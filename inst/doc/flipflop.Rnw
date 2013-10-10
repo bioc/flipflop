@@ -1,0 +1,302 @@
+%\VignetteIndexEntry{FlipFlop: Fast Lasso-based Isoform Prediction as a Flow Problem}
+%\VignettePackage{FlipFlop}
+
+
+\documentclass[11pt]{article}
+
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{natbib}
+\usepackage[pdftex]{graphicx}
+\usepackage{url}
+\SweaveOpts{keep.source=TRUE,eps=TRUE,pdf=TRUE,prefix=TRUE} 
+
+% R part
+\newcommand{\R}[1]{{\textsf{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Metas}[1]{{\texttt{#1}}}
+
+\begin{document}
+\title{FlipFlop: Fast Lasso-based Isoform Prediction as a Flow Problem}
+\author{Elsa Bernard \and Laurent Jacob \and Julien Mairal \and Jean-Philippe Vert}
+
+\maketitle
+\begin{abstract}
+  \Rpackage{FlipFlop} implements a fast method for \emph{de novo}
+  transcript discovery and abundance estimation from RNA-Seq data. It
+  differs from Cufflinks by simultaneously performing the transcript
+  and quantitation tasks using a penalized maximum likelihood
+  approach, which leads to improved precision/recall. Other softwares
+  taking this approach have an exponential complexity in the number of
+  exons in the gene. We use a novel algorithm based on network flow
+  formalism, which gives us a polynomial runtime. 
+  In practice,
+  \Rpackage{FlipFlop} was shown to outperform 
+  penalized maximum likelihood based softwares in terms of speed and
+  to perform transcript discovery in less than 1/2 second even for
+  large genes.
+\end{abstract}
+
+\section{Introduction}
+
+Over the past decade, quantitation of mRNA molecules in a cell
+population has become a popular approach to study the effect of
+several factors on cellular activity. Typical applications include the
+detection of genes whose expression varies between two or more
+populations of samples (differential analysis), classification of
+samples based on gene expression~\citep{Veer2002Gene}, and clustering,
+which consists of identifying a grouping structure in a sample
+set~\citep{Perou2000Molecular}. While probe-based DNA microarray
+technologies only allow to quantitate mRNA molecules whose sequence is
+known in advance, the recent development of deep sequencing has
+removed this restriction. More precisely, RNA-Seq
+technologies~\citep{Mortazavi2008Mapping} allow the sequencing of cDNA
+molecules obtained by reverse transcription of RNA molecules present
+in the cell. Consequently, any transcript can be sequenced and
+therefore quantitated, even though its sequence might not be available a
+priori for designing a specific probe. 
+In addition to facilitating the
+study of non-coding parts of known genomes and organisms whose genome
+has not been sequenced~\citep{Mortazavi2010Scaffolding}, 
+RNA-Seq technologies
+facilitate the quantitation of alternatively spliced genes.  Genes in
+eukaryote cells indeed contain a succession of exon and intron
+sequences. Transcription results in a pre-mRNA molecule from
+which most introns are removed and some exons are retained during a
+processing step called RNA splicing. 
+It is estimated that more than
+$95\%$ of multiexonic genes are subject to alternative
+splicing~\citep{Pan2008Deep}: the set of exons 
+retained during splicing can vary, resulting for the same gene
+in different versions of the mRNA, referred to as
+transcripts or isoforms. 
+Identification and quantification of isoforms
+present in a sample is of outmost interest because different isoforms
+can later be translated as different proteins. Detection of isoforms
+whose presence or quantity varies between samples may lead to new
+biomarkers and highlight novel biological processes invisible at the
+gene level.
+
+Sequencing technologies are well suited to transcript quantitation as
+the read density observed along the different exons of a gene provide
+information on which alternatively spliced mRNAs were expressed in the
+sample, and in which proportions. Since the read length is typically
+smaller than the mRNA molecule of a transcript, identifying and
+quantifying the transcripts is however difficult: 
+an observed read
+mapping to a particular exon may come from an mRNA molecule of any
+transcript containing this exon. Some methods consider that the
+set of expressed isoforms~\citep{Jiang2009Statistical} 
+or a candidate superset~\citep{Huang2012robust, Xing2006expectation-maximization} is
+known in advance, in which case the only problem is to estimate their
+expression. However little is known in practice about the possible
+isoforms of genes, and restricting oneself to isoforms that have been
+described in the literature may lead to missing new ones.
+
+Two main paradigms have been used so far to estimate expression at the
+transcript level while allowing de novo transcript discovery. On the
+one hand, the Cufflinks software
+package~\citep{Trapnell2010Transcript} proceeds in two separate steps
+to identify expressed isoforms and estimate their abundances.  It
+first estimates the list of alternatively spliced transcripts by
+building a small set of isoforms containing all observed exons and
+exon junctions.  In a second step, the expression of each transcript
+is quantified by likelihood maximization given the list of
+transcripts. Identification and quantification are therefore done
+independently. On the other hand, a second family of
+methods~\citep{Xia2011NSMAP, IsoLasso, Bohnert2010rQuant, Li2011SLIDE,
+Mezlini2013ireckon} jointly estimates the set of transcripts and their
+expression using a penalized likelihood approach.  These methods model
+the likelihood of the expression of all possible transcripts, possibly
+after some preselection, and the penalty encourages sparse solutions
+that have a few expressed transcripts.
+
+The two-step approach of Cufflinks~\citep{Trapnell2010Transcript} is
+reasonably fast, but does not exploit the observed read density along
+the gene, which can be a valuable information to identify the set of
+transcripts.  This is indeed a conclusion drawn experimentally using
+methods from
+the second paradigm~\citep[see][]{Xia2011NSMAP, IsoLasso,
+Bohnert2010rQuant, Li2011SLIDE, Mezlini2013ireckon}.
+
+To summarize, the first paradigm is fast but can be less statistically
+powerful than the second one in some cases, and the second paradigm
+should always be powerful but becomes untractable for genes with many
+exons. The contribution of this paper is to allow methods of the
+second family to run efficiently without prefiltering the set of isoform
+candidates, although they solve a non-smooth optimization problem over an
+exponential number of variables. To do so, we show that the penalized
+likelihood maximization can be reformulated as a convex cost network flow
+problem, which can be solved efficiently \citep{ahuja,bertsekas,Mairal2012Path}. 
+
+For more detail about the statistical model and method,
+see~\cite{Bernard2013Efficient} and references therein.
+
+\section{Software features}
+
+\Rpackage{FlipFlop} takes aligned reads in \texttt{sam} format and
+offers the following functionalities:
+\begin{description}
+\item[Transcript discovery] \Rpackage{FlipFlop} estimates the set of
+  transcripts which are most likely to be expressed according to the
+  model described in~\cite{Bernard2013Efficient}.
+\item[Abundance estimation] The implemented method simultaneously
+  estimates the abundance of the expressed transcripts in FPKM.  
+\end{description}
+
+\section{Case studies}
+
+We now show on a simple one gene example
+how \Rpackage{FlipFlop} can be used to
+estimate which transcripts are expressed in an RNA-Seq experiment, and
+what the transcript abundances are.
+
+\subsection{Loading the library and the data}
+
+We load the \Rpackage{FlipFlop} package by typing or pasting the
+following codes in R command line:
+<<lib, echo=TRUE>>=
+library(flipflop)
+@
+
+A \texttt{.sam} data file can be loaded by the following command: 
+<<data, echo=TRUE>>=
+data.file <- system.file(file.path('extdata', 'vignette-sam.txt'), package='flipflop')
+tmp <- readLines(data.file)
+@
+
+These data correspond to the alignments of 1000 single-end reads of 125 base-pair long
+against the hg19 reference genome, available on the UCSC genome browser \footnote{http://genome.ucsc.edu}.
+The reads have been simulated with the RNASeqReadSimulator \footnote{http://alumni.cs.ucr.edu/~liw/rnaseqreadsimulator.html}
+from two annotated human transcripts (see reference ID uc001alm.1 and uc001aln.3 in the UCSC genome browser).
+
+\Rpackage{FlipFlop} pre-processing of the reads (exctracting exon boundaries, junctions and associated counts),
+is based on the \texttt{processsam} function of the \texttt{isolasso} software.
+More information about the \texttt{isolasso} software and the 
+\texttt{processsam} options can be found at the following link: \url{http://alumni.cs.ucr.edu/~liw/isolasso.html}.
+
+\subsection{Estimation}
+
+In order to estimate the set of expressed isoforms and their
+abundances, we run the \Rfunction{flipflop} function on the \texttt{.sam} file.
+By default the reads are considered as single-end and no annotation file is necessary. 
+If you have paired-end reads you can use the option \texttt{paired=TRUE} and  
+give the mean fragment size (option \texttt{frag}) and standard deviation (option \texttt{std}) 
+of your RNA-seq library. 
+
+<<estim, echo=TRUE, results=hide>>=
+# The minimum number of clustered reads
+# to consider a cluster of reads as a gene (default 40): 
+min.read <- 50
+# The maximum number of isoforms given
+# during regularization path (default 10):
+max.iso <- 7 
+ff.res <- flipflop(data.file=data.file, 
+                   out.file='FlipFlop_output.gtf',
+		   minReadNum=min.read,
+                   max_isoforms=max.iso) 
+@ 
+
+<<names, echo=TRUE>>=
+names(ff.res)
+@
+
+The \Rfunction{flipflop} function outputs a list whose important features 
+are lists \Robject{transcripts} and \Robject{abundances}. 
+Each element of these lists corresponds 
+to a different gene in the \texttt{.sam} file.
+
+The \Robject{transcripts} list is a \Robject{GRangesList} object 
+from the \Rpackage{GenomicRanges} package~\citep{GenomicRanges}.
+More information concerning  manipulations of this object 
+can be found in \citep{GenomicRanges}. 
+Each element of the list is a \Robject{GRanges} object that describes the 
+structure of the transcripts that are found to be expressed.
+Rows of the object correspond to exons. 
+On the left hand side each exon is described by the gene name, the chromosome, its genomic position on the chromosome and the strand. Transcripts are described on the right hand side. Every transcript is a binary vector where an exon is labelled by 1 if it is included in the transcript.
+Elements of \Robject{abundances} are vector whose length is the
+number of isoforms listed in the \Robject{transcripts} object.
+Each element of the vector is the 
+estimated abundance in FPKM of the corresponding transcript.
+
+
+<<output, echo=TRUE>>=
+transcripts <- ff.res$transcripts[[1]]
+abundances <- ff.res$abundances[[1]]
+print(transcripts)
+print(abundances)
+@
+
+Our example \texttt{.sam} file contains a gene with 7 exons. Two
+transcripts were found to be expressed, with respective abundances
+278210.2 and 114046.3 FPKM. The first of the expressed isoforms
+contains all exons except the exon 6, the second isoform does not contain exon 7.
+The output is also stored in a standart \texttt{gtf} format file.
+
+
+The \Rfunction{flipflop} function allows as well 
+the use of an annotated transcript file in \texttt{bed} format 
+to settle a priori the exon boundaries.  
+
+
+A \texttt{.bed} annotation file can be loaded by the following command: 
+<<annot, echo=TRUE>>=
+annot.file <- system.file(file.path('extdata', 'vignette-annot.bed.txt'), 
+                          package='flipflop')
+@
+
+<<estim_annot, echo=TRUE, results=hide>>=
+ff.res.annot <- flipflop(data.file=data.file, 
+                   out.file='FlipFlop_output.gtf',
+		   annot.file=annot.file)
+@
+
+<<output_annot, echo=TRUE>>=
+transcripts.annot <- ff.res.annot$transcripts[[1]]
+print(transcripts.annot)
+@
+
+Two transcripts are again found to be expressed. 
+The number of exons and the positions on the genome 
+are not the same as in the previous example because boundaries now include exons and introns from the annotation.
+
+
+\subsection{Read the output GTF file}
+
+The transcripts which are found to be expressed are stored in a \texttt{gtf} format file.
+The transcript information from the GTF file can be easily extracted using the \Rfunction{makeTranscriptDbFromGFF} function
+from the \Rpackage{GenomicFeatures} package~\citep{GenomicFeatures}.
+
+The following example shows (when the \Rpackage{GenomicFeatures} is installed) 
+how to create a 
+\Robject{TranscriptDb} object from the GTF file, 
+and several accessor functions allow to manipulate it. 
+More information can be found in \citep{GenomicFeatures}. 
+For instance the \Rfunction{exonsBy} function 
+extracts the list of exons for each gene or transcript:
+
+<<GenomicFeatures, echo=TRUE>>=
+if(require(GenomicFeatures)){
+   txdb <- makeTranscriptDbFromGFF(file='FlipFlop_output.gtf', 
+				format='gtf', 
+				exonRankAttributeName='exon_number')
+   # List of exons for each transcript:
+   exonsBy(txdb, by='tx')
+}
+@
+
+\section{Session Information}
+
+<<sessionInfo, echo=FALSE>>=
+sessionInfo()
+@
+
+
+\bibliographystyle{plainnat}
+\bibliography{biblio}
+
+\end{document}

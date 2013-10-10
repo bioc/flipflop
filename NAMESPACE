@@ -1,0 +1,9 @@
+## package has a dynamic library
+useDynLib(flipflop)
+
+export('flipflop')
+
+importFrom('Matrix', sparseMatrix)
+importClassesFrom('Matrix', index, number, replValue)
+import('IRanges')
+importFrom('GenomicRanges', GRanges, GRangesList)

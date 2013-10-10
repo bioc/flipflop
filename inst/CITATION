@@ -1,0 +1,24 @@
+citEntry(
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # BibTeX entry:
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  entry="TechReport",
+  author ="Elsa Bernard and Laurent Jacob and Julien Mairal and Jean-Philippe Vert",
+  title ="Efficient RNA isoforms identification and quantification from RNA-Seq data with network flows",
+  year =         "2013", 
+  month =        "March",
+  institution =  "Mines ParisTech",
+  url =         "http://hal.inria.fr/hal-00803134",
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Plain-text citation:
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  textVersion = paste(
+ "Efficient RNA isoforms identification and quantification from RNA-Seq data with network flows",
+ "Elsa Bernard, Laurent Jacob, Julien Mairal and Jean-Philippe Vert",
+  "March 2013", 
+  "technical report",
+  #"arXiv techreport", 
+  "http://hal.inria.fr/hal-00803134"
+  )
+)
