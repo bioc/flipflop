@@ -131,7 +131,8 @@ flipflop <- function(data.file,
   #genome.pos <- list()
   #chromosome <- vector()
   #strand.all <- vector()
-  granges <- GRangesList() 
+  #granges <- GRangesList() 
+  granges <- list() # GRangesList does not work because the number of metadata columns varies
   mm <- 0
   scan(inpf, what=character(0), nlines=3, quiet=TRUE)
 
@@ -286,6 +287,8 @@ flipflop <- function(data.file,
         ## Model Selection:
         ## BIC Criterion
         ##================			
+        beta.select <- 0
+        path.select <- matrix(0, n.exons)
         select <- which.min(loss.set + BICcst*size.set*log(n.nodes))
         trueind <- which(beta.refit[[select]] > 0)
         if(length(trueind)>0){
@@ -407,7 +410,6 @@ flipflop <- function(data.file,
                   transcript=path.select)
     granges[[mm]] <- gr
   }
-  metadata(granges) <- list(beta=beta.all, timer=timer.all)
   close(inpf)
   close(outf)
   ## Delete processed sam file
