@@ -427,7 +427,8 @@ using namespace FISTA;
   param.pos = pos;
   param.clever = clever;
 
-  if(param.log = log) {
+  param.log=log;
+  if(log) {
     int n = strlen(logName);
     if(n == 0) 
       throw("fistaFlat : missing field logName");
@@ -569,7 +570,8 @@ using namespace FISTA;
   param.pos = pos;
   param.clever = clever;
 
-  if(param.log = log) {
+  param.log=log;
+  if(log) {
     int n = strlen(logName);
     if(n == 0) 
       throw("fistaTree : missing field logName");

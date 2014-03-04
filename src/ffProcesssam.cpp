@@ -37,6 +37,6 @@ extern "C" {
     /* initialize the boring global variables */
     initGlobalVariables();
     /* start the job */
-    readSamFile(inSamFile, cline);  
+    readSamFile(inSamFile, prefix, cline);  
   }
 }

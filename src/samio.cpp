@@ -32,7 +32,7 @@ void initGlobalVariables(){
     VERBOSE=0;
     MIN_CVG_FRACTION=0.25;
     MINEXONCVG=2;
-    OUTPUT_INDIVIDUAL_COVERAGE=true;
+    OUTPUT_INDIVIDUAL_COVERAGE=false;
     DEFAULT_MIN_JUNCTION=1;
     MIN_GRANGE_DISTANCE=100;
     MIN_GRANGE_READ_CNT=4;
@@ -60,6 +60,7 @@ analyze sam file.
 Return value: 0 if all reads are single-ended, 1 if some are paired-ended.
 */
 int readSamFile(string inSamFile, //input file
+    string MonPrefix, // ELSA, prefix name
     vector<string> args // we need to print the command line into the instance file
     ){
 
@@ -227,7 +228,8 @@ int readSamFile(string inSamFile, //input file
     }
   }
   //write the total number of reads in a separate file
-  ofstream fichier("totalnumread", ios::out | ios::trunc);
+  string outNumRead=MonPrefix+".totalnumread";
+  ofstream fichier(outNumRead.c_str(), ios::out | ios::trunc);
   fichier<<"@Total Number of Reads\n"<<totalnumread<<"\n";
   fichier<<"@Total Number of Pairs\n"<<totalpair/2;
   fichier.close();

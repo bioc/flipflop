@@ -22,14 +22,14 @@
 flipflop(data.file, out.file="FlipFlop_output.gtf", annot.file="", paired=FALSE,
   frag=400, std=20, minReadNum=40, minFragNum=20, minCvgCut=0.25, verbose=0,
   verbosepath=0, max_isoforms=10, use_TSSPAS=0, cutoff=5, BICcst=50,
-  isolasso.instance="", NN="")
+  OnlyPreprocess=FALSE, preprocess.instance="", NN="")
 }
 
 \arguments{
   \item{data.file}{Input alignment file in SAM format.}
   \item{out.file}{Output gtf data file storing the structure of the transcripts which are found to be expressed together with their abundances in FPKM.}
-  \item{annot.file}{Optional annotation file in BED format. If given exon boundaries will be taken from the annotations}
-  \item{paired}{Boolean for paired-end reads. If FALSE your reads will be considered as single-end reads. Default FALSE}
+  \item{annot.file}{Optional annotation file in BED12 format. If given, exon boundaries will be taken from the annotations.}
+  \item{paired}{Boolean for paired-end reads. If FALSE your reads will be considered as single-end reads. Default FALSE.}
   \item{frag}{Mean fragment size. Only used if paired is set to TRUE. Default 400.}
   \item{std}{Standard deviation of fragment size. Only used if paired is set to TRUE. Default 20.}
   \item{minReadNum}{[Pre-processing] The minimum number of clustered reads to output. Default 40. If you give an annotation file it will be the minimum number of mapped reads to process a gene.}
@@ -41,8 +41,9 @@ flipflop(data.file, out.file="FlipFlop_output.gtf", annot.file="", paired=FALSE,
   \item{use_TSSPAS}{Do we restrict the candidate TSS and PAS sites. 1 is yes and 0 is no. Default 0 i.e each exon can possibly starts or ends an isoform.}
   \item{cutoff}{For paired-end reads do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Not active is paired is FALSE. Default 5.}
   \item{BICcst}{Constant used for model selection with the BIC criterion. Default 50.}
-  \item{isolasso.instance}{Input file directly from IsoLasso. If non empty, the data.file and annot.file fields are ignored.}
-  \item{NN}{Total number of mapped fragments. This field is only necessary if you give isolasso.instance.}
+  \item{OnlyPreprocess}{Boolean for performing only the pre-processing step. Output is two files: one file '.instance' and one other file '.totalnumread'. Default FALSE.}
+  \item{preprocess.instance}{Give directly the pre-processed input file created when using the OnlyPreprocess option. If non empty, the data.file and annot.file fields are ignored.}
+  \item{NN}{Total number of mapped fragments. Optional if you give data.file. Only necessary if you give preprocess.instance (you can have access to this number by looking at the file '.totalnumred' created when using the OnlyPreprocess option).}
 }
 
 \value{

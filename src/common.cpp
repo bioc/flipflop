@@ -44,7 +44,7 @@ bool FIXBOUND=false;
 /*
  output the coverage of individual bases into instance file.
 */
-bool OUTPUT_INDIVIDUAL_COVERAGE=true; 
+bool OUTPUT_INDIVIDUAL_COVERAGE=false; 
 
 
 /*

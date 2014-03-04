@@ -1006,28 +1006,29 @@ void ReadGroup::toStream(ostream &out)const {
       //  out<<(apitr->second)[i]<<" ";
       out<<endl;
   }
-  //coverage
+  //Coverage
   //for each type, count the number of reads for each position
-  vector<map<long,int> >typecvg(alltype.size());
-  for(int i=0;i<start.size();i++){
-    if(validRead[i]==0)continue;
-    typecvg[read2type[i]][start[i][0]]++;
-  }
-
-  out<<"Coverage\t"<<nvalsg<<"\t"<<validSize()<<endl;
-  int counter=0;
-  for(int i=0;i<alltype.size();i++){
-    if(validSGType[i]==0)continue;
-    //count the number of positions having a specific number of reads
-    map<int,int> posstat;
-    map<long,int>& ttc=typecvg[i];
-    for(map<long,int>::iterator ittc=ttc.begin();ittc!=ttc.end();ittc++)
-      posstat[ittc->second]++;
-    out<<counter++<<"\t"<<posstat.size()<<endl;
-    for(map<int,int>::iterator ipss=posstat.begin();ipss!=posstat.end();ipss++)
-      out<<ipss->first<<","<<ipss->second<<"\t";
-    out<<endl;
-  }
+  // ELSA modif 28fev14: do not write Coverage in the instance file, comment below:
+//   vector<map<long,int> >typecvg(alltype.size());
+//   for(int i=0;i<start.size();i++){
+//     if(validRead[i]==0)continue;
+//     typecvg[read2type[i]][start[i][0]]++;
+//   }
+// 
+//   out<<"Coverage\t"<<nvalsg<<"\t"<<validSize()<<endl;
+//   int counter=0;
+//   for(int i=0;i<alltype.size();i++){
+//     if(validSGType[i]==0)continue;
+//     //count the number of positions having a specific number of reads
+//     map<int,int> posstat;
+//     map<long,int>& ttc=typecvg[i];
+//     for(map<long,int>::iterator ittc=ttc.begin();ittc!=ttc.end();ittc++)
+//       posstat[ittc->second]++;
+//     out<<counter++<<"\t"<<posstat.size()<<endl;
+//     for(map<int,int>::iterator ipss=posstat.begin();ipss!=posstat.end();ipss++)
+//       out<<ipss->first<<","<<ipss->second<<"\t";
+//     out<<endl;
+//   }
   
 }
 

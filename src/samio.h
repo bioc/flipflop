@@ -20,7 +20,8 @@ read sam file, and generate read mapping file for isoinfer
 
 void initGlobalVariables();
 
-int readSamFile(string inSamFile, 
+int readSamFile(string inSamFile,
+                string MonPrefix, 
 		vector<string> args
 		);
 
