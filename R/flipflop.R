@@ -213,23 +213,27 @@ flipflop <- function(data.file,
          npetype <- as.integer(petype[3])
          # Skip instance when not enough mapped reads or mapped fragments (but don't skip if your reads are supposed to be paired but there is more than 1000 single-end reads):
          if(nreads<minReadNum | (paired==TRUE & npereads<minFragNum & nreads<1000)){
-            scan(inpf, what=character(0), nlines=(2*npetype), quiet=TRUE) # Skip paired-end type information
+            if(npetype>0){
+               scan(inpf, what=character(0), nlines=(2*npetype), quiet=TRUE) # Skip paired-end type information
+            }
             next
          }
          # Consider reads as single-end (npetype==0 means there is no pair and for npetype>300 the paired graph creation is too long):
          eff.paired <- FALSE
-         if(paired==FALSE | npetype==0 | npetype>=300){
-            scan(inpf, what=character(0), nlines=(2*npetype), quiet=TRUE) # Skip paired-end type information
-         }
-         # Paired-end reads:
-         if(paired==TRUE & npetype>0 & npetype<300){
-            eff.paired <- TRUE
-            # Construct the bins (consider pairs as 'long single' with some heuristics if necessary)
-            bins.res <- bins_paired(inpf=inpf, npetype=npetype, tophat.exons=tophat.exons, count.exons=count.exons, 
-                                    len.exons=len.exons, n.exons=n.exons, readtype=readtype, gap=gap, std=std) 
-            longtype <- bins.res$longtype
-            numbertype <- bins.res$numbertype
-            VALID <- (length(longtype)>0)
+         if(npetype>0){
+            if(paired==FALSE | npetype>=300){
+               scan(inpf, what=character(0), nlines=(2*npetype), quiet=TRUE) # Skip paired-end type information
+            }
+            # Paired-end reads:
+            if(paired==TRUE & npetype<300){
+               eff.paired <- TRUE
+               # Construct the bins (consider pairs as 'long single' with some heuristics if necessary)
+               bins.res <- bins_paired(inpf=inpf, npetype=npetype, tophat.exons=tophat.exons, count.exons=count.exons, 
+                                       len.exons=len.exons, n.exons=n.exons, readtype=readtype, gap=gap, std=std) 
+               longtype <- bins.res$longtype
+               numbertype <- bins.res$numbertype
+               VALID <- (length(longtype)>0)
+            }
          }
 
          tic()
