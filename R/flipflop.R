@@ -29,9 +29,9 @@
 ## @synopsis
 ##
 ## \arguments{
-##   \item{data.file}{Input alignment file in SAM format.}
-##   \item{out.file}{Output gtf data file storing the structure of the transcripts which are found to be expressed together with their abundances in FPKM.}
-##   \item{annot.file}{Optional annotation file in BED12 format. If given, exon boundaries will be taken from the annotations.}
+##   \item{data.file}{Input alignment file in SAM format. The SAM file must be sorted according to chromosome name and starting position.}
+##   \item{out.file}{Output gtf file storing the structure of the transcripts which are found to be expressed together with their abundances (in FPKM and expected count).}
+##   \item{annot.file}{Optional annotation file in BED12 format. If given, exon boundaries will be taken from the annotations. The BED file should be sorted according to chromosome name and starting position of transcripts.}
 ##   \item{paired}{Boolean for paired-end reads. If FALSE your reads will be considered as single-end reads. Default FALSE.}
 ##   \item{frag}{Mean fragment size. Only used if paired is set to TRUE. Default 400.}
 ##   \item{std}{Standard deviation of fragment size. Only used if paired is set to TRUE. Default 20.}
@@ -45,14 +45,15 @@
 ##   \item{cutoff}{For paired-end reads do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Not active is paired is FALSE. Default 5.}
 ##   \item{BICcst}{Constant used for model selection with the BIC criterion. Default 50.}
 ##   \item{OnlyPreprocess}{Boolean for performing only the pre-processing step. Output is two files: one file '.instance' and one other file '.totalnumread'. Default FALSE.}
-##   \item{preprocess.instance}{Give directly the pre-processed input file created when using the OnlyPreprocess option. If non empty, the data.file and annot.file fields are ignored.}
-##   \item{NN}{Total number of mapped fragments. Optional if you give data.file. Only necessary if you give preprocess.instance (you can have access to this number by looking at the file '.totalnumred' created when using the OnlyPreprocess option).}
+##   \item{preprocess.instance}{Give directly the pre-processed '.instance' input file created when using the OnlyPreprocess option. If non empty, the data.file and annot.file fields are ignored.}
+##   \item{NN}{Total number of mapped fragments. Optional if you give a SAM data.file. Only necessary if you give preprocess.instance (the number of mapped fragments is stored in the file '.totalnumred' created when using the OnlyPreprocess option).}
 ## }
 ##
 ## \value{
 ##  A @list with the following elements:
-##  \item{transcripts}{A list storing the structure of the expressed isoforms. The list is a GRangesList object from the GenomicRanges package. Rows correspond to exons. On the left hand side each exon is described by the gene name, the chromosome, its genomic position on the chromosome  and the strand. Transcripts are described on the right hand side. Every transcript is a binary vector where an exon is labelled by 1 if it is included in the transcript.}
-##  \item{abundances}{A list storing the abundances of the expressed isoforms in FPKM unit. Each element of the list is a vector whose length is the number of expressed transcripts listed in the above 'transcripts' object.}
+##  \item{transcripts}{A list storing the structure of the expressed isoforms. The list is a GRangesList object from the GenomicRanges package. Rows correspond to exons. On the left hand side each exon is described by the gene name, the chromosome, its genomic position on the chromosome and the strand. Transcripts are described on the right hand side. Every transcript is a binary vector where an exon is labelled by 1 if it is included in the transcript.}
+##  \item{abundancesFPKM}{A list storing the abundances of the expressed isoforms in FPKM unit. Each element of the list is a vector whose length is the number of expressed transcripts listed in the above 'transcripts' object.}
+##  \item{expected.counts}{A similar list as 'abundancesFPKM' but storing the expected fragment counts for each expressed isoforms.}
 ##  \item{timer}{A vector with the computation time in seconds for each gene.}
 ## }
 ##
@@ -88,14 +89,13 @@ flipflop <- function(data.file,
    ##================================================================================
    # Pre-Process sam input file: 
    if(preprocess.instance=='' | OnlyPreprocess==TRUE){
+      print('PRE-PROCESSING sam file ....')
       data.file <- path.expand(path=data.file) # In case there is a '~' in the input path 
       annot.file <- path.expand(path=annot.file)
       bn <- basename(data.file)
       prefix <- sub('[.][^.]*$', '', bn)
       processsam(data.file, prefix, annot=annot.file, minReadNum=minReadNum, minCvgCut=minCvgCut, verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
-      if(verbose==1){
-         print('PRE-PROCESSING IS DONE')
-      }
+      print('DONE !')
    }
    # Continue the job:
    if(OnlyPreprocess==FALSE){
@@ -136,7 +136,8 @@ flipflop <- function(data.file,
       param$pos <- TRUE
       param$tol <- 1e-10
       ##=======================================
-      beta.all <- list()
+      beta.fpkm <- list()
+      beta.expcount <- list()
       timer.all <- vector()
       #granges <- GRangesList() 
       granges <- list() # GRangesList does not work because the number of metadata columns varies
@@ -297,7 +298,8 @@ flipflop <- function(data.file,
                ## Model Selection:
                ## BIC Criterion
                ##================			
-               beta.select <- 0
+               beta.select <- 0 # abundance values in FPKM
+               beta.raw <- 0 # expected fragment 'raw' counts 
                path.select <- matrix(0, n.exons)
                select <- which.min(loss.set + BICcst*size.set*log(n.nodes))
                trueind <- which(beta.refit[[select]] > 0)
@@ -342,9 +344,18 @@ flipflop <- function(data.file,
                                           ind.exons <- unique(unlist(strsplit(allbins[which(pp!=0)], split='-')))
                                           ind.exons <- sort(as.numeric(ind.exons))
                                           onep[ind.exons] <- 1
-                                          return(onep)
-                                              })
+                                          return(onep)})
                   }
+                  npaths <- length(beta.select)
+                  ind.exons.all <- lapply(1:npaths, FUN=function(tt){ which(path.select[,tt]!=0)})
+                  beta.raw <- sapply(1:npaths, FUN=function(qq){ 
+                                     ind.exons <- ind.exons.all[[qq]]
+                                     if(eff.paired){
+                                       return(max(0,(sum(len.exons[ind.exons]) - frag + 1)*beta.select[qq]*NN/1e9)) # expected raw counts for paired-end
+                                     }
+                                     if(!eff.paired){
+                                        return(max(0,(sum(len.exons[ind.exons]) - readlen + 1)*beta.select[qq]*NN/1e9)) # expected raw counts for single-end
+                                     }})
                   if(verbose==1){
                      print('WRITE in OUTPUT ...')
                   }
@@ -353,11 +364,11 @@ flipflop <- function(data.file,
                   ##================
                   manage.exons <- tophat.exons
                   manage.exons[length(manage.exons)] <- manage.exons[length(manage.exons)]+1
-                  for(ll in 1:length(beta.select)){
-                     ind.exons <- which(path.select[,ll]!=0)
+                  for(ll in 1:npaths){
+                     ind.exons <- ind.exons.all[[ll]]
                      transcript.start <- tophat.exons[(ind.exons[1]),1]
                      transcript.end <- tophat.exons[tail(ind.exons,1),2]
-                     write.transcript(outf, chr, nom, strand, transcript.start, transcript.end, beta.select[ll], ll) 
+                     write.transcript(outf, chr, nom, strand, transcript.start, transcript.end, beta.select[ll], beta.raw[ll], ll) 
                      numex <- 0
                      subexons <- as.vector(manage.exons[ind.exons,])
                      ii1 <- duplicated(subexons)
@@ -367,7 +378,7 @@ flipflop <- function(data.file,
                      for(kk in 1:nrow(subexons)){
                         numex <- numex+1
                         write.exons(outf, chr, nom, strand, (subexons[kk,1]), (subexons[kk,2]-1), ll, numex, 
-                                    beta.select[ll])
+                                    beta.select[ll], beta.raw[ll])
                      }
                   }
                }
@@ -382,10 +393,12 @@ flipflop <- function(data.file,
             if(select==2){
                beta.select <- count.exons*1e9/(NN*len.exons)
                path.select <- matrix(1)
+               beta.raw <- count.exons
             }
             if(select==1){
                beta.select <- 0
                path.select <- matrix(0)
+               beta.raw <- 0
             }
             if(verbose==1){
                print('WRITE in OUTPUT ...')
@@ -396,13 +409,14 @@ flipflop <- function(data.file,
             if(beta.select > 0){
                transcript.start <- tophat.exons[1,1]
                transcript.end <- tophat.exons[1,2]
-               write.transcript(outf, chr, nom, strand, transcript.start, transcript.end, beta.select, 1)
-               write.exons(outf, chr, nom, strand, transcript.start, transcript.end, 1, 1, beta.select)
+               write.transcript(outf, chr, nom, strand, transcript.start, transcript.end, beta.select, beta.raw, 1)
+               write.exons(outf, chr, nom, strand, transcript.start, transcript.end, 1, 1, beta.select, beta.raw)
             }
          }
 
          timer <- toc()
-         beta.all[[mm]] <- beta.select
+         beta.fpkm[[mm]] <- beta.select
+         beta.expcount[[mm]] <- beta.raw
          timer.all[mm] <- timer
          strand.gr <- strand
          if(strand.gr=='.'){
@@ -424,7 +438,7 @@ flipflop <- function(data.file,
       unlink(infn)
    }
    if(OnlyPreprocess==FALSE){
-      return(list(transcripts=granges, abundances=beta.all, timer=timer.all))
+      return(list(transcripts=granges, abundancesFPKM=beta.fpkm, expected.counts=beta.expcount, timer=timer.all))
    }
 }
 

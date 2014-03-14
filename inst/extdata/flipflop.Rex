@@ -18,7 +18,12 @@ transcripts <- ff.res$transcripts[[1]]
 print(transcripts)
 
 ## Abundances in FPKM of the expressed isoforms for the first gene
-## The length of the vector corresponds to the number of transcripts listed in the 'transcripts' object.
-## Each element of the vector is the estimated abundance of the corresponding transcript.
-abundances <- ff.res$abundances[[1]]
-print(abundances)
+## The length of the vector corresponds to the number of transcripts listed in the 'transcripts' object
+## Each element of the vector is the estimated abundance of the corresponding transcript
+abundancesFPKM <- ff.res$abundancesFPKM[[1]]
+print(abundancesFPKM)
+
+## Expected 'raw' counts of each expressed isoforms for the first gene
+expected.counts <- ff.res$expected.counts[[1]]
+print(expected.counts)
+

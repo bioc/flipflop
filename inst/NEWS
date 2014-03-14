@@ -1,14 +1,22 @@
+CHANGES IN VERSION 1.1.5
+--------------------------
+
+NEW FEATURES
+o Add 'expected.counts' in the output objects. 
+It gives the expected raw count (ie number of mapped fragments) for each predicted transcripts. 
+
+
 CHANGES IN VERSION 1.1.4
 --------------------------
 
 NEW FEATURES
-o Add a OnlyPreprocess option for performing only the pre-processing step of the input sam file.  
+o Add a 'OnlyPreprocess' option for performing only the pre-processing step of the input sam file.  
 This step writes two files: one file named 'prefix.instance' and one other named 'prefix.totalnumread',
 where 'prefix' is the prefix of the input sam file.
 The 'prefix.instance' file can then be given to the option 'preprocess.instance'
 and the total number of mapped reads is stored in the 'prefix.totalnumread' file.
 
-o Allow to give NN (total number of mapped fragments) even when using the sam file as input.
+o Allow to give 'NN' (total number of mapped fragments) even when using the sam file as input.
 This can be used to run flipflop in parallel on parsed sam files with the same NN constant. 
 
 USER-LEVEL CHANGES

@@ -153,7 +153,7 @@ offers the following functionalities:
 We now show on a simple one gene example
 how \Rpackage{FlipFlop} can be used to
 estimate which transcripts are expressed in an RNA-Seq experiment, and
-what the transcript abundances are.
+what are the transcript abundances.
 
 \subsection{Loading the library and the data}
 
@@ -166,18 +166,22 @@ library(flipflop)
 A \texttt{.sam} data file can be loaded by the following command: 
 <<data, echo=TRUE>>=
 data.file <- system.file(file.path('extdata', 'vignette-sam.txt'), package='flipflop')
-tmp <- readLines(data.file)
 @
 
-These data correspond to the alignments of 1000 single-end reads of 125 base-pair long
+These toy data correspond to the alignments of 1000 single-end reads of 125 base-pair long
 against the hg19 reference genome, available on the UCSC genome browser \footnote{http://genome.ucsc.edu}.
 The reads have been simulated with the RNASeqReadSimulator \footnote{http://alumni.cs.ucr.edu/~liw/rnaseqreadsimulator.html}
 from two annotated human transcripts (see reference ID uc001alm.1 and uc001aln.3 in the UCSC genome browser).
 
+In a general context \texttt{data.file} should simply be the path to the \texttt{.sam} alignement file.
+
 \Rpackage{FlipFlop} pre-processing of the reads (exctracting exon boundaries, junctions and associated counts),
-is based on the \texttt{processsam} function of the \texttt{isolasso} software.
+is based on the \texttt{processsam} function from the \texttt{isolasso} software.
 More information about the \texttt{isolasso} software and the 
 \texttt{processsam} options can be found at the following link: \url{http://alumni.cs.ucr.edu/~liw/isolasso.html}.
+
+Note that the \texttt{.sam} file has to be sorted according to chromosome name and starting position.
+In Unix or Mac systems, it can be done with the command \texttt{sort -k 3,3 -k 4,4n in.sam > in.sorted.sam}.
 
 \subsection{Estimation}
 
@@ -187,6 +191,8 @@ By default the reads are considered as single-end and no annotation file is nece
 If you have paired-end reads you can use the option \texttt{paired=TRUE} and  
 give the mean fragment size (option \texttt{frag}) and standard deviation (option \texttt{std}) 
 of your RNA-seq library. 
+
+\subsubsection{without annotation}
 
 <<estim, echo=TRUE, results=hide>>=
 # The minimum number of clustered reads
@@ -206,9 +212,9 @@ names(ff.res)
 @
 
 The \Rfunction{flipflop} function outputs a list whose important features 
-are lists \Robject{transcripts} and \Robject{abundances}. 
+are lists \Robject{transcripts}, \Robject{abundancesFPKM} and \Robject{expected.counts}.
 Each element of these lists corresponds 
-to a different gene in the \texttt{.sam} file.
+to a different gene in the \texttt{sam} file.
 
 The \Robject{transcripts} list is a \Robject{GRangesList} object 
 from the \Rpackage{GenomicRanges} package~\citep{GenomicRanges}.
@@ -218,30 +224,39 @@ Each element of the list is a \Robject{GRanges} object that describes the
 structure of the transcripts that are found to be expressed.
 Rows of the object correspond to exons. 
 On the left hand side each exon is described by the gene name, the chromosome, its genomic position on the chromosome and the strand. Transcripts are described on the right hand side. Every transcript is a binary vector where an exon is labelled by 1 if it is included in the transcript.
-Elements of \Robject{abundances} are vector whose length is the
+Elements of \Robject{abundancesFPKM} are vector whose length is the
 number of isoforms listed in the \Robject{transcripts} object.
 Each element of the vector is the 
 estimated abundance in FPKM of the corresponding transcript.
-
+\Robject{expected.counts} has the same structure whereas it corresponds to the expected fragment counts for each transcript 
+(ie the expected number of mapped fragments by transcript).
 
 <<output, echo=TRUE>>=
 transcripts <- ff.res$transcripts[[1]]
-abundances <- ff.res$abundances[[1]]
+abundancesFPKM <- ff.res$abundancesFPKM[[1]]
+expected.counts <- ff.res$expected.counts[[1]]
 print(transcripts)
-print(abundances)
+print(abundancesFPKM)
+print(expected.counts)
 @
 
-Our example \texttt{.sam} file contains a gene with 7 exons. Two
+Our example \texttt{sam} file contains a gene with 7 exons. Two
 transcripts were found to be expressed, with respective abundances
 278210.2 and 114046.3 FPKM. The first of the expressed isoforms
 contains all exons except the exon 6, the second isoform does not contain exon 7.
-The output is also stored in a standart \texttt{gtf} format file.
 
+The output is also stored in a standart \texttt{gtf} format file. 
+For more details about the GTF format visit \url{http://mblab.wustl.edu/GTF2.html}. 
+In the so-called attributes column, \texttt{FPKM} corresponds to abundances in FPKM unit
+while \texttt{EXP_COUNT} corresponds to the expected fragment counts.
+
+\subsubsection{with annotation}
 
 The \Rfunction{flipflop} function allows as well 
 the use of an annotated transcript file in \texttt{bed} format 
-to settle a priori the exon boundaries.  
-
+to settle a priori the exon boundaries.   
+More precisely, the \texttt{bed} file must be a \texttt{bed12} file with 12 columns. 
+It also has to be sorted according to chromosome name and starting position of isoforms.
 
 A \texttt{.bed} annotation file can be loaded by the following command: 
 <<annot, echo=TRUE>>=
