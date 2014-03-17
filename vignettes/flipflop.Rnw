@@ -248,7 +248,7 @@ contains all exons except the exon 6, the second isoform does not contain exon 7
 The output is also stored in a standart \texttt{gtf} format file. 
 For more details about the GTF format visit \url{http://mblab.wustl.edu/GTF2.html}. 
 In the so-called attributes column, \texttt{FPKM} corresponds to abundances in FPKM unit
-while \texttt{EXP_COUNT} corresponds to the expected fragment counts.
+while \texttt{EXP-COUNT} corresponds to the expected fragment counts.
 
 \subsubsection{with annotation}
 
