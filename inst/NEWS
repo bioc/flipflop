@@ -1,9 +1,10 @@
-CHANGES IN VERSION 1.1.5
+CHANGES IN VERSION 1.1.6
 --------------------------
 
 NEW FEATURES
 o Add 'expected.counts' in the output objects. 
 It gives the expected raw count (ie number of mapped fragments) for each predicted transcripts. 
+This information is also available in the output gtf file.
 
 
 CHANGES IN VERSION 1.1.4
@@ -19,10 +20,12 @@ and the total number of mapped reads is stored in the 'prefix.totalnumread' file
 o Allow to give 'NN' (total number of mapped fragments) even when using the sam file as input.
 This can be used to run flipflop in parallel on parsed sam files with the same NN constant. 
 
+
 USER-LEVEL CHANGES
 o Handle '~' in input paths with path.expand function.
 
 o Give a more detailed R output with the read count.
+
 
 MINOR CHANGES
 o Do not write individual Coverage into the pre-processing file anymore ie, the .instance file.
