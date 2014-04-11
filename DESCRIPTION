@@ -1,6 +1,6 @@
 Package: flipflop
 Title: Fast lasso-based isoform prediction as a flow problem
-Version: 1.1.7
+Version: 1.2.0
 Date: 2013-09-26
 Author: Elsa Bernard, Laurent Jacob, Julien Mairal and Jean-Philippe
         Vert
