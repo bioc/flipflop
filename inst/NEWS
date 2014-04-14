@@ -2,34 +2,38 @@ CHANGES IN VERSION 1.1.6
 --------------------------
 
 NEW FEATURES
-o Add 'expected.counts' in the output objects. 
-It gives the expected raw count (ie number of mapped fragments) for each predicted transcripts. 
-This information is also available in the output gtf file.
+
+    o Add 'expected.counts' in the output objects. 
+      It gives the expected raw count (ie number of mapped fragments) for each predicted transcripts. 
+      This information is also available in the output gtf file.
 
 
 CHANGES IN VERSION 1.1.4
 --------------------------
 
 NEW FEATURES
-o Add a 'OnlyPreprocess' option for performing only the pre-processing step of the input sam file.  
-This step writes two files: one file named 'prefix.instance' and one other named 'prefix.totalnumread',
-where 'prefix' is the prefix of the input sam file.
-The 'prefix.instance' file can then be given to the option 'preprocess.instance'
-and the total number of mapped reads is stored in the 'prefix.totalnumread' file.
 
-o Allow to give 'NN' (total number of mapped fragments) even when using the sam file as input.
-This can be used to run flipflop in parallel on parsed sam files with the same NN constant. 
+    o Add a 'OnlyPreprocess' option for performing only the pre-processing step of the input sam file.  
+    This step writes two files: one file named 'prefix.instance' and one other named 'prefix.totalnumread',
+    where 'prefix' is the prefix of the input sam file.
+    The 'prefix.instance' file can then be given to the option 'preprocess.instance'
+    and the total number of mapped reads is stored in the 'prefix.totalnumread' file.
+
+    o Allow to give 'NN' (total number of mapped fragments) even when using the sam file as input.
+    This can be used to run flipflop in parallel on parsed sam files with the same NN constant. 
 
 
 USER-LEVEL CHANGES
-o Handle '~' in input paths with path.expand function.
 
-o Give a more detailed R output with the read count.
+    o Handle '~' in input paths with path.expand function.
+
+    o Give a more detailed R output with the read count.
 
 
 MINOR CHANGES
-o Do not write individual Coverage into the pre-processing file anymore ie, the .instance file.
-(in practice comments lines in readgroup.cpp, part 'toStream')
+
+    o Do not write individual Coverage into the pre-processing file anymore ie, the .instance file.
+    (in practice comments lines in readgroup.cpp, part 'toStream')
 
 
 
@@ -37,4 +41,5 @@ CHANGES IN VERSION 1.1.2
 --------------------------
 
 BUG FIXES
-o Switch from GRangeList to a regular list as the number of metadata columns could not vary in GRangeList.
+
+    o Switch from GRangeList to a regular list as the number of metadata columns could not vary in GRangeList.
