@@ -246,7 +246,29 @@ flipflop <- function(data.file,
             ##==========================================
             if(!eff.paired){
                lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
-               validbins <- sapply(lolo, FUN=function(v) sum(len.exons[v])>=readlen) # Sanity check
+               ## probleme de duplicated lolo
+               # ---------------------
+               list.dup <- lolo[duplicated(lolo)]
+               to.remove <- c()
+               for(dd in unique(list.dup)){
+                  # indice des dupliques
+                  ind.dup <- which(sapply(lolo, FUN=function(k) identical(k,dd)))
+                  readtype[ind.dup[1],n.exons+1] <- sum(readtype[ind.dup,n.exons+1])
+                  to.remove <- c(to.remove, ind.dup[2:length(ind.dup)])
+               }
+               if(!is.null(to.remove)){
+                  readtype <- readtype[-to.remove,,drop=F]
+               }
+               lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
+               # --------------------  
+               validbins <- sapply(lolo, FUN=function(v){
+                                   if(length(v)<=2){
+                                      return((sum(len.exons[v])>=readlen))
+                                   }
+                                   if(length(v)>=3){
+                                      vv <- v[2:(length(v)-1)]
+                                      return(((sum(len.exons[v])>=readlen) & (sum(len.exons[vv])<(readlen-1)))) 
+                                   }}) 
                VALID <- (sum(validbins)>0)
             }
 
@@ -285,7 +307,7 @@ flipflop <- function(data.file,
                loss.weights <- NN*len/1e9
                param$loss_weights <- as.matrix(loss.weights)
 
-               respath <- regularization_path(graph, count, param, max_isoforms, delta, fast_guess=1, iterpoisson=1000, tolpoisson=1e-7, verbosepath, verbose)
+               respath <- regularization_path(graph, count, param, max_isoforms, delta, fast_guess=1, iterpoisson=2000, tolpoisson=1e-9, verbosepath, verbose)
                beta.refit=respath$beta.refit
                path.set=respath$path.set
                size.set=respath$size.set
