@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.3.2
+--------------------------
+    o Solve small bugs in the graph construction
+    o Update the optimization solver for refit. More accurate and faster!
+    o Remove warnings from spams (to continue ...)
+
 CHANGES IN VERSION 1.1.6
 --------------------------
 
