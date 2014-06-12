@@ -86,7 +86,7 @@ range_t Align::getRange(bool forcesingle){
  * Parese CIGAR strings
  * notice that the range should be interpreted as [startpos, endpos], not [startpos,endpos).
  * Handle I and D Cigar characters
- * Handle S and X Cigar characters # ELSA TO DO - test more
+ * Handle S and X and = Cigar characters (soft-clipping, match, mismatch) # ELSA TO DO - test more - 
  */
 void Align::parsecigar( ){
   pos_t & startpos=start; 
@@ -127,7 +127,7 @@ void Align::parsecigar( ){
         tpos=tpos+nof;
       }
     }
-    else if(t=='S' || t=='X'){
+    else if(t=='S' || t=='X' || t=='='){
        // cerr<<"Encounter the string "<<t<<" in CIGAR "<<cigar<<endl;
        startpos.push_back(tpos);
        endpos.push_back(tpos+nof-1);
