@@ -104,7 +104,6 @@ throw(const char *)
 {
   SpMatrix<T> *alpha = new SpMatrix<T>();
   int n = X->m();
-  int M = X->n();
   int nD = D->m();
   int K = D->n();
   if (n != nD)
@@ -187,7 +186,6 @@ throw(const char *)
 {
   SpMatrix<T> *alpha = new SpMatrix<T>();
   int n = X->m();
-  int M = X->n();
   int nD = D->m();
   int K = D->n();
   if (n != nD)
@@ -244,7 +242,6 @@ template <typename T>
 SpMatrix<T> *_omp(Matrix<T> *X,Matrix<T> *D,Matrix<T> **path,bool return_reg_path,bool given_L,Vector<int>*L,bool given_eps,Vector<T>*eps,bool given_Lambda,Vector<T>*Lambda,const int numThreads) {
   SpMatrix<T> *alpha = new SpMatrix<T>();
     int n = X->m();
-    int M = X->n();
     int nD = D->m();
     int K = D->n();
     if (n != nD)
@@ -380,7 +377,7 @@ Matrix<T> *_fistaFlat(Matrix<T> *X,AbstractMatrixB<T> *D,Matrix<T> *alpha0,
 	     int size_group,
 	     bool sqrt_step,
 	     bool transpose,
-	     int linesearch_mode
+             int linesearch_mode
 )
 throw(const char *) 
 {
@@ -425,9 +422,8 @@ using namespace FISTA;
   param.verbose = verbose;
   param.pos = pos;
   param.clever = clever;
-  param.log = log;
-  
-  if(log) {
+  param.log= log;
+  if(param.log) {
     int n = strlen(logName);
     if(n == 0) 
       throw("fistaFlat : missing field logName");
@@ -568,9 +564,9 @@ using namespace FISTA;
   param.verbose = verbose;
   param.pos = pos;
   param.clever = clever;
-  param.log = log; 
 
-  if(log) {
+  param.log= log;
+  if(param.log) {
     int n = strlen(logName);
     if(n == 0) 
       throw("fistaTree : missing field logName");
@@ -1160,7 +1156,6 @@ using namespace FISTA;
 
 template<typename T> 
 SpMatrix<T> *_removeCyclesGraph(int mD, int p, double *D_v, int *D_r, int *D_pB)  throw(const char *){
-  const int n = p;
   int* D_pE;
 
   D_pE=D_pB+1;

@@ -354,7 +354,7 @@ void omp(const Matrix<T>& X, const Matrix<T>& D, SpMatrix<T>& spalpha,
 
       Vector<T>& Rdn=RdnT[numT];
       D.multTrans(Xi,Rdn);
-      coreORMP(scoresT[numT],normT[numT],tmpT[numT],UnT[numT],UndnT[numT],UndsT[numT],
+      coreORMP<T>(scoresT[numT],normT[numT],tmpT[numT],UnT[numT],UndnT[numT],UndsT[numT],
             GsT[numT],Rdn,G,ind,RUn, normX, vecEps ? peps+i : peps,
             vecL ? pL+i : pL, vecLambda ? pLambda+i : pLambda, 
             path && i==0 ? path->rawX() : NULL);
@@ -523,7 +523,6 @@ void coreORMP(Vector<T>& scores, Vector<T>& norm, Vector<T>& tmp, Matrix<T>& Un,
 
    // permit unsafe low level access
    T* const prUn = Un.rawX();
-   T* const prUnds = Unds.rawX();
    T* const prUndn = Undn.rawX();
    T* const prGs = Gs.rawX();
    T* const prRUn= RUn.rawX();
@@ -2541,7 +2540,7 @@ void somp(const Matrix<T>* XT, const Matrix<T>& D, SpMatrix<T>* spalphaT,
    Matrix<T> G;
    D.XtX(G);
 
-   int NUM_THREADS=init_omp(numThreads);
+   init_omp(numThreads);
 
    int i;
 #pragma omp parallel for private(i) 

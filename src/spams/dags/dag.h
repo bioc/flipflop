@@ -1,5 +1,5 @@
 /*!
-/* Software SPAMS v2.3 - Copyright 2009-2011 Julien Mairal 
+ * Software SPAMS v2.3 - Copyright 2009-2011 Julien Mairal 
  *
  * This file is part of SPAMS.
  *
@@ -79,7 +79,6 @@ void remove_cycles(const SpMatrix<T>& G1, SpMatrix<T>& G2) {
    int n = G1.n();
    int* color = new int[n];
    memset(color,0,n*sizeof(int));
-   int next=0;
    list_int list;
    int* pB = G2.pB();
    int* r = G2.r();
