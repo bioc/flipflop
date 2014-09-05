@@ -1892,7 +1892,6 @@ R_swig_evalPathCoding ( SEXP alpha0, SEXP dual_val, SEXP precision, SEXP weights
     R_result_pos = 0;
     R_len_t m = result->m();
     R_len_t n = result->n();
-    R_len_t nzmax = result->nzmax();
     SEXP indptr, indices, vdata, dims, output;
     PROTECT(indptr = Rf_allocVector(INTSXP,n + 1));
     PROTECT(dims = Rf_allocVector(VECSXP,2));
@@ -2112,7 +2111,6 @@ R_swig_sepCostsPathCoding ( SEXP alpha0, SEXP alpha, SEXP weights, SEXP ir, SEXP
     R_result_pos = 0;
     R_len_t m = result->m();
     R_len_t n = result->n();
-    R_len_t nzmax = result->nzmax();
     SEXP indptr, indices, vdata, dims, output;
     PROTECT(indptr = Rf_allocVector(INTSXP,n + 1));
     PROTECT(dims = Rf_allocVector(VECSXP,2));
