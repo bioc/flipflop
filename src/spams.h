@@ -1,14 +1,11 @@
 #ifndef SPAMS_H
 #define SPAMS_H
 
-//#include "dags.h"
 #include "dag.h"
 #include "fista.h"
 #include "decomp.h"
 #include "linalg.h"
-//#include "Rinterface.h"
 #include "cblas_alt_template.h"
-
 #include<iostream>
 
 /* from linalg */
@@ -107,7 +104,6 @@ throw(const char *)
 {
   SpMatrix<T> *alpha = new SpMatrix<T>();
   int n = X->m();
-  int M = X->n();
   int nD = D->m();
   int K = D->n();
   if (n != nD)
@@ -190,7 +186,6 @@ throw(const char *)
 {
   SpMatrix<T> *alpha = new SpMatrix<T>();
   int n = X->m();
-  int M = X->n();
   int nD = D->m();
   int K = D->n();
   if (n != nD)
@@ -247,7 +242,6 @@ template <typename T>
 SpMatrix<T> *_omp(Matrix<T> *X,Matrix<T> *D,Matrix<T> **path,bool return_reg_path,bool given_L,Vector<int>*L,bool given_eps,Vector<T>*eps,bool given_Lambda,Vector<T>*Lambda,const int numThreads) {
   SpMatrix<T> *alpha = new SpMatrix<T>();
     int n = X->m();
-    int M = X->n();
     int nD = D->m();
     int K = D->n();
     if (n != nD)
@@ -382,7 +376,8 @@ Matrix<T> *_fistaFlat(Matrix<T> *X,AbstractMatrixB<T> *D,Matrix<T> *alpha0,
 	     Vector<T> *inner_weights,
 	     int size_group,
 	     bool sqrt_step,
-	     bool transpose
+	     bool transpose,
+             int linesearch_mode
 )
 throw(const char *) 
 {
@@ -416,6 +411,7 @@ using namespace FISTA;
   param.admm = admm;
   param.intercept = intercept;
   param.resetflow = resetflow;
+  param.linesearch_mode=linesearch_mode;
   param.regul = regul_from_string(name_regul);
 
   if (param.regul==INCORRECT_REG) {
@@ -426,9 +422,8 @@ using namespace FISTA;
   param.verbose = verbose;
   param.pos = pos;
   param.clever = clever;
-
-  param.log=log;
-  if(log) {
+  param.log= log;
+  if(param.log) {
     int n = strlen(logName);
     if(n == 0) 
       throw("fistaFlat : missing field logName");
@@ -570,8 +565,8 @@ using namespace FISTA;
   param.pos = pos;
   param.clever = clever;
 
-  param.log=log;
-  if(log) {
+  param.log= log;
+  if(param.log) {
     int n = strlen(logName);
     if(n == 0) 
       throw("fistaTree : missing field logName");
@@ -1161,7 +1156,6 @@ using namespace FISTA;
 
 template<typename T> 
 SpMatrix<T> *_removeCyclesGraph(int mD, int p, double *D_v, int *D_r, int *D_pB)  throw(const char *){
-  const int n = p;
   int* D_pE;
 
   D_pE=D_pB+1;

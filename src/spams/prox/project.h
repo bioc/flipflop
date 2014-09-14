@@ -638,7 +638,7 @@ void inline MaxFlow<T>::add_edge(const int u, const int v, const T Cu, const T C
 template <typename T>
 void inline MaxFlow<T>::discharge(const list_int& component, const int u, const int max_label) {
 #ifdef VERBB
-   // cerr << "Discharge " << u << endl;
+   cerr << "Discharge " << u << endl;
 #endif
    const T* capacity=_capacity+_pr_node[u];
    T* flow=_flow+_pr_node[u];
@@ -659,7 +659,7 @@ void inline MaxFlow<T>::discharge(const list_int& component, const int u, const 
             _excess[u]-=delta;
             flow[num_c]+=delta;
 #ifdef VERBB
-            // cerr << "Send " << delta << " from " << u << " to " << v << endl;
+            cerr << "Send " << delta << " from " << u << " to " << v << endl;
 #endif
             /// add v to the list of active nodes
             if (!_active[v] && v != _t) {
@@ -684,14 +684,14 @@ void inline MaxFlow<T>::discharge(const list_int& component, const int u, const 
             _labels[u]=max_label;
          } else { 
 #ifdef VERBB
-            // cerr << "relabel " << u << " from " << _labels[u] << " to " << MIN(m,max_label) << endl;
+            cerr << "relabel " << u << " from " << _labels[u] << " to " << MIN(m,max_label) << endl;
 #endif
             _labels[u]=MIN(m,max_label);
             _all_nodes[_labels[u]]++;         
          }
       } else {
 #ifdef VERBB
-         // cerr << "relabel " << u << " from " << _labels[u] << " to " << MIN(m,max_label) << endl;
+         cerr << "relabel " << u << " from " << _labels[u] << " to " << MIN(m,max_label) << endl;
 #endif
          _labels[u]=MIN(m,max_label);
       }
@@ -730,11 +730,11 @@ void inline MaxFlow<T>::perform_maxflow() {
 
 template <typename T>
 void inline MaxFlow<T>::print_excess() {
-   // cerr << "Excess: " << endl;
+   cerr << "Excess: " << endl;
    for (int i= 0; i<_N; ++i) {
-      // cerr << _excess[i] << " ";
+      cerr << _excess[i] << " ";
    }
-   // cerr << endl;
+   cerr << endl;
 
 };
 
@@ -761,18 +761,18 @@ void inline MaxFlow<T>::deactivate(const list_int& component) {
 
 template <typename T>
 void inline MaxFlow<T>::print_labels() {
-   // cerr << "Labels: " << endl;
-   //for (int i= 0; i<_N; ++i)
-   //   cerr << _labels[i] << " ";
-   //cerr << endl;
+   cerr << "Labels: " << endl;
+   for (int i= 0; i<_N; ++i)
+      cerr << _labels[i] << " ";
+   cerr << endl;
 
 };
 
 template <typename T>
 void inline MaxFlow<T>::print_graph() {
-   // cerr << "Number of nodes: " << _N << endl;
-   // cerr << "Source: " << _s << endl;
-   // cerr << "Sink: " << _t << endl;
+   cerr << "Number of nodes: " << _N << endl;
+   cerr << "Source: " << _s << endl;
+   cerr << "Sink: " << _t << endl;
    for (int i = 0; i<_N; ++i) _seen[i]=false;
    this->print_graph_aux(_s);
 };
@@ -847,7 +847,7 @@ bool inline MaxFlow<T>::check_flow() {
       const int ind = _pr_node[node];
       tmp.pop_front();
       if (_excess[node] < 0) {
-         // cerr << "negative excess: " <<_excess[node]  << " on node " << node << endl;
+         cerr << "negative excess: " <<_excess[node]  << " on node " << node << endl;
          correct=false;
       }
       T totalflow=0;
@@ -855,7 +855,7 @@ bool inline MaxFlow<T>::check_flow() {
          totalflow+=_flow[ind+i];
          if (_flow[ind+i] > _capacity[ind+i]) {
             correct=false;
-            // cerr << "exceed capacity on node " << node << " to " << _children[ind+i] << ". Flow: " << _flow[ind+i] << ", capacity: " << _capacity[ind+i] << endl;
+            cerr << "exceed capacity on node " << node << " to " << _children[ind+i] << ". Flow: " << _flow[ind+i] << ", capacity: " << _capacity[ind+i] << endl;
             total_excess += _flow[ind+i]-_capacity[ind+i];
          }
          if (!_seen[_children[ind+i]]) {
@@ -864,7 +864,7 @@ bool inline MaxFlow<T>::check_flow() {
          }
       }
       if (node != _s && node != _t && abs(totalflow+_excess[node]) > EPSILON_MAXFLOW) {
-         // cerr << "prb on node " << node << ", excess: " << _excess[node] << ", totalflow: " << totalflow << endl;
+         cerr << "prb on node " << node << ", excess: " << _excess[node] << ", totalflow: " << totalflow << endl;
       }
       if (node != _s && node != _t)
          total_excess2+=abs(totalflow+_excess[node]);
@@ -903,39 +903,39 @@ void inline MaxFlow<T>::set_weights(const T* weights,
 
 template <typename T>
 void inline MaxFlow<T>::print_sink() {
-   // cerr << "Flow: ";
-   /* for (int j = 0; j<_num_edges[_t]; ++j) { */
-   /*    cerr << _flow[_reverse_address[_pr_node[_t]+j]] << " "; */
-   /* } */
-   /* cerr << endl; */
-   /* cerr << "Capacity: "; */
-   /* for (int j = 0; j<_num_edges[_t]; ++j) { */
-   /*    cerr << _capacity[_reverse_address[_pr_node[_t]+j]] << " "; */
-   /* } */
-   /* cerr << endl; */
+   cerr << "Flow: ";
+   for (int j = 0; j<_num_edges[_t]; ++j) {
+      cerr << _flow[_reverse_address[_pr_node[_t]+j]] << " ";
+   }
+   cerr << endl;
+   cerr << "Capacity: ";
+   for (int j = 0; j<_num_edges[_t]; ++j) {
+      cerr << _capacity[_reverse_address[_pr_node[_t]+j]] << " ";
+   }
+   cerr << endl;
 };
 
 template <typename T>
 void inline MaxFlow<T>::print_component(const list_int& component) {
-  /* for (const_iterator_int it=component.begin(); */
-  /*      it != component.end(); ++it) { */
-  /*   cerr << "Node: " << *it << endl; */
-  /*   cerr << "Children: "; */
-  /*     for (int j = 0; j<_num_edges[*it]; ++j) { */
-  /*        cerr << _children[_pr_node[*it]+j] << " "; */
-  /*     } */
-  /*     cerr << endl; */
-  /*     cerr << "Flow: "; */
-  /*     for (int j = 0; j<_num_edges[*it]; ++j) { */
-  /*        cerr << _flow[_pr_node[*it]+j] << " "; */
-  /*     } */
-  /*     cerr << endl; */
-  /*     cerr << "Capacity: "; */
-  /*     for (int j = 0; j<_num_edges[*it]; ++j) { */
-  /*        cerr << _capacity[_pr_node[*it]+j] << " "; */
-  /*     } */
-  /*     cerr << endl; */
-  /*  } */
+   for (const_iterator_int it=component.begin();
+         it != component.end(); ++it) {
+      cerr << "Node: " << *it << endl;
+      cerr << "Children: ";
+      for (int j = 0; j<_num_edges[*it]; ++j) {
+         cerr << _children[_pr_node[*it]+j] << " ";
+      }
+      cerr << endl;
+      cerr << "Flow: ";
+      for (int j = 0; j<_num_edges[*it]; ++j) {
+         cerr << _flow[_pr_node[*it]+j] << " ";
+      }
+      cerr << endl;
+      cerr << "Capacity: ";
+      for (int j = 0; j<_num_edges[*it]; ++j) {
+         cerr << _capacity[_pr_node[*it]+j] << " ";
+      }
+      cerr << endl;
+   }
 };
 
 template <typename T>
@@ -1053,56 +1053,58 @@ T inline MaxFlow<T>::norm(const T* variables, T* work, const T* weights, const i
 
 template <typename T>
 void inline MaxFlow<T>::print_component2(const list_int& component) {
-   /* cerr << "*********Print component***********" << endl; */
-   /* for (const_iterator_int it=component.begin(); */
-   /*       it != component.end(); ++it) { */
-   /*    cerr << *it <<  " "; */
-   /* } */
-   /* cerr << endl; */
-   /* cerr << "Excess" << endl; */
-   /* for (const_iterator_int it=component.begin(); */
-   /*       it != component.end(); ++it) { */
-   /*    cerr << _excess[*it] <<  " "; */
-   /* } */
-   /* cerr << "  " << _excess[_s] << " " << _excess[_t]; */
-   /* cerr << endl; */
-   /* cerr << "Labels" << endl; */
-   /* for (const_iterator_int it=component.begin(); */
-   /*       it != component.end(); ++it) { */
-   /*    cerr << _labels[*it] <<  " "; */
-   /* } */
-   /* cerr << "  " << _labels[_s] << " " << _labels[_t]; */
-   /* cerr << endl; */
+   cerr << "*********Print component***********" << endl;
+   for (const_iterator_int it=component.begin();
+         it != component.end(); ++it) {
+      cerr << *it <<  " ";
+   }
+   cerr << endl;
+   cerr << "Excess" << endl;
+   for (const_iterator_int it=component.begin();
+         it != component.end(); ++it) {
+      cerr << _excess[*it] <<  " ";
+   }
+   cerr << "  " << _excess[_s] << " " << _excess[_t];
+   cerr << endl;
+   cerr << "Labels" << endl;
+   for (const_iterator_int it=component.begin();
+         it != component.end(); ++it) {
+      cerr << _labels[*it] <<  " ";
+   }
+   cerr << "  " << _labels[_s] << " " << _labels[_t];
+   cerr << endl;
+
+
 };
 
 
 template <typename T>
 void inline MaxFlow<T>::print_graph_aux(const int i) {
    if (_seen[i]) return;
-   /* cerr << endl; */
-   /* cerr << "Node: " << i << endl; */
-   /* _seen[i]=true; */
-   /* if (i == _t) return; */
-   /* cerr << "Children: "; */
-   /* for (int j = 0; j<_num_edges[i]; ++j) { */
-   /*    cerr << _children[_pr_node[i]+j] << " "; */
-   /* } */
-   /* cerr << endl; */
-   /* cerr << "Capacity: "; */
-   /* for (int j = 0; j<_num_edges[i]; ++j) { */
-   /*    cerr << _capacity[_pr_node[i]+j] << " "; */
-   /* } */
-   /* cerr << endl; */
-   /* cerr << "Flow: "; */
-   /* for (int j = 0; j<_num_edges[i]; ++j) { */
-   /*    cerr << _flow[_pr_node[i]+j] << " "; */
-   /* } */
-   /* cerr << endl; */
-   /* cerr << "Rverse Flow: "; */
-   /* for (int j = 0; j<_num_edges[i]; ++j) { */
-   /*    cerr << _flow[_reverse_address[_pr_node[i]+j]] << " "; */
-   /* } */
-   /* cerr << endl; */
+   cerr << endl;
+   cerr << "Node: " << i << endl;
+   _seen[i]=true;
+   if (i == _t) return;
+   cerr << "Children: ";
+   for (int j = 0; j<_num_edges[i]; ++j) {
+      cerr << _children[_pr_node[i]+j] << " ";
+   }
+   cerr << endl;
+   cerr << "Capacity: ";
+   for (int j = 0; j<_num_edges[i]; ++j) {
+      cerr << _capacity[_pr_node[i]+j] << " ";
+   }
+   cerr << endl;
+   cerr << "Flow: ";
+   for (int j = 0; j<_num_edges[i]; ++j) {
+      cerr << _flow[_pr_node[i]+j] << " ";
+   }
+   cerr << endl;
+   cerr << "Rverse Flow: ";
+   for (int j = 0; j<_num_edges[i]; ++j) {
+      cerr << _flow[_reverse_address[_pr_node[i]+j]] << " ";
+   }
+   cerr << endl;
 
    for (int j = 0; j<_num_edges[i]; ++j) {
       this->print_graph_aux(_children[_pr_node[i]+j]);
@@ -1603,7 +1605,7 @@ void inline MaxFlow<T>::perform_maxflow_component(const list_int& component) {
          if (_active_nodes[_current_max_label]->empty()) {
             _current_max_label--;
 #ifdef VERBB
-            // cerr << "current max label decreased to " << _current_max_label << endl;
+            cerr << "current max label decreased to " << _current_max_label << endl;
 #endif
          } else {
             const int current_node=_active_nodes[_current_max_label]->front();
@@ -1626,7 +1628,7 @@ void inline MaxFlow<T>::perform_maxflow_component(const list_int& component) {
       }
    }
 #ifdef VERBB
-   // cerr << "END max flow" << endl;
+   cerr << "END max flow" << endl;
    this->print_excess();
    stop();
 #endif
@@ -1636,7 +1638,7 @@ void inline MaxFlow<T>::perform_maxflow_component(const list_int& component) {
 template <typename T>
 void inline MaxFlow<T>::gap_relabelling(const list_int& component, const int gap, const int max_label) {
 #ifdef VERBB
-   // cerr << "Gap relabelling " << gap << endl;
+   cerr << "Gap relabelling " << gap << endl;
 #endif
    if (tglobal2.getElapsed() > 0.1*tglobal3.getElapsed()) return;
    tglobal2.start();
@@ -2185,11 +2187,11 @@ void inline Graph<T>::proximal_operator(const T* variables_in, T* variables_out,
 #ifdef VERB3
          if (component->size() > 100000) {
             PRINT_I(component->size())
-               // cerr << "num_comp: " << num << endl;
-            // cerr << "size_component: " << num3 << endl;
-            // cerr << "num_relabels: " << num1 << endl;
-            // cerr << "global: " << num2 << endl;
-            // cerr << "gap:: " << num4 << endl;
+               cerr << "num_comp: " << num << endl;
+            cerr << "size_component: " << num3 << endl;
+            cerr << "num_relabels: " << num1 << endl;
+            cerr << "global: " << num2 << endl;
+            cerr << "gap:: " << num4 << endl;
             tglobal1.printElapsed();
             tglobal2.printElapsed();
             tglobal3.printElapsed();
@@ -2203,12 +2205,12 @@ void inline Graph<T>::proximal_operator(const T* variables_in, T* variables_out,
       delete(component);
    }
 #ifdef VERB2
-   // cerr << "num_comp: " << num << endl;
-   // cerr << "size_component: " << num3 << endl;
-   // cerr << "num_relabels: " << num1 << endl;
-   // cerr << "global: " << num2 << endl;
-   // cerr << "gap:: " << num4 << endl;
-   // cerr << "Time global" << endl;
+   cerr << "num_comp: " << num << endl;
+   cerr << "size_component: " << num3 << endl;
+   cerr << "num_relabels: " << num1 << endl;
+   cerr << "global: " << num2 << endl;
+   cerr << "gap:: " << num4 << endl;
+   cerr << "Time global" << endl;
    tglobal1.printElapsed();
    tglobal2.printElapsed();
    tglobal3.printElapsed();
@@ -2534,9 +2536,9 @@ void MinCostFlow<Int>::compute_min_cost(const bool scale_data, const bool verbos
 //   cout << "Num pushes: " << num_pushes << ", num relabels: " << num_relabels << endl;
 //   flush(cout);
    if (verbose) {
-      // cerr << "Num pushes: " << num_pushes << ", num relabels: " << num_relabels << endl;
+      cerr << "Num pushes: " << num_pushes << ", num relabels: " << num_relabels << endl;
       _time1.printElapsed();
-      // cerr << "Time for price updates" << endl;
+      cerr << "Time for price updates" << endl;
       _time2.printElapsed();
       //cerr << "Time for price refines" << endl;
       //tglobal3.printElapsed();
@@ -2669,7 +2671,7 @@ void inline MinCostFlow<Int>::price_update(const Int eps) {
    //this->print_graph();
    const Int max_increase=max_rank;
    for (int i = 0; i<_n; ++i) {
-     //assert(rank[i] >= 0);
+      //assert(rank[i] >= 0);
       _prices[i] -= rank[i] > max_rank ? max_increase : rank[i];
    }
 
@@ -2762,7 +2764,7 @@ bool MinCostFlow<Int>::test_optimality_conditions() const {
          }
       }
    }
-   // cerr << "Flow is " << -min_prb << "-optimal" << endl;
+   cerr << "Flow is " << -min_prb << "-optimal" << endl;
    return !min_prb;
 };
 
@@ -3084,34 +3086,34 @@ bool inline MinCostFlow<Int>::topological_sort(const bool admissible, bool* admi
 
 template <typename Int>
 void inline MinCostFlow<Int>::print_excess() const {
-   /*  cerr << "Excess: " << endl; */
-   /* for (int i= 0; i<_n; ++i) { */
-   /*    cerr << _excess[i] << " "; */
-   /* } */
-   /* cerr << endl; */
+   cerr << "Excess: " << endl;
+   for (int i= 0; i<_n; ++i) {
+      cerr << _excess[i] << " ";
+   }
+   cerr << endl;
 };
 
 template <typename Int>
 void inline MinCostFlow<Int>::print_prices() const {
-   /* cerr << "Prices: " << endl; */
-   /* for (int i= 0; i<_n; ++i) { */
-   /*    cerr << _prices[i] << " "; */
-   /* } */
-   /* cerr << endl; */
+   cerr << "Prices: " << endl;
+   for (int i= 0; i<_n; ++i) {
+      cerr << _prices[i] << " ";
+   }
+   cerr << endl;
 };
 
 template <typename Int>
 void inline MinCostFlow<Int>::print_graph() const {
-   /* cerr << "Graph: " << _n << " x " << _m << endl; */
-   /* for (int i= 0; i<_n; ++i) { */
-   /*    cerr <<"***********************" << endl;  */
-   /*    cerr <<"Node: " << i << ", e(i): " << _excess[i] << ", pi(i): " << _prices[i] << ", d(i): " << _demand[i] << endl; */
-   /*    const int pr=_pr_node[i]; */
-   /*    for (int j = 0; j<_num_arcs[i]; ++j) { */
-   /*       cerr << "    child: " << _children[pr+j] << ", cap: " << _capacity[pr+j] << ", cost: " << _cost[pr+j] << ", flow: " << _flow[pr+j] << endl; */
-   /*    } */
-   /* } */
-   /* cerr << endl; */
+   cerr << "Graph: " << _n << " x " << _m << endl;
+   for (int i= 0; i<_n; ++i) {
+      cerr <<"***********************" << endl; 
+      cerr <<"Node: " << i << ", e(i): " << _excess[i] << ", pi(i): " << _prices[i] << ", d(i): " << _demand[i] << endl;
+      const int pr=_pr_node[i];
+      for (int j = 0; j<_num_arcs[i]; ++j) {
+         cerr << "    child: " << _children[pr+j] << ", cap: " << _capacity[pr+j] << ", cost: " << _cost[pr+j] << ", flow: " << _flow[pr+j] << endl;
+      }
+   }
+   cerr << endl;
 };
 
 template <typename T = double, typename Int = long long> class GraphPath {
@@ -3446,12 +3448,12 @@ loss_flow loss_flow_from_string(char* regul, const bool alt_norm = false) {
 
 void print_loss_flow(const loss_flow& loss) {
    switch (loss) {
-      case FLOW_SQUARE: /* cout << "Square loss" << endl;*/ break;
-      case FLOW_SQUARE_WEIGHTS: /* cout << "Weighted square loss" << endl; */ break;
-      case FLOW_LINEAR: /* cout << "Linear loss" << endl; */ break;
-      case FLOW_POISSON: /* cout << "Poisson loss" << endl; */ break;
-      case FLOW_POISSON_WEIGHTS: /* cout << "Weighted Poisson loss" << endl; */ break;
-      default: /* cout << "Unknown loss" << endl; */ break;
+      case FLOW_SQUARE: cout << "Square loss" << endl; break;
+      case FLOW_SQUARE_WEIGHTS: cout << "Weighted square loss" << endl; break;
+      case FLOW_LINEAR: cout << "Linear loss" << endl; break;
+      case FLOW_POISSON: cout << "Poisson loss" << endl; break;
+      case FLOW_POISSON_WEIGHTS: cout << "Weighted Poisson loss" << endl; break;
+      default: cout << "Unknown loss" << endl;
    }
 };
 
@@ -3666,22 +3668,22 @@ void inline DoubleMinCostFlow<T>::set_edge(const int u, const int v, const T cos
 
 template <typename T>
 void inline DoubleMinCostFlow<T>::print_excess() const {
-   /* cerr << "Excess "; */
-   /* for (int i = 0; i<_n; ++i) { */
-   /*    cerr << _excess[i] << " "; */
-   /* } */
-   /* cerr << endl; */
-   /* flush(cerr); */
+   cerr << "Excess ";
+   for (int i = 0; i<_n; ++i) {
+      cerr << _excess[i] << " ";
+   }
+   cerr << endl;
+   flush(cerr);
 };
 
 template <typename T>
 void inline DoubleMinCostFlow<T>::print_prices() const {
-   /* cerr << "Prices "; */
-   /* for (int i = 0; i<_n; ++i) { */
-   /*    cerr << _prices[i] << " "; */
-   /* } */
-   /* cerr << endl; */
-   /* flush(cerr); */
+   cerr << "Prices ";
+   for (int i = 0; i<_n; ++i) {
+      cerr << _prices[i] << " ";
+   }
+   cerr << endl;
+   flush(cerr);
 };
 
 
@@ -3714,7 +3716,7 @@ T inline DoubleMinCostFlow<T>::eval_flow_arc(const int node, const int arc) cons
       case FLOW_POISSON_POS: tmp = MIN(param3+flow,param1); tmp=tmp-param1*alt_log<T>(tmp); break;
       case FLOW_POISSON_WEIGHTS: tmp = param3+param2*flow; tmp=tmp-param1*alt_log<T>(tmp); break;
       case FLOW_POISSON_WEIGHTS_POS: tmp = MIN(param3+param2*flow,param1); tmp=tmp-param1*alt_log<T>(tmp); break;
-      default: tmp=0; // cerr << "Unknown loss" << endl; exit(1);
+      default: tmp=0;cerr << "Unknown loss" << endl; exit(1);
    }
    return tmp;
 };
@@ -3743,7 +3745,7 @@ T inline DoubleMinCostFlow<T>::eval_flow_derivative_arc(const int node, const in
       case FLOW_POISSON_POS: tmp= param3+flow; tmp = tmp > param1 ? 0 : T(1.0)-param1/(tmp); break; 
       case FLOW_POISSON_WEIGHTS: tmp = param2*(T(1.0)-param1/(param3+param2*flow)); break;
       case FLOW_POISSON_WEIGHTS_POS: tmp = param3+param2*flow; tmp= tmp > param1 ? 0 : param2*(T(1.0)-param1/(tmp)); break;
-      default: tmp=0; // cerr << "Unknown loss" << endl; exit(1);
+      default: tmp=0;cerr << "Unknown loss" << endl; exit(1);
    }
    return _capacity[pointer] > 0 ? tmp : -tmp;
 };
@@ -3766,7 +3768,7 @@ T inline DoubleMinCostFlow<T>::eval_flow_saturate_arc(const int node, const int 
       case FLOW_POISSON_POS: tmp = target >= 0 ? MAX_FLOW : MAX(param1/(T(1.0)-target)-param3,0); break;
       case FLOW_POISSON_WEIGHTS: tmp = (target >= param2) ? MAX_FLOW : MAX(param1/(param2-target)-param3/param2,0); break;
       case FLOW_POISSON_WEIGHTS_POS: tmp = (target >= 0) ? MAX_FLOW : MAX(param1/(param2-target)-param3/param2,0); break;
-      default: tmp=0; // cerr << "Unknown loss" << endl; exit(1);
+      default: tmp=0; cerr << "Unknown loss" << endl; exit(1);
    }
    tmp=_capacity[pointer] > 0 ? tmp : -tmp;
    return tmp;
@@ -3955,7 +3957,7 @@ void inline DoubleMinCostFlow<T>::discharge(const int node, const T eps) {
        //              cout << "Push " << delta << endl;
                   }
                }
-               if (!_active[child] & _excess[child] > _epsilon_flow) {
+               if (!_active[child] & (_excess[child] > _epsilon_flow)) {
                   _active[child]=true;
                   _list_active.push_back(child);
                }
@@ -4334,7 +4336,7 @@ void inline DoubleMinCostFlow<T>::price_update(const T eps) {
    //this->print_graph();
    const T max_increase=max_rank;
    for (int i = 0; i<_n; ++i) {
-      // assert(rank[i] >= 0);
+      //assert(rank[i] >= 0);
       _prices[i] -= rank[i] > max_rank ? max_increase : rank[i];
    }
 
@@ -4645,8 +4647,8 @@ void DoubleGraphPath<T>::sep_costs_conv(T* variables,const T lambda, const loss_
          _solver->set_edge(i,0,variables[i],_max_capacity,loss,weights[i],delta);
       for (int i=0; i<_n; ++i) if (weights[i]) total_demand += abs<T>(variables[i])/weights[i];
    } else {
-     //cerr << "Wrong loss" << endl;
-      // exit(1);
+      //cerr << "Wrong loss" << endl;
+      //exit(1);
    }
 
    total_demand*=100;  // to be safe

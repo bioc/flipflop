@@ -63,7 +63,7 @@ typedef int mwSize;
 #define MAX_ITER_CGRAD 40
 
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(_WIN32) || defined(WINDOWS)
 
 #include <time.h>
 #include <windows.h>
@@ -77,13 +77,13 @@ typedef int mwSize;
 #endif
 
 
-struct timezone
+struct spams_timezone
 {
    int  tz_minuteswest; /* minutes W of Greenwich */
    int  tz_dsttime;     /* type of dst correction */
 };
 
-int gettimeofday(struct timeval *tv, struct timezone *tz)
+int gettimeofday(struct timeval *tv, struct spams_timezone *tz)
 {
    FILETIME ft;
    unsigned __int64 tmpres = 0;

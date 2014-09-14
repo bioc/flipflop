@@ -1094,29 +1094,29 @@ template <typename T> inline T Matrix<T>::operator()(const int i, const int j) c
 
 /// Print the matrix to std::cout
 template <typename T> inline void Matrix<T>::print(const string& name) const {
-   // std::cerr << name << std::endl;
-   // std::cerr << _m << " x " << _n << std::endl;
+   std::cerr << name << std::endl;
+   std::cerr << _m << " x " << _n << std::endl;
    for (int i = 0; i<_m; ++i) {
-      // for (int j = 0; j<_n; ++j) {
-         // printf("%10.5g ",static_cast<double>(_X[j*_m+i]));
+      for (int j = 0; j<_n; ++j) {
+         printf("%10.5g ",static_cast<double>(_X[j*_m+i]));
          //         std::cerr << _X[j*_m+i] << " ";
-      // }
-      // printf("\n ");
+      }
+      printf("\n ");
       //std::cerr << std::endl;
    }
-   // printf("\n ");
+   printf("\n ");
 };
 
 /// Copy the column i into x
 template <typename T> inline void Matrix<T>::copyCol(const int i, Vector<T>& x) const {
-   // assert(i >= 0 && i<_n);
+   //assert(i >= 0 && i<_n);
    x.resize(_m);
    cblas_copy<T>(_m,_X+i*_m,1,x._X,1);
 };
 
 /// Copy the column i into x
 template <typename T> inline void Matrix<T>::copyRow(const int i, Vector<T>& x) const {
-   // assert(i >= 0 && i<_m);
+   //assert(i >= 0 && i<_m);
    x.resize(_n);
    cblas_copy<T>(_n,_X+i,_m,x._X,1);
 };
@@ -1124,13 +1124,13 @@ template <typename T> inline void Matrix<T>::copyRow(const int i, Vector<T>& x) 
 
 /// Copy the column i into x
 template <typename T> inline void Matrix<T>::extract_rawCol(const int i, T* x) const {
-   // assert(i >= 0 && i<_n);
+   //assert(i >= 0 && i<_n);
    cblas_copy<T>(_m,_X+i*_m,1,x,1);
 };
 
 /// Copy the column i into x
 template <typename T> inline void Matrix<T>::add_rawCol(const int i, T* x, const T a) const {
-   // assert(i >= 0 && i<_n);
+   //assert(i >= 0 && i<_n);
    cblas_axpy<T>(_m,a,_X+i*_m,1,x,1);
 };
 
@@ -1153,7 +1153,7 @@ template <typename T> inline void Matrix<T>::getGroup(Matrix<T>& data,
 
 /// Reference the column i into the vector x
 template <typename T> inline void Matrix<T>::refCol(int i, Vector<T>& x) const {
-   // assert(i >= 0 && i<_n);
+   //assert(i >= 0 && i<_n);
    x.clear();
    x._X=_X+i*_m;
    x._n=_m;
@@ -1583,10 +1583,9 @@ template <typename T> inline void Matrix<T>::singularValues(Vector<T>& u) const 
       u.thrsPos();
       u.Sqrt();
    } else {
-      T* vu, *vv;
       Matrix<T> copyX;
       copyX.copy(*this);
-      gesvd<T>(no,no,_m,_n,copyX._X,_m,u.rawX(),vu,1,vv,1);
+      gesvd<T>(no,no,_m,_n,copyX._X,_m,u.rawX(),NULL,1,NULL,1);
    }
 };
 
@@ -1662,8 +1661,8 @@ template <typename T> inline void Matrix<T>::eigLargestSymApprox(
       }
       lambda+=theta*norm;
       if isnan(lambda) {
-         // std::cerr << "eigLargestSymApprox failed" << std::endl;
-         // exit(1);
+         //std::cerr << "eigLargestSymApprox failed" << std::endl;
+         //exit(1);
       }
       if (j == 1 && lambda < eps) {
          u.copy(uor);
@@ -1754,7 +1753,7 @@ template <typename T> inline void Matrix<T>::invSym() {
 template <typename T> inline void Matrix<T>::multTrans(const Vector<T>& x, 
       Vector<T>& b, const T a, const T c) const {
    b.resize(_n);
-   // assert(x._n == _m && b._n == _n);
+   //assert(x._n == _m && b._n == _n);
    cblas_gemv<T>(CblasColMajor,CblasTrans,_m,_n,a,_X,_m,x._X,1,c,b._X,1);
 };
 
@@ -1952,7 +1951,7 @@ template <typename T> inline void Matrix<T>::multDiagRight(
 /// C = A .* B, elementwise multiplication
 template <typename T> inline void Matrix<T>::mult_elementWise(
       const Matrix<T>& B, Matrix<T>& C) const {
-   // assert(_n == B._n && _m == B._m);
+   //assert(_n == B._n && _m == B._m);
    C.resize(_m,_n);
    vMul<T>(_n*_m,_X,B._X,C._X);
 };
@@ -1960,7 +1959,7 @@ template <typename T> inline void Matrix<T>::mult_elementWise(
 /// C = A .* B, elementwise multiplication
 template <typename T> inline void Matrix<T>::div_elementWise(
       const Matrix<T>& B, Matrix<T>& C) const {
-   // assert(_n == B._n && _m == B._m);
+   //assert(_n == B._n && _m == B._m);
    C.resize(_m,_n);
    vDiv<T>(_n*_m,_X,B._X,C._X);
 };
@@ -2071,13 +2070,13 @@ template <typename T> inline T Matrix<T>::quad(
 
 /// add alpha*mat to the current matrix
 template <typename T> inline void Matrix<T>::add(const Matrix<T>& mat, const T alpha) {
-   // assert(mat._m == _m && mat._n == _n);
+   //assert(mat._m == _m && mat._n == _n);
    cblas_axpy<T>(_n*_m,alpha,mat._X,1,_X,1);
 };
 
 /// add alpha*mat to the current matrix
 template <typename T> inline T Matrix<T>::dot(const Matrix<T>& mat) const {
-   // assert(mat._m == _m && mat._n == _n);
+   //assert(mat._m == _m && mat._n == _n);
    return cblas_dot<T>(_n*_m,mat._X,1,_X,1);
 };
 
@@ -2403,7 +2402,7 @@ template <typename T> inline void Matrix<T>::rank1Update(
    int* r = vec1._r;
    T* v = vec1._v;
    T* X2 = vec2._X;
-   // assert(vec2._n == _n);
+   //assert(vec2._n == _n);
    if (alpha == 1.0) {
       for (int i = 0; i<_n; ++i) {
          for (int j = 0; j<vec1._L; ++j) {
@@ -2517,7 +2516,7 @@ template <typename T> inline void Matrix<T>::drop(char* fileName) const {
    f.precision(12);
    f.flags(std::ios_base::scientific);
    f.open(fileName, ofstream::trunc);
-   // std::cout << "Matrix written in " << fileName << std::endl;
+   std::cout << "Matrix written in " << fileName << std::endl;
    for (int i = 0; i<_n; ++i) {
       for (int j = 0; j<_m; ++j) 
          f << _X[i*_m+j] << " ";
@@ -2734,42 +2733,38 @@ template <typename T> Vector<T>::~Vector() {
 
 /// Print the vector to std::cout
 template <> inline void Vector<double>::print(const char* name) const {
-   /* printf("%s, %d\n",name,_n);
+   printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
       printf("%g ",_X[i]);
    }
    printf("\n");
-   */
 };
 
 /// Print the vector to std::cout
 template <> inline void Vector<float>::print(const char* name) const {
-   /* printf("%s, %d\n",name,_n);
+   printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
       printf("%g ",_X[i]);
    }
    printf("\n");
-   */
 };
 
 /// Print the vector to std::cout
 template <> inline void Vector<int>::print(const char* name) const {
-   /* printf("%s, %d\n",name,_n);
+   printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
       printf("%d ",_X[i]);
    }
    printf("\n");
-   */
 };
 
 /// Print the vector to std::cout
 template <> inline void Vector<bool>::print(const char* name) const {
-   /* printf("%s, %d\n",name,_n);
+   printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
       printf("%d ",_X[i] ? 1 : 0);
    }
    printf("\n");
-   */
 };
 
 /// returns the index of the largest value
@@ -2866,13 +2861,13 @@ template <typename T> inline int Vector<T>::fmin() const {
 
 /// returns a reference to X[index]
 template <typename T> inline T& Vector<T>::operator[] (const int i) {
-   // assert(i>=0 && i<_n);
+   //assert(i>=0 && i<_n);
    return _X[i];
 };
 
 /// returns X[index]
 template <typename T> inline T Vector<T>::operator[] (const int i) const {
-   // assert(i>=0 && i<_n);
+   //assert(i>=0 && i<_n);
    return _X[i];
 };
 
@@ -2917,7 +2912,7 @@ template <> inline void Vector<int>::randperm(int n) {
       table[i]=i;
    int size=n;
    for (int i = 0; i<n; ++i) {
-      const int ind=rand() % size;
+      const int ind=random() % size;
       _X[i]=table[ind];
       table[ind]=table[size-1];
       --size;
@@ -3025,7 +3020,7 @@ template <typename T> inline T Vector<T>::nrm2sq() const {
 
 /// returns  A'x
 template <typename T> inline T Vector<T>::dot(const Vector<T>& x) const {
-   // assert(_n == x._n);
+   //assert(_n == x._n);
    return cblas_dot<T>(_n,_X,1,x._X,1);
 };
 
@@ -3042,7 +3037,7 @@ template <typename T> inline T Vector<T>::dot(const SpVector<T>& x) const {
 
 /// A <- A + a*x
 template <typename T> inline void Vector<T>::add(const Vector<T>& x, const T a) {
-   // assert(_n == x._n);
+   //assert(_n == x._n);
    cblas_axpy<T>(_n,a,x._X,1,_X,1);
 };
 
@@ -3065,7 +3060,7 @@ template <typename T> inline void Vector<T>::add(const T a) {
 
 /// A <- A - x
 template <typename T> inline void Vector<T>::sub(const Vector<T>& x) {
-   // assert(_n == x._n);
+   //assert(_n == x._n);
    vSub<T>(_n,_X,x._X,_X);
 };
 
@@ -3077,13 +3072,13 @@ template <typename T> inline void Vector<T>::sub(const SpVector<T>& x) {
 
 /// A <- A ./ x
 template <typename T> inline void Vector<T>::div(const Vector<T>& x) {
-   // // assert(_n == x._n);
+   //assert(_n == x._n);
    vDiv<T>(_n,_X,x._X,_X);
 };
 
 /// A <- x ./ y
 template <typename T> inline void Vector<T>::div(const Vector<T>& x, const Vector<T>& y) {
-   // assert(_n == x._n);
+   //assert(_n == x._n);
    vDiv<T>(_n,x._X,y._X,_X);
 };
 
@@ -4150,12 +4145,12 @@ template <typename T> inline void SpMatrix<T>::refCol(int i,
 
 /// print the sparse matrix
 template<typename T> inline void SpMatrix<T>::print(const string& name) const {
-   // cerr << name << endl;
-   // cerr << _m << " x " << _n << " , " << _nzmax << endl;
+   cerr << name << endl;
+   cerr << _m << " x " << _n << " , " << _nzmax << endl;
    for (int i = 0; i<_n; ++i) {
-      // for (int j = _pB[i]; j<_pE[i]; ++j) {
-         // cerr << "(" <<_r[j] << "," << i << ") = " << _v[j] << endl;
-      // }
+      for (int j = _pB[i]; j<_pE[i]; ++j) {
+         cerr << "(" <<_r[j] << "," << i << ") = " << _v[j] << endl;
+      }
    }
 };
 
@@ -4751,7 +4746,7 @@ template <typename T> inline void SpMatrix<T>::wXAt(const Vector<T>& w,
    int M=_n;
    int Mx = X._n;
    int numRepX= M/Mx;
-   // assert(numRepX*Mx == M);
+   //assert(numRepX*Mx == M);
    XAt.resize(n,K);
    /* compute X alpha^T */
    int NUM_THREADS=init_omp(numThreads);
@@ -4935,10 +4930,10 @@ template <typename T> inline T SpVector<T>::fmaxval() const {
 
 /// print the vector to std::cerr
 template <typename T> inline void SpVector<T>::print(const string& name) const {
-   // std::cerr << name << std::endl;
-   // std::cerr << _nzmax << std::endl;
-   // for (int i = 0; i<_L; ++i)
-      // cerr << "(" <<_r[i] << ", " <<  _v[i] << ")" << endl;
+   std::cerr << name << std::endl;
+   std::cerr << _nzmax << std::endl;
+   for (int i = 0; i<_L; ++i)
+      cerr << "(" <<_r[i] << ", " <<  _v[i] << ")" << endl;
 };
 
 /// create a reference on the vector r
@@ -4988,8 +4983,10 @@ template <typename T>
 inline T SpVector<T>::dot(const Vector<T>& vec) const {
    T sum=T();
    int countI = 0;
-   while (countI < _L) 
-      sum+=_v[countI++]*vec[_r[countI]];
+   while (countI < _L)  {
+      sum+=_v[countI]*vec[_r[countI]];
+      countI++;
+   }
    return sum;
 };
 
@@ -5286,7 +5283,7 @@ template <typename T> inline T SubMatrix<T>::operator()(const int index1,
 /// Matrix with shifts
 template <typename T> class ShiftMatrix : public AbstractMatrixB<T> {
    public:
-      ShiftMatrix(const AbstractMatrixB<T>& inputmatrix, const int shifts, const bool center = false) : _shifts(shifts), _inputmatrix(&inputmatrix), _centered(false) {
+      ShiftMatrix(const AbstractMatrixB<T>& inputmatrix, const int shifts, const bool center = false) : _shifts(shifts), _centered(false), _inputmatrix(&inputmatrix) {
          _m=_inputmatrix->m()-shifts+1;
          _n=_inputmatrix->n()*shifts;
          if (center) this->center();
@@ -5423,23 +5420,23 @@ template <typename T> void ShiftMatrix<T>::mult(const
 template <typename T> void ShiftMatrix<T>::mult(const Matrix<T>&
       B, Matrix<T>& C, const bool transA, const bool transB, const T a, const T
       b) const {
-   // cerr << "Shift Matrix is used in inadequate setting" << endl;
+   cerr << "Shift Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void ShiftMatrix<T>::mult(const SpMatrix<T>& B, Matrix<T>& C, 
       const bool transA, const bool transB, const T a, const T b) const {
-   // cerr << "Shift Matrix is used in inadequate setting" << endl;
+   cerr << "Shift Matrix is used in inadequate setting" << endl;
 }
 
 /// perform C = a*B*A + b*C, possibly transposing A or B.
 template <typename T> void ShiftMatrix<T>::multSwitch(const
       Matrix<T>& B, Matrix<T>& C, const bool transA, const bool transB,
       const T a, const T b) const {
-   // cerr << "Shift Matrix is used in inadequate setting" << endl;
+   cerr << "Shift Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void ShiftMatrix<T>::XtX(Matrix<T>& XtX) const {
-   // cerr << "Shift Matrix is used in inadequate setting" << endl;
+   cerr << "Shift Matrix is used in inadequate setting" << endl;
 };
 
 template <typename T> void ShiftMatrix<T>::copyRow(const int ind, Vector<T>& x) const {
@@ -5453,18 +5450,18 @@ template <typename T> void ShiftMatrix<T>::copyRow(const int ind, Vector<T>& x) 
 };
 
 template <typename T> void ShiftMatrix<T>::copyTo(Matrix<T>& x) const {
-   // cerr << "Shift Matrix is used in inadequate setting" << endl;
+   cerr << "Shift Matrix is used in inadequate setting" << endl;
 };
 
 
 template <typename T> T ShiftMatrix<T>::dot(const Matrix<T>& x) const {
-   // cerr << "Shift Matrix is used in inadequate setting" << endl;
+   cerr << "Shift Matrix is used in inadequate setting" << endl;
    return 0;
 };
 
 template <typename T> void ShiftMatrix<T>::print(const string& name) const {
-   // cerr << name << endl;
-   // cerr << "Shift Matrix: " << _shifts << " shifts" << endl;
+   cerr << name << endl;
+   cerr << "Shift Matrix: " << _shifts << " shifts" << endl;
    _inputmatrix->print(name);
 };
 
@@ -5573,13 +5570,13 @@ template <typename T> void DoubleRowMatrix<T>::mult(const Matrix<T>&
       B, Matrix<T>& C, const bool transA, const bool transB, const T a, const T
       b) const {
    FLAG(5)
-   // cerr << "Double Matrix is used in inadequate setting" << endl;
+   cerr << "Double Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void DoubleRowMatrix<T>::mult(const SpMatrix<T>& B, Matrix<T>& C, 
       const bool transA, const bool transB, const T a, const T b) const {
    FLAG(4)
-   // cerr << "Double Matrix is used in inadequate setting" << endl;
+   cerr << "Double Matrix is used in inadequate setting" << endl;
 }
 
 /// perform C = a*B*A + b*C, possibly transposing A or B.
@@ -5587,12 +5584,12 @@ template <typename T> void DoubleRowMatrix<T>::multSwitch(const
       Matrix<T>& B, Matrix<T>& C, const bool transA, const bool transB,
       const T a, const T b) const {
    FLAG(3)
-   // cerr << "Double Matrix is used in inadequate setting" << endl;
+   cerr << "Double Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void DoubleRowMatrix<T>::XtX(Matrix<T>& XtX) const {
    FLAG(2)
-   // cerr << "Double Matrix is used in inadequate setting" << endl;
+   cerr << "Double Matrix is used in inadequate setting" << endl;
 };
 
 template <typename T> void DoubleRowMatrix<T>::copyRow(const int ind, Vector<T>& x) const {
@@ -5602,19 +5599,19 @@ template <typename T> void DoubleRowMatrix<T>::copyRow(const int ind, Vector<T>&
 
 template <typename T> void DoubleRowMatrix<T>::copyTo(Matrix<T>& x) const {
    FLAG(1)
-   // cerr << "Double Matrix is used in inadequate setting" << endl;
+   cerr << "Double Matrix is used in inadequate setting" << endl;
 };
 
 
 template <typename T> T DoubleRowMatrix<T>::dot(const Matrix<T>& x) const {
    FLAG(0)
-   // cerr << "Double Matrix is used in inadequate setting" << endl;
+   cerr << "Double Matrix is used in inadequate setting" << endl;
    return 0;
 };
 
 template <typename T> void DoubleRowMatrix<T>::print(const string& name) const {
-   // cerr << name << endl;
-   // cerr << "Double Row Matrix" << endl;
+   cerr << name << endl;
+   cerr << "Double Row Matrix" << endl;
    _inputmatrix->print(name);
 };
 

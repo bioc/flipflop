@@ -22,7 +22,7 @@ R_CallMethodDef callMethods[] = {
   {"R_swig_multLeftDiag",
    (DL_FUNC) & R_swig_multLeftDiag, 3},
   {"R_swig_fistaFlat",
-   (DL_FUNC) & R_swig_fistaFlat, 38},
+   (DL_FUNC) & R_swig_fistaFlat, 39},
   {"R_swig_evalPathCoding",
    (DL_FUNC) & R_swig_evalPathCoding, 21},
   {"R_swig_sepCostsPathCoding",

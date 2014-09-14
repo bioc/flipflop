@@ -93,15 +93,19 @@ graph_paired <- function(binnames, len.exons, n.exons, tophat.exons, binary, fra
          if(sum(prefix.match)>0){ # one of prefix is in the existing type set
             newentrant <- allprefix[length(allprefix)]
             list.junctions <- rbind(list.junctions, c(newentrant, firstbin)) # add the junction 
-            if(prefix.match[length(prefix.match)]==0){ # the prefix for new junction do not exist 
-               allbins <- c(allbins, newentrant)
+            if(prefix.match[length(prefix.match)]==0){ # the prefix for new junction do not exist
+               if(match(newentrant, allbins, nomatch=0)==0){ 
+                  allbins <- c(allbins, newentrant)
+               }
                noentrant <- c(noentrant, newentrant)
             }
          }
          if(sum(prefix.match)==0 & sum(len.exons[attrape[-length(attrape)]])>frag){ # none of the prefix exists but the longest one is compatible
             newentrant <- allprefix[length(allprefix)]
             list.junctions <- rbind(list.junctions, c(newentrant, firstbin))
-            allbins <- c(allbins, newentrant)
+            if(match(newentrant, allbins, nomatch=0)==0){ 
+               allbins <- c(allbins, newentrant)
+            }
             noentrant <- c(noentrant, newentrant)
          }
       }

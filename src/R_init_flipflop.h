@@ -56,7 +56,7 @@ int ffProcesssam(char * in, char * pre, char * an);
 
 SWIGEXPORT SEXP R_swig_multLeftDiag ( SEXP X, SEXP Y, SEXP XY);
 
-SWIGEXPORT SEXP R_swig_fistaFlat ( SEXP X, SEXP D, SEXP alpha0, SEXP alpha, SEXP num_threads, SEXP max_it, SEXP L0, SEXP fixed_step, SEXP gamma, SEXP s_lambda, SEXP delta, SEXP lambda2, SEXP lambda3, SEXP a, SEXP b, SEXP c, SEXP tol, SEXP it0, SEXP max_iter_backtracking, SEXP compute_gram, SEXP lin_admm, SEXP admm, SEXP intercept, SEXP resetflow, SEXP name_regul, SEXP name_loss, SEXP verbose, SEXP pos, SEXP clever, SEXP log, SEXP ista, SEXP subgrad, SEXP logName, SEXP is_inner_weights, SEXP inner_weights, SEXP size_group, SEXP sqrt_step, SEXP transpose);
+SWIGEXPORT SEXP R_swig_fistaFlat ( SEXP X, SEXP D, SEXP alpha0, SEXP alpha, SEXP num_threads, SEXP max_it, SEXP L0, SEXP fixed_step, SEXP gamma, SEXP s_lambda, SEXP delta, SEXP lambda2, SEXP lambda3, SEXP a, SEXP b, SEXP c, SEXP tol, SEXP it0, SEXP max_iter_backtracking, SEXP compute_gram, SEXP lin_admm, SEXP admm, SEXP intercept, SEXP resetflow, SEXP name_regul, SEXP name_loss, SEXP verbose, SEXP pos, SEXP clever, SEXP log, SEXP ista, SEXP subgrad, SEXP logName, SEXP is_inner_weights, SEXP inner_weights, SEXP size_group, SEXP sqrt_step, SEXP transpose, SEXP linesearch_mode);
 
 SWIGEXPORT SEXP R_swig_evalPathCoding ( SEXP alpha0, SEXP dual_val, SEXP precision, SEXP weights, SEXP ir, SEXP jc, SEXP start_weights, SEXP stop_weights, SEXP num_threads, SEXP lambda1, SEXP lambda2, SEXP intercept, SEXP resetflow, SEXP name_regul, SEXP verbose, SEXP pos, SEXP clever, SEXP eval, SEXP eval_dual, SEXP size_group, SEXP transpose);
 

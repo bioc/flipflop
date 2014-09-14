@@ -94,7 +94,9 @@ graph_single <- function(binnames, goodtype, readlen, len.exons, n.exons, tophat
       gobin <- firstbin
       while(length(attrape)>1 & lleft >=readlen){
          leftbin <- paste(attrape[-length(attrape)], collapse='-')
-         allbins <- c(allbins, leftbin) # add leftbins
+         if(match(leftbin, allbins,nomatch=0)==0){ # add the leftbins
+            allbins <- c(allbins, leftbin) # add leftbins
+         }
          list.junctions <- rbind(list.junctions, c(leftbin, gobin)) # add the junction
          attrape <- attrape[-length(attrape)]
          lleft <- sum(len.exons[attrape[-length(attrape)]])

@@ -184,7 +184,7 @@ class(`multLeftDiag`) = c("SWIGFunction", class('multLeftDiag'))
 
 # Start of fistaFlat
 
-`fistaFlat` = function(X, D, alpha0, alpha, num_threads, max_it, L0, fixed_step, gamma, s_lambda, delta, lambda2, lambda3, a, b, c, tol, it0, max_iter_backtracking, compute_gram, lin_admm, admm, intercept, resetflow, name_regul, name_loss, verbose, pos, clever, log, ista, subgrad, logName, is_inner_weights, inner_weights, size_group, sqrt_step, transpose)
+`fistaFlat` = function(X, D, alpha0, alpha, num_threads, max_it, L0, fixed_step, gamma, s_lambda, delta, lambda2, lambda3, a, b, c, tol, it0, max_iter_backtracking, compute_gram, lin_admm, admm, intercept, resetflow, name_regul, name_loss, verbose, pos, clever, log, ista, subgrad, logName, is_inner_weights, inner_weights, size_group, sqrt_step, transpose, linesearch_mode)
 {
   num_threads = as.integer(num_threads); 
   
@@ -245,7 +245,13 @@ class(`multLeftDiag`) = c("SWIGFunction", class('multLeftDiag'))
   
   sqrt_step = as.logical(sqrt_step);
   transpose = as.logical(transpose);
-  ;ans = .Call('R_swig_fistaFlat', X, D, alpha0, alpha, num_threads, max_it, L0, fixed_step, gamma, s_lambda, delta, lambda2, lambda3, a, b, c, tol, it0, max_iter_backtracking, compute_gram, lin_admm, admm, intercept, resetflow, name_regul, name_loss, verbose, pos, clever, log, ista, subgrad, logName, is_inner_weights, inner_weights, size_group, sqrt_step, transpose, PACKAGE='flipflop');
+  linesearch_mode = as.integer(linesearch_mode); 
+  
+  if(length(linesearch_mode) > 1) {
+    warning("using only the first element of linesearch_mode");
+  };
+  
+  ;ans = .Call('R_swig_fistaFlat', X, D, alpha0, alpha, num_threads, max_it, L0, fixed_step, gamma, s_lambda, delta, lambda2, lambda3, a, b, c, tol, it0, max_iter_backtracking, compute_gram, lin_admm, admm, intercept, resetflow, name_regul, name_loss, verbose, pos, clever, log, ista, subgrad, logName, is_inner_weights, inner_weights, size_group, sqrt_step, transpose, linesearch_mode, PACKAGE='flipflop');
   class(ans) <- "_p_MatrixT_double_t";
   
   ans
@@ -253,8 +259,9 @@ class(`multLeftDiag`) = c("SWIGFunction", class('multLeftDiag'))
 }
 
 attr(`fistaFlat`, 'returnType') = '_p_MatrixT_double_t'
-attr(`fistaFlat`, "inputTypes") = c('_p_MatrixT_double_t', '_p_AbstractMatrixBT_double_t', '_p_MatrixT_double_t', '_p_MatrixT_double_t', 'integer', 'integer', 'numeric', 'logical', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'integer', 'integer', 'logical', 'logical', 'logical', 'logical', 'logical', 'character', 'character', 'logical', 'logical', 'logical', 'logical', 'logical', 'logical', 'character', 'logical', '_p_VectorT_double_t', 'integer', 'logical', 'logical')
+attr(`fistaFlat`, "inputTypes") = c('_p_MatrixT_double_t', '_p_AbstractMatrixBT_double_t', '_p_MatrixT_double_t', '_p_MatrixT_double_t', 'integer', 'integer', 'numeric', 'logical', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'integer', 'integer', 'logical', 'logical', 'logical', 'logical', 'logical', 'character', 'character', 'logical', 'logical', 'logical', 'logical', 'logical', 'logical', 'character', 'logical', '_p_VectorT_double_t', 'integer', 'logical', 'logical', 'integer')
 class(`fistaFlat`) = c("SWIGFunction", class('fistaFlat'))
+
 
 # Start of evalPathCoding
 

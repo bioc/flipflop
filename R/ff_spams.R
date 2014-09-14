@@ -16,7 +16,7 @@ spams_flipflop.fistaFlat <- function(Y,X,W0,return_optim_info = FALSE,numThreads
               compute_gram=FALSE,lin_admm=FALSE,admm=FALSE,intercept=FALSE,
               resetflow=FALSE,regul="",loss="",verbose=FALSE,pos=FALSE,clever=FALSE,
               log=FALSE,ista=FALSE,subgrad=FALSE,logName="",is_inner_weights=FALSE,
-              inner_weights=c(0.),size_group=1,sqrt_step=TRUE,transpose=FALSE) {
+              inner_weights=c(0.),size_group=1,sqrt_step=TRUE,transpose=FALSE,linesearch_mode=0) {
 
   m = nrow(W0)
   n = ncol(W0)
@@ -24,7 +24,7 @@ spams_flipflop.fistaFlat <- function(Y,X,W0,return_optim_info = FALSE,numThreads
   W = matrix(c(0),nrow = m,ncol = n)
 #  optim_info = do.call(solver,c(list(Y,X,W0,W),params))
 ##  optim_info = .mycall('fistaFlat',c('Y','X','W0','W',params))
-  optim_info = fistaFlat(Y,X,W0,W,numThreads ,max_it ,L0,fixed_step,gamma,lambda1,delta,lambda2,lambda3,a,b,c,tol,it0,max_iter_backtracking,compute_gram,lin_admm,admm,intercept,resetflow,regul,loss,verbose,pos,clever,log,ista,subgrad,logName,is_inner_weights,inner_weights,size_group,sqrt_step,transpose)
+  optim_info = fistaFlat(Y,X,W0,W,numThreads ,max_it ,L0,fixed_step,gamma,lambda1,delta,lambda2,lambda3,a,b,c,tol,it0,max_iter_backtracking,compute_gram,lin_admm,admm,intercept,resetflow,regul,loss,verbose,pos,clever,log,ista,subgrad,logName,is_inner_weights,inner_weights,size_group,sqrt_step,transpose,linesearch_mode)
   if(return_optim_info == TRUE)
     return(list(W,optim_info))
   else

@@ -15,7 +15,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
-#include <assert.h>
+//#include <assert.h>
 
 #ifdef HAVE_MKL   // obsolete
 //#include <mkl_cblas.h>
@@ -63,7 +63,7 @@ typedef int mwSize;
 #define MAX_ITER_CGRAD 40
 
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(_WIN32) || defined(WINDOWS)
 
 #include <time.h>
 #include <windows.h>
@@ -77,13 +77,13 @@ typedef int mwSize;
 #endif
 
 
-struct timezone
+struct spams_timezone
 {
    int  tz_minuteswest; /* minutes W of Greenwich */
    int  tz_dsttime;     /* type of dst correction */
 };
 
-int gettimeofday(struct timeval *tv, struct timezone *tz)
+int gettimeofday(struct timeval *tv, struct spams_timezone *tz)
 {
    FILETIME ft;
    unsigned __int64 tmpres = 0;
@@ -175,10 +175,10 @@ Timer::~Timer() {
 inline void Timer::printElapsed() {
    if (_running) {
       gettimeofday(_time2,NULL);
-      cerr << "Time elapsed : " << _cumul + static_cast<double>((_time2->tv_sec -
-               _time1->tv_sec)*1000000 + _time2->tv_usec-_time1->tv_usec)/1000000.0 << endl;
+       // cerr << "Time elapsed : " << _cumul + static_cast<double>((_time2->tv_sec -
+       //         _time1->tv_sec)*1000000 + _time2->tv_usec-_time1->tv_usec)/1000000.0 << endl;
    } else {
-      cerr << "Time elapsed : " << _cumul << endl;
+      // cerr << "Time elapsed : " << _cumul << endl;
    }
 };
 

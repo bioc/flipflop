@@ -288,7 +288,7 @@ from the \Rpackage{GenomicFeatures} package~\citep{GenomicFeatures}.
 
 The following example shows (when the \Rpackage{GenomicFeatures} is installed) 
 how to create a 
-\Robject{TranscriptDb} object from the GTF file, 
+\Robject{TxDb} object from the GTF file, 
 and several accessor functions allow to manipulate it. 
 More information can be found in \citep{GenomicFeatures}. 
 For instance the \Rfunction{exonsBy} function 

@@ -24,7 +24,6 @@ static char upper='u';
 static INTT info=0;
 static char incr='I';
 static char decr='D';
-static char all='A';
 static char no='N';
 static char reduced='S';
 static char allV='V';
@@ -712,8 +711,7 @@ template <> void inline gesvd( char& jobu, char& jobvt, INTT m,
       float* u, INTT ldu, float* vt, INTT ldvt) {
    float* query = new float[1];
    INTT lwork=-1;
-   sgesvd_(&jobu, &jobvt, &m, &n, a, &lda, s, u, &ldu, vt, &ldvt,
-         query, &lwork, &info );
+   sgesvd_(&jobu, &jobvt, &m, &n, a, &lda, s, u, &ldu, vt, &ldvt,query, &lwork, &info );
    lwork=static_cast<INTT>(*query); 
    delete[](query);
    float* work = new float[static_cast<int>(lwork)];
