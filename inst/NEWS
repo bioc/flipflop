@@ -5,6 +5,10 @@ o take care of all cpp warnings (isolasso+spams)
 o update citation
 
 
+CHANGES IN VERSION 1.3.7
+--------------------------
+    o solve non-portable flags issues, see Makevars 
+
 CHANGES IN VERSION 1.3.5
 --------------------------
     o solve compilation isue on Mavericks (using clang), see Makevars.

@@ -8,9 +8,9 @@
 #   EXTRA_LIBS= -lcblas
 #endif
 
-ifndef SHLIB_OPENMP_CXXFLAGS
-  SHLIB_OPENMP_CXXFLAGS= -fopenmp
-endif
+#ifndef SHLIB_OPENMP_CXXFLAGS
+#  SHLIB_OPENMP_CXXFLAGS= -fopenmp
+#endif
 EXTRA_LIBS=
 EXTRA_OPT=
 STRIP_OPT=-s
@@ -24,11 +24,12 @@ ifeq ($(shell uname),Darwin)
 endif
 
 
-#PKG_CXXFLAGS = -I. -Ispams/linalg -Ispams/prox -Ispams/decomp -Ispams/dags $(SHLIB_OPENMP_CXXFLAGS) $(OPT_DBG) -DUSE_BLAS_LIB -DNDEBUG  #### OLD  
-PKG_CXXFLAGS = -I. -Ispams/linalg -Ispams/prox -Ispams/decomp -Ispams/dags $(SHLIB_OPENMP_CXXFLAGS) $(OPT_DBG) $(EXTRA_OPT) -DUSE_BLAS_LIB -DNDEBUG -O3 -mtune=native -Wall
+#PKG_CXXFLAGS = -I. -Ispams/linalg -Ispams/prox -Ispams/decomp -Ispams/dags $(SHLIB_OPENMP_CXXFLAGS) $(OPT_DBG) -DUSE_BLAS_LIB -DNDEBUG      #### OLD (do not work with clang)
+#PKG_CXXFLAGS = -I. -Ispams/linalg -Ispams/prox -Ispams/decomp -Ispams/dags $(SHLIB_OPENMP_CXXFLAGS) $(OPT_DBG) $(EXTRA_OPT) -DUSE_BLAS_LIB -DNDEBUG -O3 -mtune=native -Wall     #### generate warnings
+PKG_CXXFLAGS = -I. -Ispams/linalg -Ispams/prox -Ispams/decomp -Ispams/dags $(SHLIB_OPENMP_CXXFLAGS) $(OPT_DBG) $(EXTRA_OPT) -DUSE_BLAS_LIB -DNDEBUG
 
 # -s to strip the .so 
-#PKG_LIBS = -s $(SHLIB_OPENMP_CXXFLAGS) -lstdc++ $(BLAS_LIBS) $(LAPACK_LIBS) $(EXTRA_LIBS) $(FLIBS) #### OLD
+#PKG_LIBS = -s $(SHLIB_OPENMP_CXXFLAGS) -lstdc++ $(BLAS_LIBS) $(LAPACK_LIBS) $(EXTRA_LIBS) $(FLIBS) #### OLD (do not work with clang)
 PKG_LIBS = $(STRIP_OPT) $(SHLIB_OPENMP_CXXFLAGS) -lstdc++ $(BLAS_LIBS) $(LAPACK_LIBS) $(EXTRA_LIBS) $(FLIBS)
 
 
