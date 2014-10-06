@@ -918,7 +918,7 @@ SWIGRUNTIME void
 R_SWIG_ReferenceFinalizer(SEXP el)
 {
   void *ptr = R_SWIG_resolveExternalRef(el, "", "<finalizer>",  (Rboolean) 1);
-  fprintf(stderr, "In R_SWIG_ReferenceFinalizer for %p\n", ptr);
+  // fprintf(stderr, "In R_SWIG_ReferenceFinalizer for %p\n", ptr);
   Rf_PrintValue(el);
 
   if(ptr) {
@@ -2559,7 +2559,7 @@ SWIG_InitializeModule(void *clientdata) {
 
   /* Now work on filling in swig_module.types */
 #ifdef SWIGRUNTIME_DEBUG
-  printf("SWIG_InitializeModule: size %d\n", swig_module.size);
+  // printf("SWIG_InitializeModule: size %d\n", swig_module.size);
 #endif
   for (i = 0; i < swig_module.size; ++i) {
     swig_type_info *type = 0;
@@ -2567,7 +2567,7 @@ SWIG_InitializeModule(void *clientdata) {
     swig_cast_info *cast;
   
 #ifdef SWIGRUNTIME_DEBUG
-    printf("SWIG_InitializeModule: type %d %s\n", i, swig_module.type_initial[i]->name);
+    // printf("SWIG_InitializeModule: type %d %s\n", i, swig_module.type_initial[i]->name);
 #endif
 
     /* if there is another module already loaded */
@@ -2577,12 +2577,12 @@ SWIG_InitializeModule(void *clientdata) {
     if (type) {
       /* Overwrite clientdata field */
 #ifdef SWIGRUNTIME_DEBUG
-      printf("SWIG_InitializeModule: found type %s\n", type->name);
+      // printf("SWIG_InitializeModule: found type %s\n", type->name);
 #endif
       if (swig_module.type_initial[i]->clientdata) {
 	type->clientdata = swig_module.type_initial[i]->clientdata;
 #ifdef SWIGRUNTIME_DEBUG
-      printf("SWIG_InitializeModule: found and overwrite type %s \n", type->name);
+      // printf("SWIG_InitializeModule: found and overwrite type %s \n", type->name);
 #endif
       }
     } else {
@@ -2596,18 +2596,18 @@ SWIG_InitializeModule(void *clientdata) {
       /* Don't need to add information already in the list */
       ret = 0;
 #ifdef SWIGRUNTIME_DEBUG
-      printf("SWIG_InitializeModule: look cast %s\n", cast->type->name);
+      // printf("SWIG_InitializeModule: look cast %s\n", cast->type->name);
 #endif
       if (swig_module.next != &swig_module) {
         ret = SWIG_MangledTypeQueryModule(swig_module.next, &swig_module, cast->type->name);
 #ifdef SWIGRUNTIME_DEBUG
-	if (ret) printf("SWIG_InitializeModule: found cast %s\n", ret->name);
+	// if (ret) printf("SWIG_InitializeModule: found cast %s\n", ret->name);
 #endif
       }
       if (ret) {
 	if (type == swig_module.type_initial[i]) {
 #ifdef SWIGRUNTIME_DEBUG
-	  printf("SWIG_InitializeModule: skip old type %s\n", ret->name);
+	  // printf("SWIG_InitializeModule: skip old type %s\n", ret->name);
 #endif
 	  cast->type = ret;
 	  ret = 0;
@@ -2615,7 +2615,7 @@ SWIG_InitializeModule(void *clientdata) {
 	  /* Check for casting already in the list */
 	  swig_cast_info *ocast = SWIG_TypeCheck(ret->name, type);
 #ifdef SWIGRUNTIME_DEBUG
-	  if (ocast) printf("SWIG_InitializeModule: skip old cast %s\n", ret->name);
+	  // if (ocast) printf("SWIG_InitializeModule: skip old cast %s\n", ret->name);
 #endif
 	  if (!ocast) ret = 0;
 	}
@@ -2623,7 +2623,7 @@ SWIG_InitializeModule(void *clientdata) {
 
       if (!ret) {
 #ifdef SWIGRUNTIME_DEBUG
-	printf("SWIG_InitializeModule: adding cast %s\n", cast->type->name);
+	// printf("SWIG_InitializeModule: adding cast %s\n", cast->type->name);
 #endif
         if (type->cast) {
           type->cast->prev = cast;
@@ -2639,19 +2639,19 @@ SWIG_InitializeModule(void *clientdata) {
   swig_module.types[i] = 0;
 
 #ifdef SWIGRUNTIME_DEBUG
-  printf("**** SWIG_InitializeModule: Cast List ******\n");
+  // printf("**** SWIG_InitializeModule: Cast List ******\n");
   for (i = 0; i < swig_module.size; ++i) {
     int j = 0;
     swig_cast_info *cast = swig_module.cast_initial[i];
-    printf("SWIG_InitializeModule: type %d %s\n", i, swig_module.type_initial[i]->name);
+    // printf("SWIG_InitializeModule: type %d %s\n", i, swig_module.type_initial[i]->name);
     while (cast->type) {
-      printf("SWIG_InitializeModule: cast type %s\n", cast->type->name);
+      // printf("SWIG_InitializeModule: cast type %s\n", cast->type->name);
       cast++;
       ++j;
     }
-  printf("---- Total casts: %d\n",j);
+  // printf("---- Total casts: %d\n",j);
   }
-  printf("**** SWIG_InitializeModule: Cast List ******\n");
+  // printf("**** SWIG_InitializeModule: Cast List ******\n");
 #endif
 }
 

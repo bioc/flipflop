@@ -81,15 +81,15 @@ namespace FISTA {
 
    void print_loss(const loss_t& loss) {
       switch (loss) {
-         case SQUARE: cout << "Square loss" << endl; break;
-         case SQUARE_MISSING: cout << "Square loss with missing data" << endl; break;
-         case LOG: cout << "Logistic loss" << endl; break;
-         case LOGWEIGHT: cout << "Weighted Logistic loss" << endl; break;
-         case HINGE: cout << "Hinge loss" << endl; break;
-         case MULTILOG: cout << "Multiclass logistic Loss" << endl; break;
-         case POISSON: cout << "Modified Poisson loss" << endl; break;
-         case CUR: cout << "CUR decomposition" << endl; break;
-         default: cerr << "Not implemented" << endl;
+         //case SQUARE: cout << "Square loss" << endl; break;
+         //case SQUARE_MISSING: cout << "Square loss with missing data" << endl; break;
+         //case LOG: cout << "Logistic loss" << endl; break;
+         //case LOGWEIGHT: cout << "Weighted Logistic loss" << endl; break;
+         //case HINGE: cout << "Hinge loss" << endl; break;
+         //case MULTILOG: cout << "Multiclass logistic Loss" << endl; break;
+         //case POISSON: cout << "Modified Poisson loss" << endl; break;
+         //case CUR: cout << "CUR decomposition" << endl; break;
+         //default: cerr << "Not implemented" << endl;
       }
    };
 
@@ -99,41 +99,41 @@ namespace FISTA {
 
    void print_regul(const regul_t& regul) {
       switch (regul) {
-         case L0: cout << "L0 regularization" << endl; break;
-         case L1: cout << "L1 regularization" << endl; break;
-         case RIDGE: cout << "L2-squared regularization" << endl; break;
-         case L2: cout << "L2-not-squared regularization" << endl; break;
-         case LOG_DC: cout << "reweighted-l1 regularization" << endl; break;
-         case L1CONSTRAINT: cout << "L1 constraint regularization" << endl; break;
-         case LINF: cout << "Linf regularization" << endl; break;
-         case ELASTICNET: cout << "Elastic-net regularization" << endl; break;
-         case FUSEDLASSO: cout << "Fused Lasso or total variation regularization" << endl; break;
-         case GROUPLASSO_L2: cout << "Group Lasso L2" << endl; break;
-         case GROUPLASSO_LINF: cout << "Group Lasso LINF" << endl; break;
-         case GROUPLASSO_L2_L1: cout << "Group Lasso L2 + L1" << endl; break;
-         case GROUPLASSO_LINF_L1: cout << "Group Lasso LINF + L1" << endl; break;
-         case L1L2: cout << "L1L2 regularization" << endl; break;
-         case L1LINF: cout << "L1LINF regularization" << endl; break;
-         case TRACE_NORM: cout << "Trace Norm regularization" << endl; break;
-         case TRACE_NORM_VEC: cout << "Trace Norm regularization for vectors" << endl; break;
-         case RANK: cout << "Rank regularization" << endl; break;
-         case RANK_VEC: cout << "Rank regularization for vectors" << endl; break;
-         case L1L2_L1: cout << "L1L2 regularization + L1" << endl; break;
-         case L1LINF_L1: cout << "L1LINF regularization + L1" << endl; break;
-         case TREE_L0: cout << "Tree-L0 regularization" << endl; break;
-         case TREE_L2: cout << "Tree-L2 regularization" << endl; break;
-         case TREE_LINF: cout << "Tree-Linf regularization" << endl; break;
-         case GRAPH: cout << "Graph regularization" << endl; break;
-         case GRAPH_RIDGE: cout << "Graph+ridge regularization" << endl; break;
-         case GRAPH_L2: cout << "Graph regularization with l2" << endl; break;
-         case TREEMULT: cout << "multitask tree regularization" << endl; break;
-         case GRAPHMULT: cout << "multitask graph regularization" << endl; break;
-         case L1LINFCR: cout << "L1LINF regularization on rows and columns" << endl; break;
-         case GRAPH_PATH_L0: cout << "Graph path non-convex regularization" << endl; break;
-         case GRAPH_PATH_CONV: cout << "Graph path convex regularization" << endl; break;
-         case GRAPH_PATH_CONV2: cout << "Graph path alternative convex regularization" << endl; break;
-         case NONE: cout << "No regularization" << endl; break;
-         default: cerr << "Not implemented" << endl;
+         //case L0: cout << "L0 regularization" << endl; break;
+         //case L1: cout << "L1 regularization" << endl; break;
+         //case RIDGE: cout << "L2-squared regularization" << endl; break;
+         //case L2: cout << "L2-not-squared regularization" << endl; break;
+         //case LOG_DC: cout << "reweighted-l1 regularization" << endl; break;
+         //case L1CONSTRAINT: cout << "L1 constraint regularization" << endl; break;
+         //case LINF: cout << "Linf regularization" << endl; break;
+         //case ELASTICNET: cout << "Elastic-net regularization" << endl; break;
+         //case FUSEDLASSO: cout << "Fused Lasso or total variation regularization" << endl; break;
+         //case GROUPLASSO_L2: cout << "Group Lasso L2" << endl; break;
+         //case GROUPLASSO_LINF: cout << "Group Lasso LINF" << endl; break;
+         //case GROUPLASSO_L2_L1: cout << "Group Lasso L2 + L1" << endl; break;
+         //case GROUPLASSO_LINF_L1: cout << "Group Lasso LINF + L1" << endl; break;
+         //case L1L2: cout << "L1L2 regularization" << endl; break;
+         //case L1LINF: cout << "L1LINF regularization" << endl; break;
+         //case TRACE_NORM: cout << "Trace Norm regularization" << endl; break;
+         //case TRACE_NORM_VEC: cout << "Trace Norm regularization for vectors" << endl; break;
+         //case RANK: cout << "Rank regularization" << endl; break;
+         //case RANK_VEC: cout << "Rank regularization for vectors" << endl; break;
+         //case L1L2_L1: cout << "L1L2 regularization + L1" << endl; break;
+         //case L1LINF_L1: cout << "L1LINF regularization + L1" << endl; break;
+         //case TREE_L0: cout << "Tree-L0 regularization" << endl; break;
+         //case TREE_L2: cout << "Tree-L2 regularization" << endl; break;
+         //case TREE_LINF: cout << "Tree-Linf regularization" << endl; break;
+         //case GRAPH: cout << "Graph regularization" << endl; break;
+         //case GRAPH_RIDGE: cout << "Graph+ridge regularization" << endl; break;
+         //case GRAPH_L2: cout << "Graph regularization with l2" << endl; break;
+         //case TREEMULT: cout << "multitask tree regularization" << endl; break;
+         //case GRAPHMULT: cout << "multitask graph regularization" << endl; break;
+         //case L1LINFCR: cout << "L1LINF regularization on rows and columns" << endl; break;
+         //case GRAPH_PATH_L0: cout << "Graph path non-convex regularization" << endl; break;
+         //case GRAPH_PATH_CONV: cout << "Graph path convex regularization" << endl; break;
+         //case GRAPH_PATH_CONV2: cout << "Graph path alternative convex regularization" << endl; break;
+         //case NONE: cout << "No regularization" << endl; break;
+         //default: cerr << "Not implemented" << endl;
       }
    };
 
@@ -1555,7 +1555,7 @@ namespace FISTA {
                }
 #ifdef VERB2
                T duality_gap2 = y.nrm2sq()-y.dot(x)+lambda*this->eval(y);
-               cerr << "duality_gap2 " << duality_gap2 << endl;
+               //cerr << "duality_gap2 " << duality_gap2 << endl;
 #endif
                _old_lambda=lambda;
             };
@@ -2049,10 +2049,10 @@ namespace FISTA {
          public:
             TraceNorm(const ParamReg<T>& param) : Regularizer<T,Matrix<T> >(param) { 
                if (param.intercept) {
-                  cerr << "Trace norm implementation is not compatible with intercept, intercept deactivated" << endl;
+                  //cerr << "Trace norm implementation is not compatible with intercept, intercept deactivated" << endl;
                }
                if (param.pos) {
-                  cerr << "Trace norm implementation is not compatible with non-negativity constraints" << endl;
+                  //cerr << "Trace norm implementation is not compatible with non-negativity constraints" << endl;
                }
 
             };
@@ -2121,10 +2121,10 @@ namespace FISTA {
          public:
             Rank(const ParamReg<T>& param) : Regularizer<T,Matrix<T> >(param) { 
                if (param.intercept) {
-                  cerr << "Rank implementation is not compatible with intercept, intercept deactivated" << endl;
+                  //cerr << "Rank implementation is not compatible with intercept, intercept deactivated" << endl;
                }
                if (param.pos) {
-                  cerr << "Rank implementation is not compatible with non-negativity constraints" << endl;
+                  //cerr << "Rank implementation is not compatible with non-negativity constraints" << endl;
                }
 
             };
@@ -2718,10 +2718,10 @@ namespace FISTA {
    template <typename T, typename D, typename E>
       T duality_gap(Loss<T,D,E>& loss, Regularizer<T,D>& regularizer, const D& x, 
             const T lambda, T& best_dual, const bool verbose = false) {
-         if (!regularizer.is_fenchel() || !loss.is_fenchel()) {
-            cerr << "Error: no duality gap available" << endl;
-            exit(1);
-         }
+         // if (!regularizer.is_fenchel() || !loss.is_fenchel()) {
+         //   cerr << "Error: no duality gap available" << endl;
+         //   exit(1);
+         // }
          T primal= loss.eval(x)+lambda*regularizer.eval(x);
          bool intercept=regularizer.is_intercept();
          D grad1, grad2;
@@ -2736,8 +2736,8 @@ namespace FISTA {
          dual = MAX(dual,best_dual);
          T delta= primal == 0 ? 0 : (primal-dual)/abs<T>(primal);
          if (verbose) {
-            cout << "Relative duality gap: " << delta << endl;
-            flush(cout);
+            //cout << "Relative duality gap: " << delta << endl;
+            //flush(cout);
          }
          best_dual=dual;
          return delta;
@@ -2762,7 +2762,7 @@ namespace FISTA {
             case POISSON: loss=new PoissonLoss<T>(D,param.delta);  break;
             case LOG:  loss = new LogLoss<T>(D); break;
             case LOGWEIGHT:  loss = new LogLoss<T,true>(D); break;
-            default: cerr << "Not implemented"; exit(1);
+            // default: cerr << "Not implemented"; exit(1);
          }
          Vector<T> Xi;
          X.refCol(0,Xi);
@@ -2810,12 +2810,12 @@ namespace FISTA {
                T los=loss.eval(x) + lambda*regularizer.eval(x);    
                optim_info[0]=los;
                T sec=time.getElapsed();
-               cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << " ";
+               //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << " ";
                if (param.log) 
                   writeLog(it,sec,los,best_dual,param.logName);
                if (param.verbose) 
-                  cout << endl;
-               flush(cout);
+                  //cout << endl;
+               //flush(cout);
                time.start();
             }
 
@@ -2879,8 +2879,8 @@ namespace FISTA {
                T los=loss.eval(x) + lambda*regularizer.eval(x);
                optim_info[0]=los;
                T sec=time.getElapsed();
-               cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L;
-               flush(cout);
+               //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L;
+               //flush(cout);
                if (param.log) 
                   writeLog(it,sec,los,best_dual,param.logName);
                time.start();
@@ -2908,7 +2908,7 @@ namespace FISTA {
                }
                L *= param.gamma;
                if (param.verbose && ((it % it0) == 0)) 
-                  cout << " " << L;
+                  //cout << " " << L;
                ++iter;
             }
             if (param.linesearch_mode==3 && iter==1 && !param.fixed_step) {
@@ -2925,12 +2925,12 @@ namespace FISTA {
                      break;
                   }
                   if (param.verbose && ((it % it0) == 0)) 
-                  cout << " " << L;
+                  //cout << " " << L;
                   ++iter;
                }
             }
             if (param.verbose && ((it % it0) == 0)) 
-               cout << endl;
+               //cout << endl;
             if (param.linesearch_mode==2) {
                sbb.copy(grad);
                xbb.copy(x);
@@ -2955,8 +2955,8 @@ namespace FISTA {
          optim_info[0]=los;
          T sec=time.getElapsed();
          if (param.verbose) {
-            cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L << endl;
-            flush(cout);
+            //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L << endl;
+            //flush(cout);
          }
          if (duality) {
             rel_duality_gap=duality_gap(loss,regularizer,x,lambda,best_dual,param.verbose);
@@ -2994,8 +2994,8 @@ namespace FISTA {
                T los=loss.eval(x) + lambda*regularizer.eval(x);    
                optim_info[0]=los;
                T sec=time.getElapsed();
-               cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L;
-               flush(cout);
+               //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L;
+               //flush(cout);
                if (param.log) 
                   writeLog(it,sec,los,best_dual,param.logName);
                time.start();
@@ -3013,11 +3013,11 @@ namespace FISTA {
                if (param.fixed_step || loss.test_backtracking(y,grad,tmp,L)) break;
                L *= param.gamma;
                if (param.verbose && ((it % it0) == 0)) 
-                  cout << " " << L;
+                  //cout << " " << L;
                ++iter;
             }
             if (param.verbose && ((it % it0) == 0)) 
-               cout << endl;
+               //cout << endl;
 
             prox.copy(x);
             prox.sub(tmp);
@@ -3043,8 +3043,8 @@ namespace FISTA {
          optim_info[0]=los;
          T sec=time.getElapsed();
          if (param.verbose) {
-            cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L << endl;
-            flush(cout);
+            //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L << endl;
+            //flush(cout);
          }
          if (duality) {
             rel_duality_gap=duality_gap(loss,regularizer,x,lambda,best_dual,param.verbose);
@@ -3197,8 +3197,8 @@ namespace FISTA {
                T sec=time.getElapsed();
                optim_info[2]=sec;
                if (param.verbose) {
-                  cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << endl;
-                  flush(cout);
+                  //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << endl;
+                  //flush(cout);
                   if (param.log) 
                      writeLog(it,sec,los,T(0),param.logName);
                }
@@ -3340,8 +3340,8 @@ namespace FISTA {
                T sec=time.getElapsed();
                optim_info[2]=sec;
                if (param.verbose) {
-                  cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << endl;
-                  flush(cout);
+                  //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << endl;
+                  //flush(cout);
                   if (param.log) 
                      writeLog(it,sec,los,T(0),param.logName);
                }
@@ -3397,7 +3397,7 @@ namespace FISTA {
             case GRAPH: param_reg.linf=true; reg=new GraphLasso<T>(param_reg); break;
             case GRAPH_L2: param_reg.linf=false; reg=new GraphLasso<T>(param_reg); break;
             case NONE: reg=new None<T>(param_reg); break;
-            default: cerr << "Not implemented"; exit(1);
+            // default: cerr << "Not implemented"; exit(1);
          }
          return reg;
       };
@@ -3449,7 +3449,7 @@ namespace FISTA {
             case GRAPH_PATH_CONV: reg = new GraphPathConv<T>(param_reg); break;
             case GRAPH_PATH_CONV2: param_reg.alt_norm=true; reg = new GraphPathConv<T>(param_reg); break;
             case NONE: reg=new None<T>(param_reg); break;
-            default: cerr << "Not implemented"; exit(1);
+            // default: cerr << "Not implemented"; exit(1);
          }
          return reg;
       };
@@ -3500,7 +3500,7 @@ namespace FISTA {
             case GRAPH_PATH_CONV: reg = new RegMat<T, GraphPathConv<T> >(param_reg); break;
             case GRAPH_PATH_CONV2: param_reg.alt_norm=true; reg = new RegMat<T, GraphPathConv<T> >(param_reg); break;
             case NONE: reg=new RegMat<T, None<T> >(param_reg); break;
-            default: cerr << "not implemented"; exit(1);
+            // default: cerr << "not implemented"; exit(1);
          }
          return reg;
       }
@@ -3510,35 +3510,35 @@ namespace FISTA {
          if (param.verbose) {
             print_loss(param.loss);
             print_regul(param.regul);
-            if (param_for_admm(param)) {
-               if (param.admm || param.lin_admm) {
-                  if (param.lin_admm) {
-                     cout << "Linearized ADMM algorithm" << endl;
-                  } else {
-                     cout << "ADMM algorithm" << endl;
-                  }
-               } 
-            } else {
-               if (param.ista) {
-                  cout << "ISTA algorithm" << endl;
-               } else if (param.subgrad) {
-                  cout << "Subgradient descent" << endl;
-               } else {
-                  cout << "FISTA algorithm" << endl;
-               }
-               if ((param.regul == GRAPH || param.regul == TREEMULT ||
-                        param.regul == GRAPHMULT || param.regul==L1LINFCR) &&
-                     param.clever) 
-                  cout << "Projections with arc capacities" << endl;
-               if (param.intercept) cout << "with intercept" << endl;
-               if (param.pos) cout << "Non-negativity constraints" << endl;
-               if (param.log && param.logName) {
-                  cout << "log activated " << endl;
-                  cout << param.logName << endl;
-                  cout << endl;
-               }
-            }
-            flush(cout);
+            //if (param_for_admm(param)) {
+            //   if (param.admm || param.lin_admm) {
+            //      if (param.lin_admm) {
+            //         cout << "Linearized ADMM algorithm" << endl;
+            //      } else {
+            //         cout << "ADMM algorithm" << endl;
+            //      }
+            //   } 
+            //} else {
+            //   if (param.ista) {
+            //      cout << "ISTA algorithm" << endl;
+            //   } else if (param.subgrad) {
+            //      cout << "Subgradient descent" << endl;
+            //   } else {
+            //      cout << "FISTA algorithm" << endl;
+            //   }
+            //   if ((param.regul == GRAPH || param.regul == TREEMULT ||
+            //            param.regul == GRAPHMULT || param.regul==L1LINFCR) &&
+            //         param.clever) 
+            //      cout << "Projections with arc capacities" << endl;
+            //   if (param.intercept) cout << "with intercept" << endl;
+            //   if (param.pos) cout << "Non-negativity constraints" << endl;
+            //   if (param.log && param.logName) {
+            //      cout << "log activated " << endl;
+            //      cout << param.logName << endl;
+            //      cout << endl;
+            //   }
+            //}
+            //flush(cout);
          }
       };
 
@@ -3586,13 +3586,13 @@ namespace FISTA {
          const int M = X.n();
          if (param.verbose) {
             const bool duality = losses[0]->is_fenchel() && regularizers[0]->is_fenchel();
-            if (duality) cout << "Duality gap via Fenchel duality" << endl;
-            if (!param.ista && param.subgrad && !regularizers[0]->is_subgrad()) {
-               cerr << "Subgradient algorithm is not implemented for this combination of loss/regularization" << endl;
-               exit(1);
-            }
-            cout << "Timings reported do not include loss and fenchel evaluation" << endl;
-            flush(cout);
+            // if (duality) cout << "Duality gap via Fenchel duality" << endl;
+            // if (!param.ista && param.subgrad && !regularizers[0]->is_subgrad()) {
+            //   cerr << "Subgradient algorithm is not implemented for this combination of loss/regularization" << endl;
+            //   exit(1);
+            // }
+            // cout << "Timings reported do not include loss and fenchel evaluation" << endl;
+            //flush(cout);
          }
          optim_info.resize(4,M);
 
@@ -3631,8 +3631,8 @@ namespace FISTA {
          const int M = X.n();
          if (param.verbose) {
             const bool duality = losses[0]->is_fenchel() && regularizers[0]->is_fenchel();
-            if (duality) cout << "Duality gap via Fenchel duality" << endl;
-            flush(cout);
+            //if (duality) cout << "Duality gap via Fenchel duality" << endl;
+            //flush(cout);
          }
 
          optim_info.resize(4,M);
@@ -3691,7 +3691,7 @@ namespace FISTA {
                switch (param.loss) {
                   case SQUARE: losses[i]=new SqLoss<T>(D); break;
                   case HINGE: losses[i] = new HingeLoss<T>(D); break;
-                  default: cerr << "Not implemented" << endl; exit(1);
+                  // default: cerr << "Not implemented" << endl; exit(1);
                }
             }
             solver_admm(X, alpha0,  alpha, optim_info, regularizers,losses,param);
@@ -3705,7 +3705,7 @@ namespace FISTA {
          } else {
             Matrix<T> G;
             if (param.loss==HINGE) {
-               cerr << "Loss only implemented for ADMM" << endl;
+               // cerr << "Loss only implemented for ADMM" << endl;
                return;
             }
             if (param.compute_gram && (param.loss==SQUARE)) D.XtX(G);
@@ -3726,7 +3726,7 @@ namespace FISTA {
                      case SQUARE_MISSING: losses[i]=new SqLossMissing<T>(D);  break;
                      case LOG:  losses[i] = new LogLoss<T>(D); break;
                      case LOGWEIGHT:  losses[i] = new LogLoss<T,true>(D); break;
-                     default: cerr << "Not implemented"; exit(1);
+                     // default: cerr << "Not implemented"; exit(1);
                   }
                }
 
@@ -3749,7 +3749,7 @@ namespace FISTA {
                   regularizers[i]=setRegularizerMatrices(param,alpha0.m(),N,graph_st,tree_st,graph_path_st);
                   switch (param.loss) {
                      case MULTILOG:  losses[i] = new MultiLogLoss<T>(D); break;
-                     default: cerr << "Not implemented"; exit(1);
+                     // default: cerr << "Not implemented"; exit(1);
                   }
                }
                solver_aux2(X, alpha0,  alpha, optim_info, regularizers,losses,param);
@@ -3779,12 +3779,12 @@ namespace FISTA {
                   case LOG:  loss = new LossMat<T, LogLoss<T,false> >(X.n(),D); break;
                   case LOGWEIGHT:  loss = new LossMat<T, LogLoss<T,true> >(X.n(),D); break;
                   case CUR:  loss = new LossCur<T>(D); break; 
-                  default: cerr << "Not implemented"; exit(1);
+                  // default: cerr << "Not implemented"; exit(1);
                }
                regularizer=setRegularizerMatrices(param,alpha0.m(),alpha0.n(),graph_st,tree_st,graph_path_st);
                if (param.verbose) {
                   const bool duality = loss->is_fenchel() && regularizer->is_fenchel();
-                  if (duality) cout << "Duality gap via Fenchel duality" << endl;
+                  //if (duality) cout << "Duality gap via Fenchel duality" << endl;
                }
                loss->init(X);
                optim_info.resize(4,1);
@@ -3812,18 +3812,18 @@ namespace FISTA {
             const GraphPathStruct<T>* graph_path_st = NULL) {
          if (param.verbose) {
             print_regul(param.regul);
-            if ((param.regul == GRAPH || param.regul == TREEMULT ||
-                     param.regul == GRAPHMULT || param.regul==L1LINFCR) &&
-                  param.clever) 
-               cout << "Projections with arc capacities" << endl;
-            if (param.intercept) cout << "with intercept" << endl;
-            flush(cout);
+            //if ((param.regul == GRAPH || param.regul == TREEMULT ||
+            //         param.regul == GRAPHMULT || param.regul==L1LINFCR) &&
+            //      param.clever) 
+               //cout << "Projections with arc capacities" << endl;
+            //if (param.intercept) cout << "with intercept" << endl;
+            //flush(cout);
          }
          int num_threads=MIN(alpha.n(),param.num_threads);
          num_threads=init_omp(num_threads);
          const int M = alpha.n();
          if (!graph_st && param.regul==GRAPH) {
-            cerr << "Graph structure should be provided" << endl;
+            //cerr << "Graph structure should be provided" << endl;
             return;
          }
 
@@ -3878,9 +3878,9 @@ namespace FISTA {
             SpMatrix<T>* paths = NULL) {
          if (param.verbose) {
             print_regul(param.regul);
-            if (param.intercept) cout << "with intercept" << endl;
-            if (param.eval_dual_norm) cout << "Evaluate the dual norm only" << endl;
-            flush(cout);
+            //if (param.intercept) cout << "with intercept" << endl;
+            //if (param.eval_dual_norm) cout << "Evaluate the dual norm only" << endl;
+            //flush(cout);
          }
          int num_threads=MIN(alpha0.n(),param.num_threads);
          num_threads=init_omp(num_threads);
@@ -3924,7 +3924,7 @@ namespace FISTA {
             delete[](regularizers);
 
          } else {
-            cerr << "Not implemented" << endl;
+            //cerr << "Not implemented" << endl;
             return;
          }
       };
@@ -3938,9 +3938,9 @@ namespace FISTA {
          const T* weights=param.inner_weights;
          const T delta=param.delta;
          if (param.verbose) {
-            cout << "Flow solver with separable costs" << endl;
+            // cout << "Flow solver with separable costs" << endl;
             print_regul(param.regul);
-            flush(cout);
+            //flush(cout);
          }
          int num_threads=MIN(alpha0.n(),param.num_threads);
          num_threads=init_omp(num_threads);
@@ -3950,10 +3950,10 @@ namespace FISTA {
             graphs[i]=new DoubleGraphPath<T>();
             graphs[i]->init_graph(*graph_path_st);
          }
-         if (param.regul != GRAPH_PATH_CONV && param.regul != GRAPH_PATH_CONV2) {
-            cout << "Invalid loss" << endl;
-            exit(1);
-         }
+         // if (param.regul != GRAPH_PATH_CONV && param.regul != GRAPH_PATH_CONV2) {
+         //   cout << "Invalid loss" << endl;
+         //   exit(1);
+         // }
          const bool alt_norm= param.regul==GRAPH_PATH_CONV2;
          const bool pos = param.pos || loss==FLOW_POISSON || loss==FLOW_POISSON_WEIGHTS;
          loss_flow new_loss=loss;
@@ -3963,7 +3963,7 @@ namespace FISTA {
                case FLOW_SQUARE_WEIGHTS: new_loss=FLOW_SQUARE_POS_WEIGHTS; break;
                case FLOW_POISSON: new_loss=FLOW_POISSON_POS; break;
                case FLOW_POISSON_WEIGHTS: new_loss=FLOW_POISSON_WEIGHTS_POS; break;
-               default: cerr << "Unknown loss" << endl; exit(1); break;
+               // default: cerr << "Unknown loss" << endl; exit(1); break;
             }
 
          int i;

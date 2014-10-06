@@ -1094,17 +1094,17 @@ template <typename T> inline T Matrix<T>::operator()(const int i, const int j) c
 
 /// Print the matrix to std::cout
 template <typename T> inline void Matrix<T>::print(const string& name) const {
-   std::cerr << name << std::endl;
-   std::cerr << _m << " x " << _n << std::endl;
+   // std::cerr << name << std::endl;
+   // std::cerr << _m << " x " << _n << std::endl;
    for (int i = 0; i<_m; ++i) {
       for (int j = 0; j<_n; ++j) {
-         printf("%10.5g ",static_cast<double>(_X[j*_m+i]));
+         //printf("%10.5g ",static_cast<double>(_X[j*_m+i]));
          //         std::cerr << _X[j*_m+i] << " ";
       }
-      printf("\n ");
+      //printf("\n ");
       //std::cerr << std::endl;
    }
-   printf("\n ");
+   //printf("\n ");
 };
 
 /// Copy the column i into x
@@ -2516,7 +2516,7 @@ template <typename T> inline void Matrix<T>::drop(char* fileName) const {
    f.precision(12);
    f.flags(std::ios_base::scientific);
    f.open(fileName, ofstream::trunc);
-   std::cout << "Matrix written in " << fileName << std::endl;
+   // std::cout << "Matrix written in " << fileName << std::endl;
    for (int i = 0; i<_n; ++i) {
       for (int j = 0; j<_m; ++j) 
          f << _X[i*_m+j] << " ";
@@ -2733,38 +2733,38 @@ template <typename T> Vector<T>::~Vector() {
 
 /// Print the vector to std::cout
 template <> inline void Vector<double>::print(const char* name) const {
-   printf("%s, %d\n",name,_n);
+   //printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
-      printf("%g ",_X[i]);
+      //printf("%g ",_X[i]);
    }
-   printf("\n");
+   //printf("\n");
 };
 
 /// Print the vector to std::cout
 template <> inline void Vector<float>::print(const char* name) const {
-   printf("%s, %d\n",name,_n);
+   //printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
-      printf("%g ",_X[i]);
+      //printf("%g ",_X[i]);
    }
-   printf("\n");
+   //printf("\n");
 };
 
 /// Print the vector to std::cout
 template <> inline void Vector<int>::print(const char* name) const {
-   printf("%s, %d\n",name,_n);
+   //printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
-      printf("%d ",_X[i]);
+      //printf("%d ",_X[i]);
    }
-   printf("\n");
+   //printf("\n");
 };
 
 /// Print the vector to std::cout
 template <> inline void Vector<bool>::print(const char* name) const {
-   printf("%s, %d\n",name,_n);
+   //printf("%s, %d\n",name,_n);
    for (int i = 0; i<_n; ++i) {
-      printf("%d ",_X[i] ? 1 : 0);
+      //printf("%d ",_X[i] ? 1 : 0);
    }
-   printf("\n");
+   //printf("\n");
 };
 
 /// returns the index of the largest value
@@ -4145,12 +4145,12 @@ template <typename T> inline void SpMatrix<T>::refCol(int i,
 
 /// print the sparse matrix
 template<typename T> inline void SpMatrix<T>::print(const string& name) const {
-   cerr << name << endl;
-   cerr << _m << " x " << _n << " , " << _nzmax << endl;
+   // cerr << name << endl;
+   // cerr << _m << " x " << _n << " , " << _nzmax << endl;
    for (int i = 0; i<_n; ++i) {
-      for (int j = _pB[i]; j<_pE[i]; ++j) {
-         cerr << "(" <<_r[j] << "," << i << ") = " << _v[j] << endl;
-      }
+      //for (int j = _pB[i]; j<_pE[i]; ++j) {
+      //   cerr << "(" <<_r[j] << "," << i << ") = " << _v[j] << endl;
+      //}
    }
 };
 
@@ -4930,10 +4930,10 @@ template <typename T> inline T SpVector<T>::fmaxval() const {
 
 /// print the vector to std::cerr
 template <typename T> inline void SpVector<T>::print(const string& name) const {
-   std::cerr << name << std::endl;
-   std::cerr << _nzmax << std::endl;
-   for (int i = 0; i<_L; ++i)
-      cerr << "(" <<_r[i] << ", " <<  _v[i] << ")" << endl;
+   // std::cerr << name << std::endl;
+   // std::cerr << _nzmax << std::endl;
+   // for (int i = 0; i<_L; ++i)
+   //   cerr << "(" <<_r[i] << ", " <<  _v[i] << ")" << endl;
 };
 
 /// create a reference on the vector r
@@ -5420,23 +5420,23 @@ template <typename T> void ShiftMatrix<T>::mult(const
 template <typename T> void ShiftMatrix<T>::mult(const Matrix<T>&
       B, Matrix<T>& C, const bool transA, const bool transB, const T a, const T
       b) const {
-   cerr << "Shift Matrix is used in inadequate setting" << endl;
+   //cerr << "Shift Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void ShiftMatrix<T>::mult(const SpMatrix<T>& B, Matrix<T>& C, 
       const bool transA, const bool transB, const T a, const T b) const {
-   cerr << "Shift Matrix is used in inadequate setting" << endl;
+   //cerr << "Shift Matrix is used in inadequate setting" << endl;
 }
 
 /// perform C = a*B*A + b*C, possibly transposing A or B.
 template <typename T> void ShiftMatrix<T>::multSwitch(const
       Matrix<T>& B, Matrix<T>& C, const bool transA, const bool transB,
       const T a, const T b) const {
-   cerr << "Shift Matrix is used in inadequate setting" << endl;
+   //cerr << "Shift Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void ShiftMatrix<T>::XtX(Matrix<T>& XtX) const {
-   cerr << "Shift Matrix is used in inadequate setting" << endl;
+   //cerr << "Shift Matrix is used in inadequate setting" << endl;
 };
 
 template <typename T> void ShiftMatrix<T>::copyRow(const int ind, Vector<T>& x) const {
@@ -5450,18 +5450,18 @@ template <typename T> void ShiftMatrix<T>::copyRow(const int ind, Vector<T>& x) 
 };
 
 template <typename T> void ShiftMatrix<T>::copyTo(Matrix<T>& x) const {
-   cerr << "Shift Matrix is used in inadequate setting" << endl;
+   //cerr << "Shift Matrix is used in inadequate setting" << endl;
 };
 
 
 template <typename T> T ShiftMatrix<T>::dot(const Matrix<T>& x) const {
-   cerr << "Shift Matrix is used in inadequate setting" << endl;
+   //cerr << "Shift Matrix is used in inadequate setting" << endl;
    return 0;
 };
 
 template <typename T> void ShiftMatrix<T>::print(const string& name) const {
-   cerr << name << endl;
-   cerr << "Shift Matrix: " << _shifts << " shifts" << endl;
+   //cerr << name << endl;
+   //cerr << "Shift Matrix: " << _shifts << " shifts" << endl;
    _inputmatrix->print(name);
 };
 
@@ -5569,27 +5569,27 @@ template <typename T> void DoubleRowMatrix<T>::mult(const
 template <typename T> void DoubleRowMatrix<T>::mult(const Matrix<T>&
       B, Matrix<T>& C, const bool transA, const bool transB, const T a, const T
       b) const {
-   FLAG(5)
-   cerr << "Double Matrix is used in inadequate setting" << endl;
+   //FLAG(5)
+   //cerr << "Double Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void DoubleRowMatrix<T>::mult(const SpMatrix<T>& B, Matrix<T>& C, 
       const bool transA, const bool transB, const T a, const T b) const {
-   FLAG(4)
-   cerr << "Double Matrix is used in inadequate setting" << endl;
+   //FLAG(4)
+   //cerr << "Double Matrix is used in inadequate setting" << endl;
 }
 
 /// perform C = a*B*A + b*C, possibly transposing A or B.
 template <typename T> void DoubleRowMatrix<T>::multSwitch(const
       Matrix<T>& B, Matrix<T>& C, const bool transA, const bool transB,
       const T a, const T b) const {
-   FLAG(3)
-   cerr << "Double Matrix is used in inadequate setting" << endl;
+   //FLAG(3)
+   //cerr << "Double Matrix is used in inadequate setting" << endl;
 }
 
 template <typename T> void DoubleRowMatrix<T>::XtX(Matrix<T>& XtX) const {
-   FLAG(2)
-   cerr << "Double Matrix is used in inadequate setting" << endl;
+   //FLAG(2)
+   //cerr << "Double Matrix is used in inadequate setting" << endl;
 };
 
 template <typename T> void DoubleRowMatrix<T>::copyRow(const int ind, Vector<T>& x) const {
@@ -5598,20 +5598,20 @@ template <typename T> void DoubleRowMatrix<T>::copyRow(const int ind, Vector<T>&
 };
 
 template <typename T> void DoubleRowMatrix<T>::copyTo(Matrix<T>& x) const {
-   FLAG(1)
-   cerr << "Double Matrix is used in inadequate setting" << endl;
+   //FLAG(1)
+   //cerr << "Double Matrix is used in inadequate setting" << endl;
 };
 
 
 template <typename T> T DoubleRowMatrix<T>::dot(const Matrix<T>& x) const {
-   FLAG(0)
-   cerr << "Double Matrix is used in inadequate setting" << endl;
+   //FLAG(0)
+   //cerr << "Double Matrix is used in inadequate setting" << endl;
    return 0;
 };
 
 template <typename T> void DoubleRowMatrix<T>::print(const string& name) const {
-   cerr << name << endl;
-   cerr << "Double Row Matrix" << endl;
+   //cerr << name << endl;
+   //cerr << "Double Row Matrix" << endl;
    _inputmatrix->print(name);
 };
 

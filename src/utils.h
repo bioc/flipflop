@@ -48,10 +48,10 @@ typedef int mwSize;
 #define SIGN(a) (((a) < 0) ? -1.0 : 1.0)
 #define ABS(a) (((a) < 0) ? -(a) : (a))
 // DEBUG macros
-#define PRINT_I(name) printf(#name " : %d\n",name);
-#define PRINT_F(name) printf(#name " : %g\n",name);
-#define PRINT_S(name) printf("%s\n",name);
-#define FLAG(a) printf("flag : %d \n",a);
+//#define PRINT_I(name) printf(#name " : %d\n",name);
+//#define PRINT_F(name) printf(#name " : %g\n",name);
+//#define PRINT_S(name) printf("%s\n",name);
+//#define FLAG(a) printf("flag : %d \n",a);
 
 // ALGORITHM constants
 #define EPSILON 10e-10

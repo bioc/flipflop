@@ -69,7 +69,7 @@ T log_alt(const T x);
    cin.ignore( numeric_limits<streamsize>::max(), '\n' );
 };*/
 static inline void stop() {
-   printf("Appuyez sur une touche pour continuer\n");
+   //printf("Appuyez sur une touche pour continuer\n");
    getchar();
 }
 

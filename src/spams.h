@@ -112,12 +112,12 @@ throw(const char *)
   if(max_length_path < 0) max_length_path = 4 * L;
   if (L> n && !(mode == PENALTY && isZero(constraint) && !pos && lambda2 > 0)) {
     if (verbose)
-      printf("L is changed to %d\n",n);
+      // printf("L is changed to %d\n",n);
     L=n;
   }
   if (L > K) {
     if (verbose)
-      printf("L is changed to %d\n",K);
+      // printf("L is changed to %d\n",K);
     L=K;
   }
   if(return_reg_path)
@@ -158,12 +158,12 @@ throw(const char *)
   if(max_length_path < 0) max_length_path = 4 * L;
   if (L> n && !(mode == PENALTY && isZero(constraint) && !pos && lambda2 > 0)) {
     if (verbose)
-      printf("L is changed to %d\n",n);
+      // printf("L is changed to %d\n",n);
     L=n;
   }
   if (L > K) {
     if (verbose)
-      printf("L is changed to %d\n",K);
+      // printf("L is changed to %d\n",K);
     L=K;
   }
   if(return_reg_path)
@@ -193,12 +193,12 @@ throw(const char *)
   if(L < 0) L = K;
   if (L> n && !(mode == PENALTY && isZero(constraint) && !pos && lambda2 > 0)) {
     if (verbose)
-      printf("L is changed to %d\n",n);
+      // printf("L is changed to %d\n",n);
     L=n;
   }
   if (L > K) {
     if (verbose)
-      printf("L is changed to %d\n",K);
+      // printf("L is changed to %d\n",K);
     L=K;
   }
   lasso_mask((Matrix<T> &)(*X),(Matrix<T> &)(*D),(SpMatrix<T> &)(*alpha),(Matrix<bool> &)(*B),L,constraint,lambda2,mode,pos,numThreads);
@@ -221,12 +221,12 @@ throw(const char *)
   if(L < 0) L = K;
   if (L> n ) {
     if (verbose)
-      printf("L is changed to %d\n",n);
+      // printf("L is changed to %d\n",n);
     L=n;
   }
   if (L > K) {
     if (verbose)
-      printf("L is changed to %d\n",K);
+      // printf("L is changed to %d\n",K);
     L=K;
   }
   int KK = W->m();
@@ -455,7 +455,7 @@ using namespace FISTA;
     if (minval != 0)
       throw("fistaFlat : smallest class should be 0");
     if (maxval*X->n() > nAlpha || mD != m) {
-      cerr << "Number of classes: " << maxval << endl;
+      // cerr << "Number of classes: " << maxval << endl;
       //cerr << "Alpha: " << pAlpha << " x " << nAlpha << endl;
          //cerr << "X: " << X.m() << " x " << X.n() << endl;
       throw("fistaFlat : Argument sizes are not consistent");
@@ -598,7 +598,7 @@ using namespace FISTA;
     if (minval != 0)
       throw("fistaTree : smallest class should be 0");
     if (maxval*X->n() > nAlpha || mD != m) {
-      cerr << "Number of classes: " << maxval << endl;
+      // cerr << "Number of classes: " << maxval << endl;
       //cerr << "Alpha: " << pAlpha << " x " << nAlpha << endl;
          //cerr << "X: " << X.m() << " x " << X.n() << endl;
       throw("fistaTree : Argument sizes are not consistent");
@@ -927,7 +927,7 @@ using namespace FISTA;
     if (minval != 0)
       throw("fistaFlat : smallest class should be 0");
     if (maxval*X->n() > nAlpha || mD != m) {
-      cerr << "Number of classes: " << maxval << endl;
+      // cerr << "Number of classes: " << maxval << endl;
       throw("fistaFlat : Argument sizes are not consistent");
     }
   } else if (param.loss == CUR && (pAlpha != D->n() || nAlpha != D->m())) {

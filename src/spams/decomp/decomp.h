@@ -1690,7 +1690,7 @@ void coreLARS2(Vector<T>& DtR, const AbstractMatrix<T>& G,
       }
       step = MIN(MIN(step,step_max2),step_max);
       if (step < 1e-15) {
-         FLAG(0)
+         //FLAG(0)
       }
       if (step == INFINITY) break; // stop the path
 
