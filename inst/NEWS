@@ -5,6 +5,11 @@ o take care of all cpp warnings (isolasso+spams)
 o update citation
 
 
+
+CHANGES IN VERSION 1.3.9
+--------------------------
+    o [pre-processing] redefine extreme boundary of segments (first and last), see calculateBound in readgroup.cpp
+
 CHANGES IN VERSION 1.3.7
 --------------------------
     o solve non-portable flags issues, see Makevars 

@@ -592,8 +592,9 @@ void ReadGroup::calculateBound(
   vpos_t & rpoolend=end;
   map<long,int> boundfilter;
   range_t currentrange=getRange();
-  boundfilter[currentrange.first]=minjunc;
-  boundfilter[currentrange.second+1]=minjunc;
+  // 2014-09-30: ELSA - redefine extreme boundary  
+  // boundfilter[currentrange.first]=minjunc;
+  // boundfilter[currentrange.second+1]=minjunc;
   for(int i=0;i<rpoolstart.size();i++){
     if(rpoolstart[i].size()>1){
       //Ranges are [start,end)
@@ -607,6 +608,26 @@ void ReadGroup::calculateBound(
     if(mitr->second>=minjunc)
       allbound[mitr->first]=0;//set up boundary. ok to reset 2 to 0
   }
+  // 2014-09-30: ELSA set up extreme boundary 
+  if(allbound.size() == 0) { // if no internal boundary only use currentrange
+     allbound[currentrange.first]=minjunc;
+     allbound[currentrange.second+1]=minjunc;
+  } else {
+     long posS;
+     long posE;
+     posS=allbound.begin()->first; // first found boundary (ie junction)
+     posE=allbound.rbegin()->first; // last found boundary
+     if(currentrange.first >= posS-statReadLen) {
+	allbound[currentrange.first]=minjunc;
+     } else {
+	allbound[posS-statReadLen]=minjunc;
+     }
+     if(currentrange.second+1 <= posE+statReadLen) {
+	allbound[currentrange.second+1]=minjunc;
+     } else {
+	allbound[posE+statReadLen]=minjunc;
+     }
+  }
     //now, check the coverage (real), insert boundaries if the coverage drops below 0.
     //but do not insert boundaries if the maximum coverage is too low, or if the gap is too short
   if(cvgcut==false)return;
@@ -619,8 +640,8 @@ void ReadGroup::calculateBound(
     
   // now, check adjacent ranges,
   // if they're too close, merge them
-  //int mincutseglen=statReadLen;
-  int mincutseglen=2; //change here compared to isolasso. Replace 0 by 2 for possible sub-exons created by coverage cut-off. 
+  int mincutseglen=statReadLen;
+  //int mincutseglen=2; //change here compared to isolasso. Replace 0 by 2 for possible sub-exons created by coverage cut-off. 
   if(cutpoint.size()>0){
     for(int i=0;i<cutpoint.size();i++){
         if(allbound.count(cutpoint[i].first)==0 
