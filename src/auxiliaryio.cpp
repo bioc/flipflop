@@ -31,7 +31,7 @@ ofstream gofs; //gene range file
 /*
 Prepare the aux output file, including parsing the input arguments and open corresponding files
 */
-int prepareAuxFile(vector<string> args,
+void prepareAuxFile(vector<string> args,
   string prefix,
   bool& outinstance
   ){
@@ -72,21 +72,21 @@ int prepareAuxFile(vector<string> args,
       wigfs.open(wigfile.c_str());
       if(!wigfs.is_open()){
 	// cerr<<"Error opening wig file "<<wigfile<<endl;
-	return -1;
+	//return -1;
       }
       //header line of annotations
       wigfs<<"track type=bedGraph name=Read_Cvg description="<<prefix<<"\n";
       realwigfs.open(realwigfile.c_str());
       if(!realwigfs.is_open()){
 	// cerr<<"Error opening wig file "<<realwigfile<<endl;
-	return -1;
+	//return -1;
       }
       //header line
       realwigfs<<"track type=bedGraph name=Read_Coverage description="<<prefix<<"\n";
       bedfs.open(bedfile.c_str());
       if(!bedfs.is_open()){
 	// cerr<<"Error opening bed file "<<bedfile<<endl;
-	return -1;
+	//return -1;
       }
       //header line
       bedfs<<"track name=Junctions description="<<prefix<<"\n";
@@ -95,14 +95,14 @@ int prepareAuxFile(vector<string> args,
       juncfs.open(juncfile.c_str());
       if(!juncfs.is_open()){
 	// cerr<<"Error opening bed file "<<juncfile<<endl;
-	return -1;
+	//return -1;
       }
       juncfs<<"track name=Junction_Summary description="<<prefix<<"\n";
   
       boundfs.open(boundfile.c_str());
       if(!boundfs.is_open()){
 	// cerr<<"Error opening bed file "<<boundfile<<endl;
-	return -1;
+	//return -1;
       }
       boundfs<<"track name=Instance_Boundary description="<<prefix<<"\n";
     }
@@ -116,17 +116,17 @@ int prepareAuxFile(vector<string> args,
       ofs.open(outReadInfoFile.c_str());
       if(!ofs.is_open()){
 	// cerr<<"Error opening output file "<<outReadInfoFile<<endl;
-	return -1;
+	//return -1;
       }
       bofs.open(outBoundFile.c_str());
       if(!bofs.is_open()){
 	// cerr<<"Error opening boundary output file "<<outBoundFile<<endl;
-	return -1;
+	//return -1;
       } 
       gofs.open(outGeneRangeFile.c_str());
       if(!gofs.is_open()){
 	// cerr<<"Error opening gene range file "<<outGeneRangeFile<<endl;
-	return -1;
+	//return -1;
       }
     }
     if(string(args[i])=="-i"){//this option removed

@@ -15,7 +15,7 @@ using namespace std;
 /*
 Prepare the aux output file, including parsing the input arguments and open corresponding files
 */
-int prepareAuxFile(vector<string> args,
+void prepareAuxFile(vector<string> args,
 	string prefix,
 	bool& outinstance
 	);
