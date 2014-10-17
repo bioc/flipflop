@@ -677,6 +677,8 @@ type_t ReadGroup::getType(int n)const{
 type_t ReadGroup::getType(const pos_t& sn, const pos_t& en)const{
   type_t ret;
   long totallen=0;
+  // ELSA 17 oct 14
+  map<int,int> mapret; // we use a map in order to be sure to have ORDERED indices and to avoid DUPLICATA
   for(int i=0;i<sn.size();i++){
     for(int j=0;j<segs.size();j++){
       long d=getoverlaplength(sn[i],en[i],segs[j].first,segs[j].second);
@@ -689,10 +691,16 @@ type_t ReadGroup::getType(const pos_t& sn, const pos_t& en)const{
          if( i==sn.size()-1  && sn[i]<segs[j].first 
             && segs[j].first<en[i] && en[i]<segs[j].second ) continue;
         }
-        ret.push_back(j);
+	//ret.push_back(j);
+	mapret[j]=1; // we update the map
       }
     }
   }
+  // we return a vector at the end 
+  for(map<int,int>::iterator begin=mapret.begin(); begin!=mapret.end(); begin++) {
+     ret.push_back((*begin).first);
+  }
+
   int readlen=getReadLen(0);//getreadlen(n)
   if(readlen!=totallen){
     //if it's not completely overlap, this is an invalid type
