@@ -35,7 +35,8 @@ int Align::parse(string oneline){
     ss>>twostr;
     ss>>twostr;
     int pos=ss.tellg();
-    string rest=oneline.substr(pos+1);
+    //string rest=oneline.substr(pos+1); safer not to put the +1
+    string rest=oneline.substr(pos);
     //parse XS:A:
     if(start.size()==1)splicedir=0;
     else{
