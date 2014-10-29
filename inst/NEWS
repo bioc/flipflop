@@ -3,9 +3,13 @@ o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
-CHANGES IN VERSION 1.5.2
+
+CHANGES IN VERSION 1.5.3
  --------------------------
-    o [pre-processing] solve bug on parsing the sam lines (bad indice when no tag field in the sam), see align.cpp
+
+NEW FEATURE
+
+    o [pre-processing] add minJuncCount as an option, ie number of required reads to consider a junction/boundary as valid.
 
 CHANGES IN VERSION 1.5.1
  --------------------------

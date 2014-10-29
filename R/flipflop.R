@@ -38,6 +38,7 @@
 ##   \item{minReadNum}{[Pre-processing] The minimum number of clustered reads to output. Default 40. If you give an annotation file it will be the minimum number of mapped reads to process a gene.}
 ##   \item{minFragNum}{[Pre-processing] The minimum number of mapped read pairs to process a gene. Only used if paired is TRUE. Default 20.}
 ##   \item{minCvgCut}{[Pre-processing] The fraction for coverage cutoff, should be between 0-1. A higher value will be more sensitive to coverage discrepancies in one gene. Default 0.25.}
+##   \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 1.}
 ##   \item{verbose}{Verbosity. Default 0 (little verbosity). Put 1 for more verbosity.}
 ##   \item{verbosepath}{Verbosity of the optimization part. Default 0 (little verbosity). Put 1 for more verbosity.}
 ##   \item{max_isoforms}{Maximum number of isoforms given during regularization path. Default 10.}
@@ -72,6 +73,7 @@ flipflop <- function(data.file,
                      minReadNum=40,
                      minFragNum=20,
                      minCvgCut=0.25,
+                     minJuncCount=1,
                      verbose=0,
                      verbosepath=0,
                      max_isoforms=10,
@@ -94,7 +96,7 @@ flipflop <- function(data.file,
       annot.file <- path.expand(path=annot.file)
       bn <- basename(data.file)
       prefix <- sub('[.][^.]*$', '', bn)
-      processsam(data.file, prefix, annot=annot.file, minReadNum=minReadNum, minCvgCut=minCvgCut, verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
+      processsam(data.file, prefix, annot=annot.file, minReadNum=minReadNum, minCvgCut=minCvgCut, minJuncCount=minJuncCount, verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
       print('DONE !')
    }
    # Continue the job:
