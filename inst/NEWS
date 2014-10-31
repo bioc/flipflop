@@ -3,6 +3,9 @@ o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
+CHANGES IN VERSION 1.5.4
+ --------------------------
+    o [pre-processing] solve small issue on CIGAR character 'S,X,=' (again!), see align.cpp
 
 CHANGES IN VERSION 1.5.3
  --------------------------

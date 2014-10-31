@@ -102,7 +102,7 @@ void Align::parsecigar( ){
     ss2>>nof;
     if(ss2.eof())break;
     ss2>>t;
-    if(t=='M'){
+    if(t=='M' || t=='S' || t=='X' || t=='='){ // 31oct14
       if(islastn==false){
         startpos.push_back(tpos);
         endpos.push_back(tpos+nof-1);
@@ -127,13 +127,6 @@ void Align::parsecigar( ){
         endpos.back()+=nof;
         tpos=tpos+nof;
       }
-    }
-    else if(t=='S' || t=='X' || t=='='){
-       // cerr<<"Encounter the string "<<t<<" in CIGAR "<<cigar<<endl;
-       startpos.push_back(tpos);
-       endpos.push_back(tpos+nof-1);
-       tpos=tpos+nof;
-       // cerr<<"String S at the beginning:"<<tpos<<"et:"<<islastn<<endl;
     }
     else{
       // cerr<<"Error: not supported CIGAR character "<<t<<" of CIGAR "<<cigar<<endl;
