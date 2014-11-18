@@ -4,9 +4,10 @@
 #include "common.h"
 
 extern "C" {  
-  void ffProcesssam(char ** in, char ** pre, char ** an, char ** minr, char ** minc, char ** minj, char ** verb){
+  void ffProcesssam(char ** in, char ** pre, char ** an, char ** pair, char ** minr, char ** minc, char ** minj, char ** verb){
     string inSamFile = string(in[0]);  
     string prefix = string(pre[0]);
+    string paired = string(pair[0]);
     string verbose = string(verb[0]);
     string minReadNum = string(minr[0]);
     string minJuncCount = string(minj[0]);
@@ -15,7 +16,9 @@ extern "C" {
     /* processsam activation */
     cline.push_back(string("processsam"));
     /* consider reads as single-end */
-    cline.push_back(string("--single-only"));
+    if(paired=="FALSE"){
+       cline.push_back(string("--single-only"));
+    }
     /* prefix name */
     cline.push_back(string("--prefix"));
     cline.push_back(prefix);

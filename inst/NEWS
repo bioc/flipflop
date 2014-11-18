@@ -3,13 +3,21 @@ o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
+CHANGES IN VERSION 1.5.5
+ --------------------------
+    o allow more easy 2 steps run (preprocessing+prediction). The option "OnlyPreprocess" allow to perform preprocessing only. It creates two files 'prefix.instance' and (prefix.totalnumread). Running then flipflop with the option preprocess.instance='prefix.instance' performs the prediction (it reads automatically the total number fo reads in prefix.totalnumread)
+    o [pre-processing] push the default minJuncCount from 1 to 2 (high enough for a default?) 
+    o [pre-processing] slight change for paired-end preprocessing, see option to processsam (--single-only not automatic anymore)
+    o start using Rprintf in c/cpp codes for user messges (to continue)
+
+
 CHANGES IN VERSION 1.5.4
  --------------------------
     o [pre-processing] solve small issue on CIGAR character 'S,X,=' (again!), see align.cpp
 
+
 CHANGES IN VERSION 1.5.3
  --------------------------
-
 NEW FEATURE
 
     o [pre-processing] add minJuncCount as an option, ie number of required reads to consider a junction/boundary as valid.

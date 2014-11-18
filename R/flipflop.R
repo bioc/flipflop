@@ -38,7 +38,7 @@
 ##   \item{minReadNum}{[Pre-processing] The minimum number of clustered reads to output. Default 40. If you give an annotation file it will be the minimum number of mapped reads to process a gene.}
 ##   \item{minFragNum}{[Pre-processing] The minimum number of mapped read pairs to process a gene. Only used if paired is TRUE. Default 20.}
 ##   \item{minCvgCut}{[Pre-processing] The fraction for coverage cutoff, should be between 0-1. A higher value will be more sensitive to coverage discrepancies in one gene. Default 0.25.}
-##   \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 1.}
+##   \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 2.}
 ##   \item{verbose}{Verbosity. Default 0 (little verbosity). Put 1 for more verbosity.}
 ##   \item{verbosepath}{Verbosity of the optimization part. Default 0 (little verbosity). Put 1 for more verbosity.}
 ##   \item{max_isoforms}{Maximum number of isoforms given during regularization path. Default 10.}
@@ -73,7 +73,7 @@ flipflop <- function(data.file,
                      minReadNum=40,
                      minFragNum=20,
                      minCvgCut=0.25,
-                     minJuncCount=1,
+                     minJuncCount=2,
                      verbose=0,
                      verbosepath=0,
                      max_isoforms=10,
@@ -96,7 +96,7 @@ flipflop <- function(data.file,
       annot.file <- path.expand(path=annot.file)
       bn <- basename(data.file)
       prefix <- sub('[.][^.]*$', '', bn)
-      processsam(data.file, prefix, annot=annot.file, minReadNum=minReadNum, minCvgCut=minCvgCut, minJuncCount=minJuncCount, verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
+      processsam(data.file, prefix, annot=annot.file, paired=paired, minReadNum=minReadNum, minCvgCut=minCvgCut, minJuncCount=minJuncCount, verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
       print('DONE !')
    }
    # Continue the job:
@@ -105,23 +105,32 @@ flipflop <- function(data.file,
       if(preprocess.instance==''){
          infn <- paste(prefix, '.instance', sep='')
          inpf <- file(infn, 'r')
-         if(NN==''){ # if NN (total number of mapped fragments) is not given, read it in the file created previously
-            numrfn <- paste(prefix, '.totalnumread', sep='')
-            numrf <- file(numrfn,'r') # Read the file where the total number of reads is stored
-            if(paired==FALSE){
-               NN <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1) # Total number of mapped reads
-            }
-            if(paired==TRUE){
-               Nall <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
-               Npair <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
-               NN <- Nall - Npair # Total number of mapped fragments
-            }
-            close(numrf)
-         }
       }
       # Or use given preprocess.instance input file. 
       if(preprocess.instance!=''){
          inpf <- file(preprocess.instance, 'r')
+      }
+      # Total number of mapped reads, if not provided
+      if(NN==''){ # if NN (total number of mapped fragments) is not given, read it in the file created previously
+         if(preprocess.instance==''){
+            numrfn <- paste(prefix, '.totalnumread', sep='')
+            numrf <- file(numrfn,'r') # Read the file where the total number of reads is stored
+         }
+         if(preprocess.instance!=''){
+            go1 <- dirname(preprocess.instance)
+            go2 <- sub('[.][^.]*$', '',basename(preprocess.instance))
+            numrfn <- paste(go1,'/',go2,'.totalnumread',sep="")
+            numrf <- file(numrfn,'r')
+         }
+         if(paired==FALSE){
+            NN <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1) # Total number of mapped reads
+         }
+         if(paired==TRUE){
+            Nall <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
+            Npair <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
+            NN <- Nall - Npair # Total number of mapped fragments
+         }
+         close(numrf)
       }
       outf <- file(out.file, 'w')
 

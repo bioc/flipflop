@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <climits>
 
+#include <R.h> // add that for using Rprintf 18/11/14 ELSA
+
 #include "samio.h"
 #include "parseopt.h"
 #include "auxiliaryio.h"
@@ -33,7 +35,7 @@ void initGlobalVariables(){
     MIN_CVG_FRACTION=0.25;
     MINEXONCVG=2;
     OUTPUT_INDIVIDUAL_COVERAGE=false;
-    DEFAULT_MIN_JUNCTION=1;
+    DEFAULT_MIN_JUNCTION=2;
     MIN_GRANGE_DISTANCE=100;
     MIN_GRANGE_READ_CNT=4;
     MAX_INSTANCE=-1;
@@ -80,11 +82,13 @@ int readSamFile(string inSamFile, //input file
     fifs.open(inSamFile.c_str());
     if(!fifs.is_open()){
       // cerr<<"Error opening input file "<<inSamFile<<endl;
+       Rprintf("Error opening input sam file %s\n",inSamFile.c_str());
       return -1;
     }
   }
   istream &ifs= (inSamFile=="-")?cin:fifs;
   // cerr<<"Input file: "<<inSamFile<<endl;
+  Rprintf("Input sam file: %s\n",inSamFile.c_str());
 
   int appearpereads=-1;
   if(USE_SINGLE_ONLY==1)appearpereads=0;
@@ -186,6 +190,7 @@ int readSamFile(string inSamFile, //input file
         rd.add(calign);
     }else{
       if(calign.pos<currentrange.first){
+	 Rprintf("Error: the SAM file MUST be sorted!\n");
           // cerr<<"Error: the SAM file MUST be sorted!\n";
       }
       else{

@@ -198,12 +198,16 @@ of your RNA-seq library.
 # The minimum number of clustered reads
 # to consider a cluster of reads as a gene (default 40): 
 min.read <- 50
+# The minimim number of spanning reads
+# to consider a valid junction
+min.junc=10
 # The maximum number of isoforms given
 # during regularization path (default 10):
 max.iso <- 7 
 ff.res <- flipflop(data.file=data.file, 
                    out.file='FlipFlop_output.gtf',
 		   minReadNum=min.read,
+		   minJuncCount=min.junc,
                    max_isoforms=max.iso) 
 @ 
 
