@@ -3,7 +3,7 @@ useDynLib(flipflop)
 
 export('flipflop')
 
-importFrom('Matrix', sparseMatrix)
+importFrom('Matrix', sparseMatrix, rowSums, colSums)
 importClassesFrom('Matrix', index, number, replValue)
 import('IRanges')
 importFrom('GenomicRanges', GRanges, GRangesList)

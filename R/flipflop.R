@@ -38,16 +38,16 @@
 ##   \item{minReadNum}{[Pre-processing] The minimum number of clustered reads to output. Default 40. If you give an annotation file it will be the minimum number of mapped reads to process a gene.}
 ##   \item{minFragNum}{[Pre-processing] The minimum number of mapped read pairs to process a gene. Only used if paired is TRUE. Default 20.}
 ##   \item{minCvgCut}{[Pre-processing] The fraction for coverage cutoff, should be between 0-1. A higher value will be more sensitive to coverage discrepancies in one gene. Default 0.25.}
-##   \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 2.}
+##   \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 1.}
 ##   \item{verbose}{Verbosity. Default 0 (little verbosity). Put 1 for more verbosity.}
 ##   \item{verbosepath}{Verbosity of the optimization part. Default 0 (little verbosity). Put 1 for more verbosity.}
 ##   \item{max_isoforms}{Maximum number of isoforms given during regularization path. Default 10.}
 ##   \item{use_TSSPAS}{Do we restrict the candidate TSS and PAS sites. 1 is yes and 0 is no. Default 0 i.e each exon can possibly starts or ends an isoform.}
-##   \item{cutoff}{For paired-end reads do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Not active is paired is FALSE. Default 5.}
+##   \item{cutoff}{For paired-end reads do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Not active if paired is FALSE. Default 5.}
 ##   \item{BICcst}{Constant used for model selection with the BIC criterion. Default 50.}
 ##   \item{OnlyPreprocess}{Boolean for performing only the pre-processing step. Output is two files: one file '.instance' and one other file '.totalnumread'. Default FALSE.}
 ##   \item{preprocess.instance}{Give directly the pre-processed '.instance' input file created when using the OnlyPreprocess option. If non empty, the data.file and annot.file fields are ignored.}
-##   \item{NN}{Total number of mapped fragments. Optional if you give a SAM data.file. Only necessary if you give preprocess.instance (the number of mapped fragments is stored in the file '.totalnumred' created when using the OnlyPreprocess option).}
+##   \item{NN}{Total number of mapped fragments. Optional. If given the number of mapped fragments is not read from the '.totalnumread' file.}
 ## }
 ##
 ## \value{
@@ -73,7 +73,7 @@ flipflop <- function(data.file,
                      minReadNum=40,
                      minFragNum=20,
                      minCvgCut=0.25,
-                     minJuncCount=2,
+                     minJuncCount=1,
                      verbose=0,
                      verbosepath=0,
                      max_isoforms=10,
@@ -99,6 +99,7 @@ flipflop <- function(data.file,
       processsam(data.file, prefix, annot=annot.file, paired=paired, minReadNum=minReadNum, minCvgCut=minCvgCut, minJuncCount=minJuncCount, verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
       print('DONE !')
    }
+
    # Continue the job:
    if(OnlyPreprocess==FALSE){
       # Read the preprocess.instance file just created:
@@ -147,6 +148,7 @@ flipflop <- function(data.file,
       param$pos <- TRUE
       param$tol <- 1e-10
       ##=======================================
+      
       beta.fpkm <- list()
       beta.expcount <- list()
       timer.all <- vector()
@@ -157,6 +159,7 @@ flipflop <- function(data.file,
 
       while(1){
          mm <- mm+1
+
          ## Name-Instance
          name <- scan(inpf, what=character(0), nlines=1, quiet=TRUE)
          print(name)
@@ -195,13 +198,14 @@ flipflop <- function(data.file,
          ## Annotated References
          ref <- scan(inpf, what=character(0), nlines=1, quiet=TRUE)
          nref <- as.integer(ref[2])
+         TSSref <- PASref <- NULL
          if(nref>=1){
             listref <- scan(inpf, what=character(0), nlines=nref, quiet=TRUE) # so far we don't use reference information for more than exon boundaries
+            dim(listref) <- c((n.exons+2),nref)
+            listref <- listref[1:n.exons,,drop=F]
+            TSSref <- unique(apply(listref, 2, FUN=function(v) which(v==1)[1]))
+            PASref <- unique(apply(listref, 2, FUN=function(v) tail(which(v==1),1)))
          }
-         #dim(listref) <- c((n.exons+2),nref)
-         #listref <- listref[1:n.exons,]
-         #TSSref <- unique(apply(listref, 2, FUN=function(v) which(v==1)[1]))
-         #PASref <- unique(apply(listref, 2, FUN=function(v) tail(which(v==1),1)))
 
          ## Total number of reads for this gene
          nreads <- scan(inpf, what=character(0), nlines=1, quiet=TRUE)
@@ -233,18 +237,17 @@ flipflop <- function(data.file,
          # Consider reads as single-end (npetype==0 means there is no pair and for npetype>300 the paired graph creation is too long):
          eff.paired <- FALSE
          if(npetype>0){
-            if(paired==FALSE | npetype>=300){
+            if(paired==FALSE | npetype>=300) {
                scan(inpf, what=character(0), nlines=(2*npetype), quiet=TRUE) # Skip paired-end type information
-            }
+            } else {
             # Paired-end reads:
-            if(paired==TRUE & npetype<300){
                eff.paired <- TRUE
                # Construct the bins (consider pairs as 'long single' with some heuristics if necessary)
                bins.res <- bins_paired(inpf=inpf, npetype=npetype, tophat.exons=tophat.exons, count.exons=count.exons, 
                                        len.exons=len.exons, n.exons=n.exons, readtype=readtype, gap=gap, std=std) 
-               longtype <- bins.res$longtype
-               numbertype <- bins.res$numbertype
-               VALID <- (length(longtype)>0)
+               keeplolo <- bins.res$longtype
+               count.first <- bins.res$count.first
+               VALID <- (length(keeplolo)>0)
             }
          }
 
@@ -256,22 +259,23 @@ flipflop <- function(data.file,
             ## NODE:=READTYPE:=BIN
             ##==========================================
             if(!eff.paired){
+               #lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
+               ### sanity check 1 --- duplicated lolo
+               ## -------------------------------------
+               #list.dup <- lolo[duplicated(lolo)]
+               #to.remove <- c()
+               #for(dd in unique(list.dup)){
+               #   # indice des dupliques
+               #   ind.dup <- which(sapply(lolo, FUN=function(k) identical(k,dd)))
+               #   readtype[ind.dup[1],n.exons+1] <- sum(readtype[ind.dup,n.exons+1])
+               #   to.remove <- c(to.remove, ind.dup[2:length(ind.dup)])
+               #}
+               #if(!is.null(to.remove)){
+               #   readtype <- readtype[-to.remove,,drop=F]
+               #}
                lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
-               ## probleme de duplicated lolo
-               # ---------------------
-               list.dup <- lolo[duplicated(lolo)]
-               to.remove <- c()
-               for(dd in unique(list.dup)){
-                  # indice des dupliques
-                  ind.dup <- which(sapply(lolo, FUN=function(k) identical(k,dd)))
-                  readtype[ind.dup[1],n.exons+1] <- sum(readtype[ind.dup,n.exons+1])
-                  to.remove <- c(to.remove, ind.dup[2:length(ind.dup)])
-               }
-               if(!is.null(to.remove)){
-                  readtype <- readtype[-to.remove,,drop=F]
-               }
-               lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
-               # --------------------  
+               ## sanity check 2 --- valid bins
+               # -----------------------------------
                validbins <- sapply(lolo, FUN=function(v){
                                    if(length(v)<=2){
                                       return((sum(len.exons[v])>=readlen))
@@ -283,27 +287,21 @@ flipflop <- function(data.file,
                VALID <- (sum(validbins)>0)
             }
 
-            if(nreads == 0 | !VALID){ # don't go if you do not have any bins
+            if(nreads == 0 | !VALID) { # don't go if you do not have any bins
                path.select <- matrix(0, nrow=n.exons, ncol=1)
                beta.select <- 0
-            } else{
+            } else {
                # Create bins and junctions
-               if(!eff.paired){
-                  keeplolo <- lolo[validbins] 
-                  binnames <- sapply(keeplolo, FUN=function(v) paste(v, collapse='-'))
-                  goodtype <- readtype[validbins,1:(n.exons+1), drop=F] # kept readtypes after sanity check
-                  rownames(goodtype) <- binnames
-                  graph_creation <- graph_single(binnames=binnames, goodtype=goodtype, readlen=readlen, len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons, 
-                                                 use_TSSPAS=use_TSSPAS)
-               }
-               if(eff.paired){
-                  binnames <- names(longtype)
-                  binary <- t(sapply(binnames, FUN=function(pouet){ 
-                                     onep <- rep(0, n.exons)
-                                     onep[as.numeric(strsplit(pouet, split='-')[[1]])] <- 1 
-                                     return(onep) }))
-                  graph_creation <- graph_paired(binnames=binnames, len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons, 
-                                                 binary=binary, frag=frag, numbertype=numbertype, use_TSSPAS=use_TSSPAS)
+               if(!eff.paired) {
+                  keeplolo <- lolo[validbins]
+                  count.first <- readtype[validbins,n.exons+1]
+                  graph_creation <- graph_single(binlist=keeplolo, count.first=count.first, readlen=readlen,
+                                                   len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons,
+                                                   use_TSSPAS=use_TSSPAS, TSSref=TSSref, PASref=PASref)
+               } else {
+                  graph_creation <- graph_paired(binlist=keeplolo, count.first=count.first, frag=frag, 
+                                                   len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons,
+                                                   use_TSSPAS=use_TSSPAS, TSSref=TSSref, PASref=PASref)
                }
                allbins <- graph_creation$allbins
                n.nodes=length(allbins)

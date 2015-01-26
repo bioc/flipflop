@@ -75,8 +75,8 @@ regularization_path <- function(graph, count, param, max_isoforms, delta, fast_g
          Beta <- betacandidate ; 
          Z <- as.matrix(spams_flipflop.multLeftDiag(paths,param$loss_weights))
          Beta <- spams_flipflop.solverPoisson(y=count, X=as(Z,'dgCMatrix'), 
-                                     beta0=Beta, weights=matrix(param$lambda, ncol(Z), 1),
-                                     delta=delta, max_iter=iterpoisson, tol=tolpoisson)
+                                              beta0=Beta, weights=matrix(param$lambda, ncol(Z), 1),
+                                              delta=delta, max_iter=iterpoisson, tol=tolpoisson)
          ind0 <- which(Beta != 0)
          if(length(ind0) < ncol(paths) & ncol(paths)>1){
             paths <- paths[, ind0, drop=F] ## CHANGEMENT
@@ -92,17 +92,17 @@ regularization_path <- function(graph, count, param, max_isoforms, delta, fast_g
       }
       if(!fast_guess || duality_gap > 0.001){
          pc.res <- spams_flipflop.sepCostsPathCoding(count, 
-                                            graph, 
-                                            loss_weights=param$loss_weights,
-                                            max_capacity=max_capacity,
-                                            epsilon_flow=epsilon_flow,
-                                            lambda=lambda, 
-                                            delta=param$delta, 
-                                            tol=param$tol, 
-                                            regul=param$regul,
-                                            loss=param$loss,
-                                            pos=param$pos,
-                                            mode_decomposition=param$mode_decomposition)
+                                                     graph, 
+                                                     loss_weights=param$loss_weights,
+                                                     max_capacity=max_capacity,
+                                                     epsilon_flow=epsilon_flow,
+                                                     lambda=lambda, 
+                                                     delta=param$delta, 
+                                                     tol=param$tol, 
+                                                     regul=param$regul,
+                                                     loss=param$loss,
+                                                     pos=param$pos,
+                                                     mode_decomposition=param$mode_decomposition)
          paths <- pc.res$path
          Beta <- matrix(apply(as.matrix(paths), 2, max), ncol=1)  ## OK attention à l'ordre !
          paths <- matrix(as.double(paths != 0),nrow=nrow(paths),ncol=ncol(paths)) ## OK
@@ -121,21 +121,21 @@ regularization_path <- function(graph, count, param, max_isoforms, delta, fast_g
       sizemean <- ncol(paths)
       ind <- sizemean + 1 - min(sizecase, na.rm=TRUE)
       if(ind <=0){ break }
-      
+
       ##-----> case where you find a new set of solution or you have same solution size with a smaller lambda:
       if(is.na(lambdacase[ind])==TRUE | (is.na(lambdacase[ind])==FALSE & lambdacase[ind]>lambda)){
-        sizecase[ind] <- sizemean
-        lambdacase[ind] <- lambda # update the lambdas list
-        lambdasearch[ind] <- lambda # update the search one
-        path.set[[ind]] <- paths
-        beta0 <- Beta 
-        beta.avantrefit[[ind]] <- beta0
-        #dualitygap.avantrefit[ind] <- duality_gap
-        #loss.avantrefit[ind] <- primal
+         sizecase[ind] <- sizemean
+         lambdacase[ind] <- lambda # update the lambdas list
+         lambdasearch[ind] <- lambda # update the search one
+         path.set[[ind]] <- paths
+         beta0 <- Beta 
+         beta.avantrefit[[ind]] <- beta0
+         #dualitygap.avantrefit[ind] <- duality_gap
+         #loss.avantrefit[ind] <- primal
       }
       ##-----> case where you have same solution size with a bigger lambda:
       if((is.na(lambdacase[ind])==FALSE & lambdacase[ind]<lambda)){
-        lambdasearch[ind] <- lambda # only update the search lambda
+         lambdasearch[ind] <- lambda # only update the search lambda
       }
       if(sum(is.na(sizecase)) > 0){ 	
          indna <- which(is.na(sizecase))[1] # position of first NA
@@ -145,14 +145,14 @@ regularization_path <- function(graph, count, param, max_isoforms, delta, fast_g
          l22 <- max(lambdasearch[indna:length(lambdasearch)], na.rm=TRUE)
          l2 <- max(c(l21, l22))
          if(abs((l2-l1)/l2) < 1e-3){  ## TODO remplacer break par oublier cette etape ... ?
-           #print('ARREEEEEEEEET SUSPECT')
-           break
+            #print('ARREEEEEEEEET SUSPECT')
+            break
          }
          lambdaold <- lambda
          lambda <- mean(c(l1,l2))
          if(lambdaold==lambda){
-           #print('BREAAAAAAAAAAAAAAAAAK')
-           break
+            #print('BREAAAAAAAAAAAAAAAAAK')
+            break
          }
          numiso <- sizecase[indna-1]
       } else{
@@ -177,26 +177,26 @@ regularization_path <- function(graph, count, param, max_isoforms, delta, fast_g
 
    ### REFIT 
    refit <- lapply(1:length(path.set), FUN=function(ind){
-                         if(ncol(path.set[[ind]])>0){
-                           Z <- as.matrix(spams_flipflop.multLeftDiag(path.set[[ind]], param$loss_weights))
-                           beta.apos <- refitPoisson(y=count, X=as(Z,'dgCMatrix'),beta0= beta.avantrefit[[ind]], delta=delta,
-                                                     iterpoisson=iterpoisson, tolpoisson=tolpoisson, solver_refit='NEW', verbosepath=verbosepath)
-                           loss.apos <- loss.ll(count, Z%*%beta.apos, delta)
-                           size.apos <- length(which(beta.apos>0))
-                           #dg.apos <- duality_gap_poisson(count, Z, beta.apos, delta)$dg
-                         }
-                         if(ncol(path.set[[ind]])==0){
-                           beta.apos <- matrix(0,1,1)
-                           loss.apos <- loss.ll(count, rep(0,n.nodes), noise.var=delta)
-                           size.apos <- 0
-                           #dg.apos <- duality_gap_poisson(count, matrix(0, n.nodes,1), 0, delta)$dg
-                         }
-                         if(verbosepath){
-                            dg.apos <- duality_gap_poisson(count, Z, beta.apos, delta)$dg
-                            cat(sprintf('refit: duality-gap: %f\n', dg.apos))
-                         }
-                         return(list(beta.apos=beta.apos, loss.apos=loss.apos, size.apos=size.apos))
-                                                     })
+                   if(ncol(path.set[[ind]])>0){
+                      Z <- as.matrix(spams_flipflop.multLeftDiag(path.set[[ind]], param$loss_weights))
+                      beta.apos <- refitPoisson(y=count, X=as(Z,'dgCMatrix'),beta0= beta.avantrefit[[ind]], delta=delta,
+                                                iterpoisson=iterpoisson, tolpoisson=tolpoisson, solver_refit='NEW', verbosepath=verbosepath)
+                      loss.apos <- loss.ll(count, Z%*%beta.apos, delta)
+                      size.apos <- length(which(beta.apos>0))
+                      #dg.apos <- duality_gap_poisson(count, Z, beta.apos, delta)$dg
+                   }
+                   if(ncol(path.set[[ind]])==0){
+                      beta.apos <- matrix(0,1,1)
+                      loss.apos <- loss.ll(count, rep(0,n.nodes), noise.var=delta)
+                      size.apos <- 0
+                      #dg.apos <- duality_gap_poisson(count, matrix(0, n.nodes,1), 0, delta)$dg
+                   }
+                   if(verbosepath){
+                      dg.apos <- duality_gap_poisson(count, Z, beta.apos, delta)$dg
+                      cat(sprintf('refit: duality-gap: %f\n', dg.apos))
+                   }
+                   return(list(beta.apos=beta.apos, loss.apos=loss.apos, size.apos=size.apos)) })
+   
    beta.refit  <- lapply(refit, FUN=function(k) k$beta.apos)
    loss.set  <- sapply(refit, FUN=function(k) k$loss.apos)
    size.set  <- sapply(refit, FUN=function(k) k$size.apos)

@@ -592,9 +592,9 @@ void ReadGroup::calculateBound(
   vpos_t & rpoolend=end;
   map<long,int> boundfilter;
   range_t currentrange=getRange();
-  // 2014-09-30: ELSA - redefine extreme boundary  
-  // boundfilter[currentrange.first]=minjunc;
-  // boundfilter[currentrange.second+1]=minjunc;
+  // 2014-09-30: ELSA - redefine extreme boundary -- REMOVE THAT 2014-01-14 
+  boundfilter[currentrange.first]=minjunc;
+  boundfilter[currentrange.second+1]=minjunc;
   for(int i=0;i<rpoolstart.size();i++){
     if(rpoolstart[i].size()>1){
       //Ranges are [start,end)
@@ -608,7 +608,8 @@ void ReadGroup::calculateBound(
     if(mitr->second>=minjunc)
       allbound[mitr->first]=0;//set up boundary. ok to reset 2 to 0
   }
-  // 2014-09-30: ELSA set up extreme boundary 
+  // 2014-09-30: ELSA set up extreme boundary -- REMOVE THAT 2014-01-14 
+  /*
   if(allbound.size() == 0) { // if no internal boundary only use currentrange
      allbound[currentrange.first]=minjunc;
      allbound[currentrange.second+1]=minjunc;
@@ -628,6 +629,7 @@ void ReadGroup::calculateBound(
 	allbound[posE+statReadLen]=minjunc;
      }
   }
+  */
     //now, check the coverage (real), insert boundaries if the coverage drops below 0.
     //but do not insert boundaries if the maximum coverage is too low, or if the gap is too short
   if(cvgcut==false)return;

@@ -2,13 +2,27 @@ TO DO:
 o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
+o change strategy for paired-end graph ???
+
+
+CHANGES IN VERSION 1.5.6
+ --------------------------
+MAJOR CHANGES
+    o faster single-end and paired-end graph implementation 
+    o use_TSSPAS: if yes then start/end bins are the ones with no entering/outgoing junctions (+ annotated ones if given annotation)
+
+MINOR CHANGES
+    o remove the sanity-check for possibly duplicated types, as it was solved into readgroup.cpp/getType
+    o [pre-processing] back to default 1 for minJuncCount (I changed my mind !!)
+    o [pre-processing] cancel change of version 1.3.9 (extreme boundary of segments calculateBound in readgroup.cpp) (I changed my mind !!)
+
 
 CHANGES IN VERSION 1.5.5
  --------------------------
-    o allow more easy 2 steps run (preprocessing+prediction). The option "OnlyPreprocess" allow to perform preprocessing only. It creates two files 'prefix.instance' and (prefix.totalnumread). Running then flipflop with the option preprocess.instance='prefix.instance' performs the prediction (it reads automatically the total number fo reads in prefix.totalnumread)
+    o allow more easy 2 steps run (preprocessing+prediction). The option "OnlyPreprocess" allows to perform preprocessing only. It creates two files 'prefix.instance' and (prefix.totalnumread). Running then flipflop with the option preprocess.instance='prefix.instance' performs the prediction (it reads automatically the total number fo reads in prefix.totalnumread)
     o [pre-processing] push the default minJuncCount from 1 to 2 (high enough for a default?) 
     o [pre-processing] slight change for paired-end preprocessing, see option to processsam (--single-only not automatic anymore)
-    o start using Rprintf in c/cpp codes for user messges (to continue)
+    o start using Rprintf in c/cpp codes for user messages (to continue)
 
 
 CHANGES IN VERSION 1.5.4

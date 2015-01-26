@@ -1,44 +1,44 @@
-# This function elaborate the bins 
-# when reads are paired-end. 
+#------ This function elaborate the bins when reads are paired-end -----# 
 # Bins are the node of the splicing graph. 
 
+
 bins_paired <- function(inpf, npetype, tophat.exons, count.exons, len.exons, n.exons, readtype, gap, std){
-   longtype <- vector(mode='list')
-   numbertype <- vector(mode='list')
+   
+   longtype <- vector(mode='list') # record each created type
+   numbertype <- vector(mode='list') # record the number of each type
    compteur <- 0
+   
    while(compteur<npetype){
       compteur <- compteur+1
       plouf <- scan(inpf, what=character(0), nlines=2, quiet=TRUE)
       sgone <- as.numeric(plouf[1]) # left type index
       sgtwo <- as.numeric(plouf[2]) # right type index
       nimp <- as.numeric(plouf[3]) # number of such types
+      
       oneleft <- which(readtype[sgone,1:n.exons]==1) # type of left read
       oneright <- which(readtype[sgtwo,1:n.exons]==1) # type of right read
       lastleft <- oneleft[length(oneleft)]
       firstright <- oneright[1]
+      
       implicated <- as.integer(unlist(strsplit(plouf[4:(4+as.numeric(plouf[3])-1)],split=':')))
       npair <- implicated[seq(2,2*nimp,2)] # number of such paired-end reads
       alldist <- implicated[seq(1,2*nimp,2)] # all insert distances
-      # a) left and right reads stop/start into same exon or overlap -- EASY case 
-      if(lastleft>=firstright){
-         newbin <- paste(unique(sort(c(oneleft,oneright))), collapse='-')
-         longtype[[newbin]] <- c(longtype[[newbin]],alldist)
+      
+      # a) left and right reads overlap or stop/start into same exon or neighbour exons -- EASY case 
+      if(lastleft>=(firstright-1)){
+         vecbin <- unique(sort(c(oneleft,oneright)))
+         newbin <- paste(vecbin, collapse='-')
+         longtype[[newbin]] <- vecbin
          numbertype[[newbin]] <- c(numbertype[[newbin]],npair)
       }
-      # a) left and right reads stop/start into neighbour bins -- EASY case 
-      if(lastleft==firstright-1){
-         newdist <- alldist - (tophat.exons[firstright,1] - tophat.exons[lastleft,2])
-         newbin <- paste(unique(sort(c(oneleft,oneright))), collapse='-')
-         longtype[[newbin]] <- c(longtype[[newbin]],newdist)
-         numbertype[[newbin]] <- c(numbertype[[newbin]],npair)
-      }
-      # c) left and right reads stop/start not into neighbours bins -- MIGHT BE AMBIGUOUS
+      
+      # b) left and right reads stop/start not into neighbours bins -- MIGHT BE AMBIGUOUS
       if(firstright>lastleft+1){
          # b1) only jump an intron (active when annotation in input)
-         if(sum(count.exons[(lastleft+1):(firstright-1)])==0){
-            newdist <- alldist - sum(len.exons[(lastleft+1):(firstright-1)])
-            newbin <- paste(unique(sort(c(oneleft,oneright))), collapse='-')
-            longtype[[newbin]] <- c(longtype[[newbin]],newdist)
+         if(sum(count.exons[(lastleft+1):(firstright-1)])==0){ # be less stringent ????
+            vecbin <- unique(sort(c(oneleft,oneright)))
+            newbin <- paste(vecbin, collapse='-')
+            longtype[[newbin]] <- vecbin
             numbertype[[newbin]] <- c(numbertype[[newbin]],npair)
          }
          # b2) complicated cases
@@ -50,19 +50,25 @@ bins_paired <- function(inpf, npetype, tophat.exons, count.exons, len.exons, n.e
             seuil.nojump <- min(gap-std, gap+std-addno)
             ind.nojump <- which(djump<seuil.nojump) # indexes of no jumping reads
             if(length(ind.nojump)>0){
-               newbin <- paste(unique(sort(c(oneleft,((lastleft+1):(firstright-1))[ppp],oneright))), collapse='-')
-               longtype[[newbin]] <- c(longtype[[newbin]],dnojump[ind.nojump])
+               vecbin <- unique(sort(c(oneleft,((lastleft+1):(firstright-1))[ppp],oneright)))
+               newbin <- paste(vecbin, collapse='-')
+               longtype[[newbin]] <- vecbin
                numbertype[[newbin]] <- c(numbertype[[newbin]],npair[ind.nojump])
             }
             seuil.jump <- max(gap-std, gap+std-addno)
             ind.jump <- which(djump>seuil.jump) # indexes of jumping reads
             if(length(ind.jump)>0){
-               newbin <- paste(unique(sort(c(oneleft,oneright))), collapse='-')
-               longtype[[newbin]] <- c(longtype[[newbin]],djump[ind.jump])
+               vecbin <- unique(sort(c(oneleft,oneright)))
+               newbin <- paste(vecbin, collapse='-')
+               longtype[[newbin]] <- vecbin
                numbertype[[newbin]] <- c(numbertype[[newbin]],npair[ind.jump])
             }
          }
       }
    }
-   return(list(longtype=longtype, numbertype=numbertype))
+
+   count.first <- sapply(numbertype, sum)
+
+   return(list(longtype=longtype, count.first=count.first))
+
 }

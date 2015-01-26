@@ -20,7 +20,7 @@
 
 \usage{
 flipflop(data.file, out.file="FlipFlop_output.gtf", annot.file="", paired=FALSE,
-  frag=400, std=20, minReadNum=40, minFragNum=20, minCvgCut=0.25, minJuncCount=2,
+  frag=400, std=20, minReadNum=40, minFragNum=20, minCvgCut=0.25, minJuncCount=1,
   verbose=0, verbosepath=0, max_isoforms=10, use_TSSPAS=0, cutoff=5, BICcst=50,
   OnlyPreprocess=FALSE, preprocess.instance="", NN="")
 }
@@ -35,16 +35,16 @@ flipflop(data.file, out.file="FlipFlop_output.gtf", annot.file="", paired=FALSE,
   \item{minReadNum}{[Pre-processing] The minimum number of clustered reads to output. Default 40. If you give an annotation file it will be the minimum number of mapped reads to process a gene.}
   \item{minFragNum}{[Pre-processing] The minimum number of mapped read pairs to process a gene. Only used if paired is TRUE. Default 20.}
   \item{minCvgCut}{[Pre-processing] The fraction for coverage cutoff, should be between 0-1. A higher value will be more sensitive to coverage discrepancies in one gene. Default 0.25.}
-  \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 2.}
+  \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 1.}
   \item{verbose}{Verbosity. Default 0 (little verbosity). Put 1 for more verbosity.}
   \item{verbosepath}{Verbosity of the optimization part. Default 0 (little verbosity). Put 1 for more verbosity.}
   \item{max_isoforms}{Maximum number of isoforms given during regularization path. Default 10.}
   \item{use_TSSPAS}{Do we restrict the candidate TSS and PAS sites. 1 is yes and 0 is no. Default 0 i.e each exon can possibly starts or ends an isoform.}
-  \item{cutoff}{For paired-end reads do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Not active is paired is FALSE. Default 5.}
+  \item{cutoff}{For paired-end reads do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Not active if paired is FALSE. Default 5.}
   \item{BICcst}{Constant used for model selection with the BIC criterion. Default 50.}
   \item{OnlyPreprocess}{Boolean for performing only the pre-processing step. Output is two files: one file '.instance' and one other file '.totalnumread'. Default FALSE.}
   \item{preprocess.instance}{Give directly the pre-processed '.instance' input file created when using the OnlyPreprocess option. If non empty, the data.file and annot.file fields are ignored.}
-  \item{NN}{Total number of mapped fragments. Optional if you give a SAM data.file. Only necessary if you give preprocess.instance (the number of mapped fragments is stored in the file '.totalnumred' created when using the OnlyPreprocess option).}
+  \item{NN}{Total number of mapped fragments. Optional. If given the number of mapped fragments is not read from the '.totalnumread' file.}
 }
 
 \value{
