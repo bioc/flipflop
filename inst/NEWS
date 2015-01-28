@@ -5,6 +5,11 @@ o take care of all cpp warnings (isolasso+spams)
 o change strategy for paired-end graph ???
 
 
+CHANGES IN VERSION 1.5.7
+ --------------------------
+    o correct a stupid error (in flipflop.R) for calculating the total number of mapped fragments in the paired-end case
+
+
 CHANGES IN VERSION 1.5.6
  --------------------------
 MAJOR CHANGES

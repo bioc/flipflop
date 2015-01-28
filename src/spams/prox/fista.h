@@ -2762,7 +2762,7 @@ namespace FISTA {
             case POISSON: loss=new PoissonLoss<T>(D,param.delta);  break;
             case LOG:  loss = new LogLoss<T>(D); break;
             case LOGWEIGHT:  loss = new LogLoss<T,true>(D); break;
-            // default: cerr << "Not implemented"; exit(1);
+            //default: cerr << "Not implemented"; exit(1);
          }
          Vector<T> Xi;
          X.refCol(0,Xi);
@@ -3397,7 +3397,7 @@ namespace FISTA {
             case GRAPH: param_reg.linf=true; reg=new GraphLasso<T>(param_reg); break;
             case GRAPH_L2: param_reg.linf=false; reg=new GraphLasso<T>(param_reg); break;
             case NONE: reg=new None<T>(param_reg); break;
-            // default: cerr << "Not implemented"; exit(1);
+            //default: cerr << "Not implemented"; exit(1);
          }
          return reg;
       };
@@ -3449,7 +3449,7 @@ namespace FISTA {
             case GRAPH_PATH_CONV: reg = new GraphPathConv<T>(param_reg); break;
             case GRAPH_PATH_CONV2: param_reg.alt_norm=true; reg = new GraphPathConv<T>(param_reg); break;
             case NONE: reg=new None<T>(param_reg); break;
-            // default: cerr << "Not implemented"; exit(1);
+            //default: cerr << "Not implemented"; exit(1);
          }
          return reg;
       };
@@ -3500,7 +3500,7 @@ namespace FISTA {
             case GRAPH_PATH_CONV: reg = new RegMat<T, GraphPathConv<T> >(param_reg); break;
             case GRAPH_PATH_CONV2: param_reg.alt_norm=true; reg = new RegMat<T, GraphPathConv<T> >(param_reg); break;
             case NONE: reg=new RegMat<T, None<T> >(param_reg); break;
-            // default: cerr << "not implemented"; exit(1);
+            //default: cerr << "not implemented"; exit(1);
          }
          return reg;
       }
@@ -3691,7 +3691,7 @@ namespace FISTA {
                switch (param.loss) {
                   case SQUARE: losses[i]=new SqLoss<T>(D); break;
                   case HINGE: losses[i] = new HingeLoss<T>(D); break;
-                  // default: cerr << "Not implemented" << endl; exit(1);
+                  //default: cerr << "Not implemented" << endl; exit(1);
                }
             }
             solver_admm(X, alpha0,  alpha, optim_info, regularizers,losses,param);
@@ -3726,7 +3726,7 @@ namespace FISTA {
                      case SQUARE_MISSING: losses[i]=new SqLossMissing<T>(D);  break;
                      case LOG:  losses[i] = new LogLoss<T>(D); break;
                      case LOGWEIGHT:  losses[i] = new LogLoss<T,true>(D); break;
-                     // default: cerr << "Not implemented"; exit(1);
+                     //default: cerr << "Not implemented"; exit(1);
                   }
                }
 
@@ -3749,7 +3749,7 @@ namespace FISTA {
                   regularizers[i]=setRegularizerMatrices(param,alpha0.m(),N,graph_st,tree_st,graph_path_st);
                   switch (param.loss) {
                      case MULTILOG:  losses[i] = new MultiLogLoss<T>(D); break;
-                     // default: cerr << "Not implemented"; exit(1);
+                     //default: cerr << "Not implemented"; exit(1);
                   }
                }
                solver_aux2(X, alpha0,  alpha, optim_info, regularizers,losses,param);
@@ -3779,7 +3779,7 @@ namespace FISTA {
                   case LOG:  loss = new LossMat<T, LogLoss<T,false> >(X.n(),D); break;
                   case LOGWEIGHT:  loss = new LossMat<T, LogLoss<T,true> >(X.n(),D); break;
                   case CUR:  loss = new LossCur<T>(D); break; 
-                  // default: cerr << "Not implemented"; exit(1);
+                  //default: cerr << "Not implemented"; exit(1);
                }
                regularizer=setRegularizerMatrices(param,alpha0.m(),alpha0.n(),graph_st,tree_st,graph_path_st);
                if (param.verbose) {
@@ -3963,7 +3963,7 @@ namespace FISTA {
                case FLOW_SQUARE_WEIGHTS: new_loss=FLOW_SQUARE_POS_WEIGHTS; break;
                case FLOW_POISSON: new_loss=FLOW_POISSON_POS; break;
                case FLOW_POISSON_WEIGHTS: new_loss=FLOW_POISSON_WEIGHTS_POS; break;
-               // default: cerr << "Unknown loss" << endl; exit(1); break;
+               //default: cerr << "Unknown loss" << endl; exit(1); break;
             }
 
          int i;

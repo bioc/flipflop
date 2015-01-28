@@ -129,7 +129,7 @@ flipflop <- function(data.file,
          if(paired==TRUE){
             Nall <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
             Npair <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
-            NN <- Nall - Npair # Total number of mapped fragments
+            NN <- Npair # Total number of mapped fragments
          }
          close(numrf)
       }
