@@ -46,7 +46,6 @@ spams_flipflop.solverPoissonFull <- function(y,X,beta0,weights,delta, max_iter=5
    return(beta)
 }
 
-
 spams_flipflop.sepCostsPathCoding <- function(alpha0, DAG, loss_weights, max_capacity=1e10, epsilon_flow=1e-10, prices=NULL,
                                      numThreads =-1, lambda=1.0, 
                                      regul="", loss="", pos=FALSE, tol=1e-5, delta=1e-3, mode_decomposition=1){

@@ -2,12 +2,35 @@ TO DO:
 o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
-o change strategy for paired-end graph ???
+o parallelization
+
+
+CHANGES IN VERSION 1.5.10
+ --------------------------
+MAJOR CHANGES
+    o implementation of a MULTI-SAMPLE version of FlipFlop 
+      -----> the multi-sample procedure uses several samples simultaneously in order to increase statistical power.
+             by default the multi-sample procedure is a penalized likelihood with the group-lasso penalty.
+             you can also choose to perform a simple refit after using the pooled data.
+
+NEW FEATURES
+    o new features as a result of the multi-sample extension. Novel options are
+      - 'samples.file'    optional samples file (one line per sample name)
+      - 'output.type'     type of output when using several samples simultaneously. 
+                          when equal to "gtf" the output corresponds to a gtf file per sample with specific abundances. 
+                          when equal to "table" the output corresponds to a single gtf file storing the structure of the transcripts, and an associated table with the abundances of all samples.
+      - 'mergerefit'      if TRUE use a simple refit strategy instead of the group-lasso. Default FALSE.
+
+MINOR CHANGES
+    o change a bit the paired-end graph paradigm. Ensure that one isoform is one unique path in the graph, as for single-end graph.
+    o [parameter] add the delta (poisson offset in the loss) parameter as an option, in case of fine-tuning.
+    o [parameter] the cutoff option is now active for both single and paired, and the default value is 1%.
 
 
 CHANGES IN VERSION 1.5.8
  --------------------------
     o change default MinCvgCut value from 0.25 to 0.05
+
 
 CHANGES IN VERSION 1.5.7
  --------------------------
@@ -26,9 +49,10 @@ MINOR CHANGES
     o [pre-processing] cancel change of version 1.3.9 (extreme boundary of segments calculateBound in readgroup.cpp) (I changed my mind !!)
 
 
+
 CHANGES IN VERSION 1.5.5
  --------------------------
-    o allow more easy 2 steps run (preprocessing+prediction). The option "OnlyPreprocess" allows to perform preprocessing only. It creates two files 'prefix.instance' and (prefix.totalnumread). Running then flipflop with the option preprocess.instance='prefix.instance' performs the prediction (it reads automatically the total number fo reads in prefix.totalnumread)
+    o allow more easy 2 steps run (preprocessing+prediction). The option "OnlyPreprocess" allows to perform preprocessing only. It creates two files 'prefix.instance' and (prefix.totalnumread). Running then flipflop with the option preprocess.instance='prefix.instance' performs the prediction (it reads automatically the total number of reads in prefix.totalnumread)
     o [pre-processing] push the default minJuncCount from 1 to 2 (high enough for a default?) 
     o [pre-processing] slight change for paired-end preprocessing, see option to processsam (--single-only not automatic anymore)
     o start using Rprintf in c/cpp codes for user messages (to continue)
@@ -75,7 +99,6 @@ CHANGES IN VERSION 1.3.2
 
 CHANGES IN VERSION 1.1.6
 --------------------------
-
 NEW FEATURES
 
     o Add 'expected.counts' in the output objects. 
@@ -85,7 +108,6 @@ NEW FEATURES
 
 CHANGES IN VERSION 1.1.4
 --------------------------
-
 NEW FEATURES
 
     o Add a 'OnlyPreprocess' option for performing only the pre-processing step of the input sam file.  

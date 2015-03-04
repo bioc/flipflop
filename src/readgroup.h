@@ -9,6 +9,7 @@ Define a cluster of reads
 #include "rangeset.h"
 #include "commontype.h"
 #include <iostream>
+#include "samples.h" // 2015-01-15 ELSA
 
 
 /*
@@ -19,7 +20,9 @@ typedef vector<int> type_t;
 
 class ReadGroup{
 private:
-//public:   
+
+  const Samples* samples; // 2015-01-15 ELSA
+
   //vector<Align> allalign;
   /*
   Data: a group of start/end positions, and its directions
@@ -69,7 +72,11 @@ private:
 
   /* Segmentation reads and types
   */
-  vector<type_t> alltype; 
+  vector<type_t> alltype;
+
+  vector<string> rdg_names; // 2015-01-15 ELSA
+  map<string, vector<int> > rdg_typecount;
+
   /* THe number of occurance of each type on reads */
   vector<int> typecount;
   /* The direction of the type. >0/<0/=0 */
@@ -99,17 +106,19 @@ private:
 
   /* Orientation of the instance: 1 for +, -1 for -, 0 for unknown */
   int orientation;
-
+  map<long, vector<double> >::const_iterator getSegStats(map<long,int>&cvg, const range_t& seg);
+  //void displayAllBound(const std::string& msg) const;
   /*
   Add a paired-end reads. Do not go through the paired-end search process
   */
-  int addPair(pos_t &s1, pos_t &e1,int d1, pos_t&s2, pos_t & e2,int d2 );
+  int addPair(pos_t &s1, pos_t &e1,int d1, const string & pairname1 , pos_t&s2, pos_t & e2,int d2, const string & pairname2); // 2015-01-15 ELSA
   /* Add one alignment to the current cluster of reads. Do not try to pair it. */
-  int addOnly(pos_t &s, pos_t &e,int dir);
+  int addOnly(pos_t &s, pos_t &e,int dir, const string& rgname); // 2015-01-15 ELSA
 
 public:
-  ReadGroup():forcesingle(false),isfixrange(false),orientation(0){}
-  
+  ReadGroup():forcesingle(false),isfixrange(false),orientation(0),samples(NULL){} // 2015-01-15 ELSA
+  void setSamples(const Samples* samples);
+
   void setForceSingle(){forcesingle=true;}
   /*
   Access functions
@@ -199,7 +208,7 @@ Calculate the types according to the boundary
 */
   vector<range_t> getSegs() const;
 
-  void toStream(ostream &out) const;
+  void toStream(ostream &out);
 
   /* If a segment is too weak, mark it as invalid */
   void removeWeakSegs(float minf);
@@ -208,7 +217,7 @@ Calculate the types according to the boundary
   */
   void calculateValidSegs();
 
-  friend ostream& operator<<(ostream& out,const ReadGroup & rg);
+  friend ostream& operator<<(ostream& out, ReadGroup & rg);
   
   /* remove reads spanning too many reads 
      If two segments of a read contains >=minspan bases and contains >maxread reads, this read is marked invalid

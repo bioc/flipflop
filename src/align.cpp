@@ -21,7 +21,7 @@ int Align::getReadLen()const{
   return n;
 }
 
- /*
+  /*
   parse fields from a line of string
   Return 0 if success, -1 if any error occurs.
   */
@@ -37,6 +37,17 @@ int Align::parse(string oneline){
     int pos=ss.tellg();
     //string rest=oneline.substr(pos+1); safer not to put the +1
     string rest=oneline.substr(pos);
+
+    //parse RG:Z -- 2015-01-15 ELSA
+    rgname="";
+    int xrg=rest.find("RG:Z:"); // give -1 if no RG
+    if(xrg==-1){
+      //rgname="prout";
+      //cout<<"DID NOT FIND RG!!!!"<<rgname<<endl;
+    } else{
+      rgname=rest.substr(xrg+5);
+    }
+
     //parse XS:A:
     if(start.size()==1)splicedir=0;
     else{
@@ -135,4 +146,3 @@ void Align::parsecigar( ){
   }//end of ss2 loop
 
 }
-

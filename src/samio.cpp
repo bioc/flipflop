@@ -37,7 +37,7 @@ void initGlobalVariables(){
     OUTPUT_INDIVIDUAL_COVERAGE=false;
     DEFAULT_MIN_JUNCTION=2;
     MIN_GRANGE_DISTANCE=100;
-    MIN_GRANGE_READ_CNT=4;
+    MIN_GRANGE_READ_CNT=40;
     MAX_INSTANCE=-1;
     MAX_PE_DISTANCE=700000;
     MAX_N_SEGS=500000;
@@ -54,6 +54,38 @@ void initGlobalVariables(){
     /*Provided annotation*/ 
     C_ANNO.resetAll();
     C_RANGE_ANNO.resetAll();
+    CVG_CUT=1;
+}
+
+
+// 2015-01-15 ELSA
+/*
+Initialize count of total number of reads/pairs to zero
+*/
+static void num_samples_init(
+      map<string, int> &num_samples, 
+      const Samples* samples){
+   // itere sur samples ....
+   const vector<string>& vsamples=samples->getSamples();
+   vector<string>::const_iterator bb=vsamples.begin();
+   vector<string>::const_iterator ee=vsamples.end();
+   while(bb!=ee){
+      num_samples[*bb] = 0;
+      bb++;
+   }
+}
+/*
+Write the total number of read/pairs in a output file
+*/
+static void num_samples_print(
+      ostream &os,
+      const map<string, int> &num_samples){
+   map<string, int>::const_iterator begin = num_samples.begin();
+   map<string, int>::const_iterator end = num_samples.end();
+   while (begin != end) {
+      os << (*begin).first << '=' << (*begin).second << ' ';
+      ++begin;
+   }
 }
 
 
@@ -71,11 +103,19 @@ int readSamFile(string inSamFile, //input file
     return -1;
   }
 
+  // 2015-01-15 ELSA:
+  Samples* samples=new Samples();
+  for(int i=0;i<args.size();i++){
+    if(args[i]=="--samples" && i<args.size()-1){
+      samples->readsamples(args[i+1]);
+    }
+  }
+
   vector<string> rangechrs;
   vector<range_t > rangerange;
   bool outinstance=true;
   //Preparing output files
-  prepareAuxFile(args, inSamFile, outinstance);
+  prepareAuxFile(args,inSamFile,outinstance);
 
   ifstream fifs;
   if(inSamFile!="-"){
@@ -109,11 +149,17 @@ int readSamFile(string inSamFile, //input file
   int instanceid=0; //instance id
   int currentreadlen=0;
   long linecount=0;
-  int totalnumread=0; // total number of reads in the SAM file 
-  int totalpair=0; // total number of pairs in the SAM file 
+  int totalnumread=0; // total number of reads in the SAM file ELSA
+  int totalpair=0; // total number of pairs in the SAM file ELSA
+  // 2015-01-15 ELSA:
+  map<string, int> numread_samples;
+  map<string, int> numpair_samples;
+  num_samples_init(numread_samples, samples);
+  num_samples_init(numpair_samples, samples);
 
   Align calign;
   ReadGroup rd;
+  rd.setSamples(samples); // 2015-01-15 ELSA
 
   //----------------The main loop of parsing SAM file-------------------------
   while(true){
@@ -126,18 +172,24 @@ int readSamFile(string inSamFile, //input file
     if(calign.parse(oneline)==-1){
       // cerr<<"Error parsing SAM records at line "<<linecount<<endl;
     }
+
+    if(!calign.isValid()) // ELSA
+      continue;
     bool usesingle=USE_SINGLE_ONLY;
     //if the paired-end distance is too large, treat them as single-end reads
     if(calign.isPairedEnd()) {
-       totalpair++;  // ATTENTION ELSA 17 SEPT 13
+       totalpair++;  // ELSA 17 SEPT 13
+       if(numpair_samples.find(calign.rgname)!=numpair_samples.end()){
+	  numpair_samples[calign.rgname]++; // 2015-01-15 ELSA
+       }
        if( abs2(calign.plen)>MAX_PE_DISTANCE)
          usesingle=true;
        //do not support mapping to different chromosomes now
        if(calign.rnext!="*" && calign.rnext!="=")
          usesingle=true;
     }
-    if(!calign.isValid())
-      continue;
+    //if(!calign.isValid())
+    //  continue;   ELSA MOVED a bit up !
   
     //write to read info
     writeoneline2readinfo(calign);
@@ -145,14 +197,21 @@ int readSamFile(string inSamFile, //input file
       ReadGroup::setStatReadLen(calign.getReadLen());
       ReadGroup::setStatChr(calign.rname);
     }
-    if(oneline[0]!='@') totalnumread++;
+    if(oneline[0]!='@'){
+       // 2015-01-15 ELSA
+       totalnumread++;
+       if(numpair_samples.find(calign.rgname)!=numpair_samples.end()){
+	  numread_samples[calign.rgname]++;
+       }
+    }
     //write to instance, if possible
     //update and write generange file
     if(calign.rname!=prevrname || calign.pos>currentrange.second+MIN_GRANGE_DISTANCE){
-  
+
       rd.clearPairInfo();   
       if(currentrange.second!=0)
         write2rangeandinstance(rd,currentrange);
+
       rd.clear();
       //If gene ranges are fixed, get the next gene range
       if(FIXRANGE){
@@ -232,12 +291,23 @@ int readSamFile(string inSamFile, //input file
       C_GENE_RANGE.inc();
     }
   }
-  //write the total number of reads in a separate file
+  //write the total number of reads in a separate file ELSA
+  /* string MonPrefix;
+  for(int i=0;i<args.size();i++){
+     if(i<args.size()-1 && (string(args[i])=="-o" || string(args[i])=="--prefix") ){
+	MonPrefix=string(args[i+1]);
+     }
+  } */
+  // 2015-01-15 ELSA:
   string outNumRead=MonPrefix+".totalnumread";
   ofstream fichier(outNumRead.c_str(), ios::out | ios::trunc);
-  fichier<<"@Total Number of Reads\n"<<totalnumread<<"\n";
-  fichier<<"@Total Number of Pairs\n"<<totalpair/2;
-  fichier.close();
+  fichier<<"@Total Number of Reads\n"<<totalnumread<<"\t";
+  num_samples_print(fichier, numread_samples); 
+  //fichier<<"\n@Total Number of Pairs\n"<<totalpair/2<<"\t";
+  fichier<<"\n@Total Number of Pairs\n"<<totalpair<<"\t";
+  num_samples_print(fichier, numpair_samples);
+  fichier<<"\n"; 
+
   fifs.close();
   closeAuxFile();
 

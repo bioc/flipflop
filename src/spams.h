@@ -2,6 +2,7 @@
 #define SPAMS_H
 
 #include "dag.h"
+//#include "dicts.h"
 #include "fista.h"
 #include "decomp.h"
 #include "linalg.h"
@@ -1151,6 +1152,117 @@ using namespace FISTA;
 }
 
 /* end prox */
+
+/* from dictLearn */
+/*
+template<typename T> 
+Matrix<T> *_alltrainDL(Data<T> *X,bool in_memory, Matrix<T> **omA,Matrix<T> **omB,Vector<int> **omiter,bool return_model,Matrix<double> *m_A,Matrix<double> *m_B,int m_iter,
+		    Matrix<T> *D1,
+		    int num_threads,
+		    int batch_size,
+		    int K,
+		    double lambda1,
+		    double lambda2,
+		    int iter,
+		    double t0, 
+		    constraint_type mode,
+		    bool posAlpha,
+		    bool posD,
+		    bool expand,
+		    constraint_type_D modeD,
+		    bool whiten,
+		    bool clean,
+		    bool verbose,
+		    double gamma1,
+		    double gamma2,
+		    T rho,
+		    double iter_updateD,
+		    bool stochastic,
+		    int modeParam,
+		    bool batch,
+		    bool log,
+		    char *logName
+		    )  throw(const char *){
+#ifdef _OPENMP
+  num_threads = num_threads <= 0 ? omp_get_num_procs() : num_threads;
+#else
+  num_threads = 1;
+#endif
+  if (in_memory) return_model = false;
+  if (batch_size < 0) batch_size = 256 * (num_threads + 1);
+  if (iter < 0)
+    throw("trainDL : bad iter param\n");
+  int n = X->m();
+  Trainer<T>* trainer;
+  if(D1->n() == 0) { // D1 is not given
+    if (K < 0)
+      throw("trainDL : bad parameter K\n");
+    trainer = new Trainer<T>(K,batch_size,num_threads);
+  } else {
+    int nD = D1->m();
+    K = D1->n();
+    if (n != nD)
+      throw("trainDL : sizes of D are not consistent\n");
+    if ((m_A->n() == 0) || in_memory) {
+      trainer = new Trainer<T>((Matrix<T> &)(*D1),batch_size,num_threads);
+    } else {  // model given
+      trainer = new Trainer<T>((Matrix<T> &)(*m_A),(Matrix<T> &)(*m_B),(Matrix<T> &)(*D1),m_iter,batch_size,num_threads);
+    }
+  }
+  ParamDictLearn<T> param;
+  param.lambda = lambda1;
+  param.lambda2 = lambda2;
+  param.iter = iter;
+  param.t0 = t0;
+  param.mode = mode;
+  param.posAlpha = posAlpha;
+  param.posD = posD;
+  param.expand = expand;
+  param.modeD = modeD;
+  param.whiten = whiten;
+  param.clean = clean;
+  param.verbose = verbose;
+  param.gamma1 = gamma1;
+  param.gamma2 = gamma2;
+  param.rho = rho;
+  param.stochastic = stochastic;
+  param.modeParam = static_cast<mode_compute>(modeParam);
+  param.batch = batch;
+  param.log= log;
+  if(param.log) {
+    int n = strlen(logName);
+    if(n == 0) 
+      throw("trainDL : missing field logName");
+    param.logName = new char[n+1];
+    strcpy(param.logName,logName);
+  }
+  if (in_memory)
+    trainer->trainOffline(*X,param);
+  else
+    trainer->train(*X,param);
+  if (param.log) delete[](param.logName);
+  Matrix<T> *D = new Matrix<T>();
+  trainer->getD((Matrix<T> &)(*D));
+  K = D->n();
+  if (return_model) {
+    *omA = new Matrix<T>(K,K);
+    trainer->getA((Matrix<T> &)(**omA));
+    *omB = new Matrix<T>(n,K);
+    trainer->getB((Matrix<T> &)(**omB));
+    *omiter = new Vector<int>(1);
+    int *p = (*omiter)->rawX();
+    *p = trainer->getIter();
+  } else {
+    *omA = NULL;
+    *omB = NULL;
+    *omiter = NULL;
+  }
+  delete(trainer);
+  return D;
+}
+*/
+/* end  dictLearn */
+
 
 /* dags */
 

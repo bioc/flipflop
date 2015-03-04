@@ -5,8 +5,14 @@
 #include "cvganalysis.h"
 #include "common.h"
 
+
+
+// 2014-09-28: Eric Viara
+//#define MERGE_ADJACENT_SEGMENTS
+
 int ReadGroup::statReadLen=0;
 
+//ReadGroup::CollapseAdjacentSegments ReadGroup::collapse_adjacent_segments = ReadGroup::COLLAPSE_ADJACENT_SEGMENTS_NO;
 string ReadGroup::statChr="";
 
 void ReadGroup::clear()
@@ -14,6 +20,7 @@ void ReadGroup::clear()
   //allalign.clear();
   start.clear();
   end.clear();
+  rdg_names.clear(); // 2015-01-15 ELSA
   direction.clear();
   pairs.clear();
   topair.clear();
@@ -42,20 +49,32 @@ void ReadGroup::clearPairInfo(){
   topair.clear();
 }
 
+/* 2015-01-15 ELSA
+TODO: can be used when we will propagate samples across split of readgroups
+16 avril 2014: not urgent at all -- may be useless */
+void ReadGroup::setSamples(const Samples* _samples){
+  samples=_samples;
+}
+
 /*
 Add a paired-end reads. Do not go through the paired-end search process
 */
-int ReadGroup::addPair(pos_t &s1, pos_t &e1, int d1, pos_t&s2, pos_t & e2, int d2 ){
-  addOnly(s1,e1,d1);
-  addOnly(s2,e2,d2);
-  pairs[pairs.size()-1]=pairs.size()-2;
-  pairs[pairs.size()-2]=pairs.size()-1;
-  //allalign[allalign.size()-1].qname=allalign[allalign.size()-2].qname;
-  return 0;
+int ReadGroup::addPair(pos_t &s1, pos_t &e1, int d1 ,const string & pairname1, pos_t&s2, pos_t & e2, int d2, const string & pairname2){
+   //if(pairname1 != pairname2){
+   //   std::cerr << "Error: wrong pairing "<<pairname1<<" "<<pairname2<<"\n";
+   //   exit(1);
+   //}
+   addOnly(s1,e1,d1,pairname1); // 2015-01-15 ELSA
+   addOnly(s2,e2,d2,pairname2); // 2015-01-15 ELSA
+   pairs[pairs.size()-1]=pairs.size()-2;
+   pairs[pairs.size()-2]=pairs.size()-1;
+   //allalign[allalign.size()-1].qname=allalign[allalign.size()-2].qname;
+   return 0;
 }
 
 /* Add one alignment to the current cluster of reads. Do not try to pair it. */
-int ReadGroup::addOnly(pos_t &s, pos_t &e,int dir){
+int ReadGroup::addOnly(pos_t &s, pos_t &e,int dir, const string& rgname){
+  rdg_names.push_back(rgname); // 2015-01-15 ELSA
   start.push_back(s);
   end.push_back(e);
   direction.push_back(dir);
@@ -71,7 +90,7 @@ int ReadGroup::addOnly(pos_t &s, pos_t &e,int dir){
 Add one alignment to the current cluster of reads. If the read is paired-end reads, try to automatically pair them.
 */
 int ReadGroup::add(Align & al){
-  addOnly(al.s(),al.e(),al.splicedir);
+  addOnly(al.s(),al.e(),al.splicedir, al.rgname); // 2015-01-15 ELSA
   if(forcesingle || al.isPairedEnd()==false){
     //single-end
   }
@@ -92,25 +111,9 @@ int ReadGroup::add(Align & al){
             //if(REPLACE_READ_NAME){allalign.back().qname=allalign[previd].qname;}
             topair[al.pos].erase(al.qname);
           }
-          //old code
-         // range_t nr=topair[al.qname];
-         // if( nr.first==al.pnext){
-         //   //pairs.push_back(topair[al.qname]);
-         //   //pairs.push_back(int(start.size()-1));
-         //   int previd=(int)nr.second;
-         //   pairs[previd]=int(start.size()-1);
-         //   pairs.back()=previd;
-         //   topair.erase(al.qname);
-         // }
         }
       }
     }
-    //remove past topair records
-    //map<long,map<string,long> >::iterator mit=topair.begin();
-    //while(mit!=topair.end()){
-    //  if(mit->first<al.pos) topair.erase(mit++);
-    //  else break;
-    //}
   }//end if
   return 0;
 }
@@ -288,7 +291,7 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,long minD){
         long cmdist=vs[j].minDist(start[i],end[i]);
         if(cmdist<=minD){
           vs[j].add(start[i],end[i]);
-          vr[j].addOnly(start[i],end[i],direction[i]);
+          vr[j].addOnly(start[i],end[i],direction[i], rdg_names[i]); // ELSA
           newrange=false;
           break;
         }
@@ -300,8 +303,8 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,long minD){
           ){
             vs[j].add(start[i],end[i]);
             vs[j].add(start[pairs[i]],end[pairs[i]]);
-            vr[j].addPair(start[i],end[i],direction[i],
-              start[pairs[i]],end[pairs[i]],direction[pairs[i]]);
+            vr[j].addPair(start[i],end[i],direction[i],rdg_names[i],
+              start[pairs[i]],end[pairs[i]],direction[pairs[i]], rdg_names[pairs[i]]);
             //vr[j].add(allalign[i]);
             //vr[j].add(allalign[pairs[i]]);
             newrange=false;
@@ -320,11 +323,11 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,long minD){
           vs.back().add(start[i],end[i]);
           vs.back().add(start[pairs[i]],end[pairs[i]]);
           //vr.back().add(allalign[pairs[i]]);
-          vr.back().addPair(start[i],end[i],direction[i],
-            start[pairs[i]],end[pairs[i]],direction[pairs[i]]);
+          vr.back().addPair(start[i],end[i],direction[i],rdg_names[i],
+            start[pairs[i]],end[pairs[i]],direction[pairs[i]],rdg_names[pairs[i]]);
         }else{
           vs.back().add(start[i],end[i]);
-          vr.back().addOnly(start[i],end[i],direction[i]);
+          vr.back().addOnly(start[i],end[i],direction[i], rdg_names[i]);
         }
        
       }
@@ -351,11 +354,11 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,long minD){
           for(int i=0;i<vr[i2].start.size();i++){
             int p=vr[i2].pairs[i];
             if(p==-1)
-              vr[i1].addOnly(vr[i2].start[i],vr[i2].end[i],vr[i2].direction[i]);
+              vr[i1].addOnly(vr[i2].start[i],vr[i2].end[i],vr[i2].direction[i], vr[i2].rdg_names[i]);
             else{
               if(i<p){
-                vr[i1].addPair(vr[i2].start[i],vr[i2].end[i],vr[i2].direction[i],
-                   vr[i2].start[p],vr[i2].end[p],vr[i2].direction[p]);
+                vr[i1].addPair(vr[i2].start[i],vr[i2].end[i],vr[i2].direction[i], vr[i2].rdg_names[i],
+                   vr[i2].start[p],vr[i2].end[p],vr[i2].direction[p],vr[i2].rdg_names[p]);
               }
             }//end if
           }//end for
@@ -419,7 +422,7 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,vector<RangeSet> & vs){
     for(int j=0;j<vs.size();j++){
       if(pairs[i]==-1){
         if(vs[j].overlapLen(start[i],end[i])==getReadLen(i)){
-          vr[j].addOnly(start[i],end[i],direction[i]);
+          vr[j].addOnly(start[i],end[i],direction[i], rdg_names[i]);
           naccepted++;
           //break; //If the range is non-overlapping, uncomment this break
         }else{
@@ -431,8 +434,8 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,vector<RangeSet> & vs){
           if(vs[j].overlapLen(start[i],end[i])==getReadLen(i)
             || vs[j].overlapLen(start[p], end[p])==getReadLen(p)
           ){
-            vr[j].addPair(start[i],end[i],direction[i],
-              start[p],end[p],direction[p]);
+            vr[j].addPair(start[i],end[i],direction[i],rdg_names[i],
+              start[p],end[p],direction[p], rdg_names[p]);
             naccepted++;
             //break;   //If the range is non-overlapping, uncomment this break
          }else{
@@ -549,7 +552,6 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,ReadGroup& prange,double 
 }
 */
 
-
 void ReadGroup::setRange(range_t  s){
   fixrange=s;
   isfixrange=true;
@@ -574,7 +576,23 @@ void ReadGroup::setupBound(vector<range_t>& jbound){
     allbound[jbound[i].second]=1;
   }
 }
- 
+
+/* 2015-01-15 ELSA displayAllBound
+void ReadGroup::displayAllBound(const std::string& msg) const
+{
+  std::cout << "display_allbound: " << msg << ", size: " << allbound.size() << '\n';
+  long opos = 0;
+  int non_zero = 0;
+  for (map<long,int>::const_iterator bb = allbound.begin(); bb != allbound.end(); ++bb) {
+    long pos = (*bb).first;
+    std::cout << ' ' << pos << " " << (opos > 0 ? pos-opos : -1) << " " << (*bb).second << '\n';
+    if ((*bb).second) {non_zero++;}
+    opos = pos;
+  }
+  std::cout << "non_zero: " << non_zero << '\n';
+}
+*/
+
 /**
  * Get all boundaries of given reads
  * minjunc: minimum junction count
@@ -592,7 +610,7 @@ void ReadGroup::calculateBound(
   vpos_t & rpoolend=end;
   map<long,int> boundfilter;
   range_t currentrange=getRange();
-  // 2014-09-30: ELSA - redefine extreme boundary -- REMOVE THAT 2014-01-14 
+  // 2014-09-30: ELSA - redefine extreme boundary -- REMOVE THAT 2015-01-14
   boundfilter[currentrange.first]=minjunc;
   boundfilter[currentrange.second+1]=minjunc;
   for(int i=0;i<rpoolstart.size();i++){
@@ -602,13 +620,13 @@ void ReadGroup::calculateBound(
       for(int j=0;j<rpoolend[i].size()-1;j++) boundfilter[rpoolend[i][j]+1]++;
     }
   }
-  //
   map<long,int>::iterator mitr,mitr2;
   for(mitr=boundfilter.begin();mitr!=boundfilter.end();mitr++){
     if(mitr->second>=minjunc)
-      allbound[mitr->first]=0;//set up boundary. ok to reset 2 to 0
+       //allbound[mitr->first]=0;//set up boundary. ok to reset 2 to 0
+       allbound[mitr->first]=mitr->second;//set up boundary. ok to reset 2 to 0
   }
-  // 2014-09-30: ELSA set up extreme boundary -- REMOVE THAT 2014-01-14 
+  // 2014-09-30: ELSA set up extreme boundary -- REMOVE THAT 2015-01-14 
   /*
   if(allbound.size() == 0) { // if no internal boundary only use currentrange
      allbound[currentrange.first]=minjunc;
@@ -630,6 +648,7 @@ void ReadGroup::calculateBound(
      }
   }
   */
+    //displayAllBound("before");
     //now, check the coverage (real), insert boundaries if the coverage drops below 0.
     //but do not insert boundaries if the maximum coverage is too low, or if the gap is too short
   if(cvgcut==false)return;
@@ -642,18 +661,21 @@ void ReadGroup::calculateBound(
     
   // now, check adjacent ranges,
   // if they're too close, merge them
-  int mincutseglen=statReadLen;
-  //int mincutseglen=2; //change here compared to isolasso. Replace 0 by 2 for possible sub-exons created by coverage cut-off. 
-  if(cutpoint.size()>0){
-    for(int i=0;i<cutpoint.size();i++){
-        if(allbound.count(cutpoint[i].first)==0 
-          && getClosestPoint(cutpoint[i].first, allbound)> mincutseglen )
-          allbound[cutpoint[i].first]=1; //begin
-        if(allbound.count(cutpoint[i].second+1)==0
-         && getClosestPoint(cutpoint[i].second+1, allbound)> mincutseglen )
-          allbound[cutpoint[i].second+1]=1; //begin
-    }
+  if(CVG_CUT==1) { // 2015-01-15 ELSA: add option for the cutpoint or not
+     int mincutseglen=statReadLen;
+     //int mincutseglen=2; //change here compared to isolasso. Replace 0 by 2 for possible sub-exons created by coverage cut-off.
+     if(cutpoint.size()>0){
+	for(int i=0;i<cutpoint.size();i++){
+	   if(allbound.count(cutpoint[i].first)==0 
+		 && getClosestPoint(cutpoint[i].first, allbound)> mincutseglen )
+	      allbound[cutpoint[i].first]=1; //begin
+	   if(allbound.count(cutpoint[i].second+1)==0
+		 && getClosestPoint(cutpoint[i].second+1, allbound)> mincutseglen )
+	      allbound[cutpoint[i].second+1]=1; //begin
+	}
+     }
   }
+  //displayAllBound("after");
   getCvgStat(cvg,allbound,cvgstat);
 }
 /*
@@ -717,6 +739,13 @@ type_t ReadGroup::getType(const pos_t& sn, const pos_t& en)const{
 }
 
 /*
+Test to define the sample name of each read of the cluster
+*/
+//void ReadGroup::catchName(){
+//
+//}
+
+/*
 Calculate the types according to the boundary
 */
 void ReadGroup::calculateType(){
@@ -724,13 +753,34 @@ void ReadGroup::calculateType(){
   //print segs
   //cout<<"SEGS:"<<endl; for(int i=0;i<segs.size();i++) cout<<"["<<segs[i].first<<","<<segs[i].second<<"] "; cout<<endl;
   alltype.clear();typecount.clear();read2type.clear();
+  // 2015-01-15 ELSA:
+  rdg_typecount.clear();
+  // rdg_typecount est une map entre le nom du sample et un vecteur indicé par le numéro du type (variable tn ci-dessous), 
+  // et chaque entrée du vecteur est le nombre d'occurence du sample pour le type tn.
+  const Samples* samples = Samples::getInstance();
+  const vector<string>& vsamples=samples->getSamples();
+  vector<string>::const_iterator bb=vsamples.begin();
+  vector<string>::const_iterator ee=vsamples.end();
+  while(bb!=ee){
+    rdg_typecount[*bb] = vector<int>();
+    bb++;
+  }
+  map<string, vector<int> >::iterator rdg_iter;
+
   map<type_t,int> knowntype;
   //also count the number of reads for each segments
   segsCnt=vector<int>(segs.size(),0);
   segsJCnt=segsCnt;
+
   for(int i=0;i<start.size();i++){
-    type_t cty=getType(i);
-    if(cty.size()>1){
+
+    // 2015-01-15 ELSA:
+    const std::string& rdg_name = rdg_names[i];
+    //std::cout << "calculatetype: RDG_NAME: " << rdg_name << endl;
+    rdg_iter=rdg_typecount.find(rdg_name);
+
+    type_t cty=getType(i); // IMPORTANT
+    if(cty.size()>0){
       //print type
       //cout<<"JUNCTION TYPE:"; for(int j=0;j<cty.size();j++) cout<<cty[j]<<" ";cout<<endl;
     }
@@ -753,6 +803,17 @@ void ReadGroup::calculateType(){
     typecount[tn]++;
     typedir[tn]+=direction[i];
     read2type.push_back(tn);
+    // 2015-01-15 ELSA:
+    if(rdg_iter!=rdg_typecount.end()){
+       vector<int>& vtc = (*rdg_iter).second;
+       if (vtc.size() <= tn) {
+	  vtc.resize(tn+1);
+	  for (size_t nn = vtc.size(); nn <= tn; ++nn) {
+	     vtc[nn] = 0;
+	  }
+       }
+       vtc[tn]++; 
+    }
   }//end for
   //set up valid SGType
   validSGType=vector<int>(alltype.size(),1);
@@ -811,7 +872,7 @@ void ReadGroup::removeWeakSegs(float minf){
           // if(VERBOSE==1){
 	    // cout<<"Invalid seg "<<j<<" because of too small coverages ("<<cvgstat[segs[j].first][4]<<"/"<<maxcvg<<").\n";
 	  // }
-	  validSeg[j]=0;
+	   validSeg[j]=0;
         }
       }
     }
@@ -905,7 +966,7 @@ int ReadGroup::getReadLen(int n) const{
 
 }
 
-void ReadGroup::toStream(ostream &out)const {
+void ReadGroup::toStream(ostream &out) {
   range_t currentrange=getRange();
   char cdir='.';
   if(getDir()==1) cdir='+';
@@ -998,33 +1059,68 @@ void ReadGroup::toStream(ostream &out)const {
       exonbin[alltype[i][j]]=1;
     }
     //output
-    for(int j=0;j<exonbin.size();j++)
-      if(validSeg[j]==1) 
-        out<<exonbin[j]<<" ";
+    for(int j=0;j<exonbin.size();j++) {
+       if(validSeg[j]==1) {
+	  out<<exonbin[j]<<" ";
+       }
+    }
     int cdir=0;
     if(typedir[i]>0)cdir=1;
     if(typedir[i]<0)cdir=-1;
-    out<<typecount[i]<<"\t"<<cdir<<endl;
+    // out<<typecount[i]<<"\t"<<cdir<<endl; // ELSA comment
+    // 2015-01-15 ELSA:
+    out<<typecount[i] << '\t';
+    map<string, vector<int> >::const_iterator begin = rdg_typecount.begin();
+    map<string, vector<int> >::const_iterator end = rdg_typecount.end();
+    while (begin != end) {
+      const vector<int>& v = (*begin).second ;
+      out << (*begin).first << '=' << (v.size()>i?v[i]:0) << ' ';
+      ++begin;
+    }
+    out<<'\t' << cdir << endl; // ELSA end
   }
   //PETypes
   map<range_t,pos_t>allpetypes;
+  // 2015-01-15 ELSA; initialisation
+  // map< range_t, map<string, pos_t> > rdg_allpetypes ; TO DO initialiser avec samples + remplir cf ci-dessous (peut etre mettre les noms de sample en clé principale)
+  map < string, map<range_t, pos_t> > rdg_allpetypes; // map entre sample names et le type de pair associé aux inserts .
+  const Samples* samples = Samples::getInstance(); 
+  const vector<string>& vsamples=samples->getSamples(); 
+  vector<string>::const_iterator bb=vsamples.begin();
+  vector<string>::const_iterator ee=vsamples.end();
+  while(bb!=ee){
+    rdg_allpetypes[*bb] = map<range_t, pos_t>();
+    bb++;
+  }
+
   int nPE=0;
   for(int i=0;i<pairs.size();i++){
     if(pairs[i]!=-1 && i<pairs[i]){
       long fod=read2type[i],sod=read2type[pairs[i]];
       if(validSGType[fod]==0 || validSGType[sod]==0)
         continue;
+      // fod:indice du type du read 1 , sod: meme chose read 2
       nPE++;
       long dist=start[pairs[i]].front()-end[i].back();
       allpetypes[range_t(fod,sod)].push_back(dist);
+      // map entre type double et un vecteur d'insert size (avec repetition possible, on les cummule toutes)
+      // rdg_allpetypes[range_t(fod,sod)][rdg_names[i]].push_back(dist);
+      if (rdg_allpetypes.find(rdg_names[i]) != rdg_allpetypes.end()) {
+	  rdg_allpetypes[rdg_names[i]][range_t(fod,sod)].push_back(dist); // 2015-01-15 ELSA
+      }
     }
   }
+  
   out<<"PETypes\t"<<nPE<<"\t"<<allpetypes.size()<<endl;
+  /* 2015-01-15 ELSA
+  - TODO to be rewritten:
+  - explicit variable names (instead of xxx.first, xxx.second etc.)
+  - code factorization */
   for(map<range_t,pos_t>::iterator apitr=allpetypes.begin();
             apitr!=allpetypes.end();
             apitr++){
       //In instance file, index+1 for all SGTypes
-      //also, the index of SGTypes are chaged due to some invalid SGTypes
+      //also, the index of SGTypes are changed due to some invalid SGTypes
       //cluster the PETypes here to avoid over 30k numbers in a line
       map<long,int> pedistmap;
       for(int i=0;i<(apitr->second).size();i++)
@@ -1032,39 +1128,67 @@ void ReadGroup::toStream(ostream &out)const {
       
       out<<validSGmap[(apitr->first).first]+1<<"\t"
         <<validSGmap[(apitr->first).second]+1<<"\t"<<pedistmap.size()<<endl;
-      for(map<long,int>::iterator pedit=pedistmap.begin();pedit!=pedistmap.end();pedit++) out<<pedit->first<<":"<<pedit->second<<" ";
-      //for(int i=0;i<(apitr->second).size();i++)
-      //  out<<(apitr->second)[i]<<" ";
+      for(map<long,int>::iterator pedit=pedistmap.begin();pedit!=pedistmap.end();pedit++){
+	 out<<pedit->first<<":"<<pedit->second<<" ";
+      }
       out<<endl;
+      const range_t &refrange = apitr->first;
+      map < string, map<range_t, pos_t> >::const_iterator bb = rdg_allpetypes.begin();
+      map < string, map<range_t, pos_t> >::const_iterator ee = rdg_allpetypes.end();
+      while (bb != ee) {
+	out << (*bb).first << " ";
+	const map<range_t, pos_t>& mp = (*bb).second;
+	map<range_t, pos_t>::const_iterator iter = mp.find(refrange);
+	if (iter == mp.end()) {
+	  out << "0\n";
+	} else {
+	  const pos_t& pp = (*iter).second;
+	  pos_t::const_iterator bpp = pp.begin();
+	  pos_t::const_iterator epp = pp.end();
+	  map<long,int> pedistmap2;
+	  while (bpp != epp) {
+	    long dist = *bpp;
+	    pedistmap2[dist]++;
+	    bpp++;
+	  }
+	  out << pedistmap2.size() << " ";
+	  for(map<long,int>::iterator pedit=pedistmap2.begin();pedit!=pedistmap2.end();pedit++){
+	    out<<pedit->first<<":"<<pedit->second<<" ";
+	  }
+	  out << endl;
+	}
+	++bb;
+      }
   }
+
   //Coverage
   //for each type, count the number of reads for each position
-  // ELSA modif 28fev14: do not write Coverage in the instance file, comment below:
-//   vector<map<long,int> >typecvg(alltype.size());
-//   for(int i=0;i<start.size();i++){
-//     if(validRead[i]==0)continue;
-//     typecvg[read2type[i]][start[i][0]]++;
-//   }
-// 
-//   out<<"Coverage\t"<<nvalsg<<"\t"<<validSize()<<endl;
-//   int counter=0;
-//   for(int i=0;i<alltype.size();i++){
-//     if(validSGType[i]==0)continue;
-//     //count the number of positions having a specific number of reads
-//     map<int,int> posstat;
-//     map<long,int>& ttc=typecvg[i];
-//     for(map<long,int>::iterator ittc=ttc.begin();ittc!=ttc.end();ittc++)
-//       posstat[ittc->second]++;
-//     out<<counter++<<"\t"<<posstat.size()<<endl;
-//     for(map<int,int>::iterator ipss=posstat.begin();ipss!=posstat.end();ipss++)
-//       out<<ipss->first<<","<<ipss->second<<"\t";
-//     out<<endl;
-//   }
+  /* ELSA modif 28fev14: do not write Coverage in the instance file, comment below:
+     vector<map<long,int> >typecvg(alltype.size());
+     for(int i=0;i<start.size();i++){
+     if(validRead[i]==0)continue;
+     typecvg[read2type[i]][start[i][0]]++;
+     }
+     out<<"Coverage\t"<<nvalsg<<"\t"<<validSize()<<endl;
+     int counter=0;
+     for(int i=0;i<alltype.size();i++){
+     if(validSGType[i]==0)continue;
+  //count the number of positions having a specific number of reads
+  map<int,int> posstat;
+  map<long,int>& ttc=typecvg[i];
+  for(map<long,int>::iterator ittc=ttc.begin();ittc!=ttc.end();ittc++)
+  posstat[ittc->second]++;
+  out<<counter++<<"\t"<<posstat.size()<<endl;
+  for(map<int,int>::iterator ipss=posstat.begin();ipss!=posstat.end();ipss++)
+  out<<ipss->first<<","<<ipss->second<<"\t";
+  out<<endl;
+  }
+  */
   
 }
 
 
-ostream& operator<<(ostream& out,const ReadGroup & rg){
+ostream& operator<<(ostream& out, ReadGroup & rg){
   rg.toStream(out);
   return out;
 }

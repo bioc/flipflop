@@ -109,4 +109,8 @@ extern bool REPLACE_READ_NAME;
 
 /* Are the input reads stranded? 1 for positive, -1 for negative, and 0 for unstranded. This parameter is set by -d/--direction option and will be used when writing instances */
 extern int STRANDED_RNASEQ;
+
+/* 2015-01-15 ELSA: add option. Boundary should be created based on coverage discrepancies or not */
+extern int CVG_CUT;
+ 
 #endif

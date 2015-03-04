@@ -131,9 +131,17 @@ int parseopt(vector<string> args){
         if(nsr=="-")
           STRANDED_RNASEQ=-1;
       }
+      else if(string(args[i])=="--cvg-cut"){
+	 string opt=string(args[i+1]);
+	 if (opt == "yes") {
+	    CVG_CUT=1;
+	 }
+	 if (opt == "no") {
+	    CVG_CUT=0;
+	 }
+      }
     }
   }
-  
   //cout<<"Minimum gap length for two genes (mingapdist): "<<MIN_GRANGE_DISTANCE<<endl;
   //cout<<"Minimum number of reads in one gene (mingrangecount): "<<MIN_GRANGE_READ_CNT<<endl;
  
@@ -142,10 +150,6 @@ int parseopt(vector<string> args){
     MIN_GRANGE_DISTANCE=0;
     MIN_GRANGE_READ_CNT=0;
   }
-
-  // cout<<"Minimum gap length for two genes (mingapdist): "<<MIN_GRANGE_DISTANCE<<endl;
-  // cout<<"Minimum number of reads in one gene (mingrangecount): "<<MIN_GRANGE_READ_CNT<<endl;
-  
   // if(VERBOSE==1){
     // cout<<"Using fix range: "<<FIXRANGE<<",size:"<<C_GENE_RANGE.size()<<endl;
   // }

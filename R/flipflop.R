@@ -29,30 +29,34 @@
 ## @synopsis
 ##
 ## \arguments{
-##   \item{data.file}{Input alignment file in SAM format. The SAM file must be sorted according to chromosome name and starting position.}
-##   \item{out.file}{Output gtf file storing the structure of the transcripts which are found to be expressed together with their abundances (in FPKM and expected count).}
-##   \item{annot.file}{Optional annotation file in BED12 format. If given, exon boundaries will be taken from the annotations. The BED file should be sorted according to chromosome name and starting position of transcripts.}
-##   \item{paired}{Boolean for paired-end reads. If FALSE your reads will be considered as single-end reads. Default FALSE.}
-##   \item{frag}{Mean fragment size. Only used if paired is set to TRUE. Default 400.}
-##   \item{std}{Standard deviation of fragment size. Only used if paired is set to TRUE. Default 20.}
-##   \item{minReadNum}{[Pre-processing] The minimum number of clustered reads to output. Default 40. If you give an annotation file it will be the minimum number of mapped reads to process a gene.}
-##   \item{minFragNum}{[Pre-processing] The minimum number of mapped read pairs to process a gene. Only used if paired is TRUE. Default 20.}
-##   \item{minCvgCut}{[Pre-processing] The fraction for coverage cutoff, should be between 0-1. A higher value will be more sensitive to coverage discrepancies in one gene. Default 0.05.}
-##   \item{minJuncCount}{[Pre-processing] The minimum number of reads to consider a junction as valid. Default 1.}
-##   \item{verbose}{Verbosity. Default 0 (little verbosity). Put 1 for more verbosity.}
-##   \item{verbosepath}{Verbosity of the optimization part. Default 0 (little verbosity). Put 1 for more verbosity.}
-##   \item{max_isoforms}{Maximum number of isoforms given during regularization path. Default 10.}
+##   \item{data.file}{[input] Input alignment file in SAM format. The SAM file must be sorted according to chromosome name and starting position. If you use a multi-sample strategy, please give a single SAM file that results from the "samtools merge" command with the "-r" option (i.e attach RG tag infered from file name).}
+##   \item{out.file}{[output] Output gtf file storing the structure of the transcripts which are found to be expressed together with their abundances (in FPKM and expected count).}
+##   \item{output.type}{[output] Type of output when using several samples simultaneously. When equal to "gtf" the output corresponds to a gtf file per sample with specific abundances. When equal to "table" the output corresponds to a single gtf file storing the structure of the transcripts, and an associated table with the abundances of all samples (transcripts in rows and samples in columns) Default "gtf".}
+##   \item{annot.file}{[input optional] Optional annotation file in BED12 format. If given, exon boundaries will be taken from the annotations. The BED file should be sorted according to chromosome name and starting position of transcripts.}
+##   \item{samples.file}{[multi-samples] Optional samples file (one line per sample name). The names should be the one present in the RG tag of the provided SAM file.}
+##   \item{mergerefit}{[multi-samples] If TRUE use a simple refit strategy instead of the group-lasso. Default FALSE.}
+##   \item{paired}{[paired] Boolean for paired-end reads. If FALSE your reads will be considered as single-end reads. Default FALSE.}
+##   \item{frag}{[paired] Mean fragment size. Only used if paired is set to TRUE. Default 400.}
+##   \item{std}{[paired] Standard deviation of fragment size. Only used if paired is set to TRUE. Default 20.}
+##   \item{OnlyPreprocess}{[pre-processing] Boolean for performing only the pre-processing step. Output is two files: one file '.instance' and one other file '.totalnumread'. Default FALSE.}
+##   \item{preprocess.instance}{[pre-processing] Give directly the pre-processed '.instance' input file created when using the OnlyPreprocess option. If non empty, the data.file and annot.file fields are ignored.}
+##   \item{minReadNum}{[pre-processing] The minimum number of clustered reads to output. Default 40. If you give an annotation file it will be the minimum number of mapped reads to process a gene.}
+##   \item{minFragNum}{[pre-processing] The minimum number of mapped read pairs to process a gene. Only used if paired is TRUE. Default 20.}
+##   \item{minCvgCut}{[pre-processing] The fraction for coverage cutoff, should be between 0-1. A higher value will be more sensitive to coverage discrepancies in one gene. Default 0.05.}
+##   \item{minJuncCount}{[pre-processing] The minimum number of reads to consider a junction as valid. Default 1.}
+##   \item{NN}{[pre-processing] Total number of mapped fragments. Optional. If given the number of mapped fragments is not read from the '.totalnumread' file.}
+##   \item{verbose}{[verbosity] Verbosity. Default 0 (little verbosity). Put 1 for more verbosity.}
+##   \item{verbosepath}{[verbosity] Verbosity of the optimization part. Default 0 (little verbosity). Put 1 for more verbosity. Mainly used for de-bugging.}
+##   \item{cutoff}{[parameter] Do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Default 1.}
+##   \item{BICcst}{[parameter] Constant used for model selection with the BIC criterion. Default 50.}
+##   \item{delta}{[parameter] Loss parameter, Poisson offset. Default 1e-7.}
 ##   \item{use_TSSPAS}{Do we restrict the candidate TSS and PAS sites. 1 is yes and 0 is no. Default 0 i.e each exon can possibly starts or ends an isoform.}
-##   \item{cutoff}{For paired-end reads do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Not active if paired is FALSE. Default 5.}
-##   \item{BICcst}{Constant used for model selection with the BIC criterion. Default 50.}
-##   \item{OnlyPreprocess}{Boolean for performing only the pre-processing step. Output is two files: one file '.instance' and one other file '.totalnumread'. Default FALSE.}
-##   \item{preprocess.instance}{Give directly the pre-processed '.instance' input file created when using the OnlyPreprocess option. If non empty, the data.file and annot.file fields are ignored.}
-##   \item{NN}{Total number of mapped fragments. Optional. If given the number of mapped fragments is not read from the '.totalnumread' file.}
+##   \item{max_isoforms}{Maximum number of isoforms given during regularization path. Default 10.}
 ## }
 ##
 ## \value{
 ##  A @list with the following elements:
-##  \item{transcripts}{A list storing the structure of the expressed isoforms. The list is a GRangesList object from the GenomicRanges package. Rows correspond to exons. On the left hand side each exon is described by the gene name, the chromosome, its genomic position on the chromosome and the strand. Transcripts are described on the right hand side. Every transcript is a binary vector where an exon is labelled by 1 if it is included in the transcript.}
+##  \item{transcripts}{A list storing the structure of the expressed isoforms. The list is a GenomicRangesList object from the GenomicRanges package. Rows correspond to exons. On the left hand side each exon is described by the gene name, the chromosome, its genomic position on the chromosome and the strand. Transcripts are described on the right hand side. Every transcript is a binary vector where an exon is labelled by 1 if it is included in the transcript.}
 ##  \item{abundancesFPKM}{A list storing the abundances of the expressed isoforms in FPKM unit. Each element of the list is a vector whose length is the number of expressed transcripts listed in the above 'transcripts' object.}
 ##  \item{expected.counts}{A similar list as 'abundancesFPKM' but storing the expected fragment counts for each expressed isoforms.}
 ##  \item{timer}{A vector with the computation time in seconds for each gene.}
@@ -66,26 +70,31 @@
 
 flipflop <- function(data.file, 
                      out.file='FlipFlop_output.gtf',
+                     output.type='gtf',
                      annot.file='',
+                     samples.file='',
+                     mergerefit=FALSE,
                      paired=FALSE,
                      frag=400,
                      std=20,
-                     minReadNum=40,
-                     minFragNum=20,
-                     minCvgCut=0.05,
-                     minJuncCount=1,
-                     verbose=0,
-                     verbosepath=0,
-                     max_isoforms=10,
-                     use_TSSPAS=0,
-                     cutoff=5,
-                     BICcst=50,
                      OnlyPreprocess=FALSE,
                      preprocess.instance='',
-                     NN=''
+                     minReadNum=40,
+                     minFragNum=20,
+                     minCvgCut=0.05, # 2015-01-22
+                     minJuncCount=1,
+                     NN='',
+                     verbose=0,
+                     verbosepath=0,
+                     cutoff=1, # 2015-01-22
+                     BICcst=50,
+                     delta=1e-7, # 2015-01-22
+                     use_TSSPAS=0,
+                     max_isoforms=10
                      ){
 
    options(scipen=20) 
+   
    ##================================================================================
    ## Process alignment data using functions of IsoLasso (Li et al. 2011)
    ##================================================================================
@@ -94,23 +103,24 @@ flipflop <- function(data.file,
       print('PRE-PROCESSING sam file ....')
       data.file <- path.expand(path=data.file) # In case there is a '~' in the input path 
       annot.file <- path.expand(path=annot.file)
+      samples.file <- path.expand(path=samples.file)
       bn <- basename(data.file)
       prefix <- sub('[.][^.]*$', '', bn)
-      processsam(data.file, prefix, annot=annot.file, paired=paired, minReadNum=minReadNum, minCvgCut=minCvgCut, minJuncCount=minJuncCount, verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
+      processsam(data.file, prefix, annot=annot.file, samples=samples.file, 
+                 paired=paired, minReadNum=minReadNum, minCvgCut=minCvgCut, minJuncCount=minJuncCount, 
+                 verbose=verbose) # Pre-Processing step (mainly from IsoLasso software)
       print('DONE !')
    }
 
    # Continue the job:
-   if(OnlyPreprocess==FALSE){
+   if(!OnlyPreprocess){
+
       # Read the preprocess.instance file just created:
-      if(preprocess.instance==''){
-         infn <- paste(prefix, '.instance', sep='')
-         inpf <- file(infn, 'r')
-      }
-      # Or use given preprocess.instance input file. 
-      if(preprocess.instance!=''){
-         inpf <- file(preprocess.instance, 'r')
-      }
+      if(preprocess.instance=='') { infn <- paste(prefix, '.instance', sep='') ; inpf <- file(infn, 'r') }
+
+      # Or use given preprocess.instance input file: 
+      if(preprocess.instance!='') { inpf <- file(preprocess.instance, 'r') }
+
       # Total number of mapped reads, if not provided
       if(NN==''){ # if NN (total number of mapped fragments) is not given, read it in the file created previously
          if(preprocess.instance==''){
@@ -123,22 +133,60 @@ flipflop <- function(data.file,
             numrfn <- paste(go1,'/',go2,'.totalnumread',sep="")
             numrf <- file(numrfn,'r')
          }
+         nn <- scan(numrf, what=character(0), nlines=1, quiet=TRUE, skip=1) # Total number of mapped reads
          if(paired==FALSE){
-            NN <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1) # Total number of mapped reads
+            NN <- as.integer(nn[1])
          }
          if(paired==TRUE){
-            Nall <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
-            Npair <- scan(numrf, what=integer(0), nlines=1, quiet=TRUE, skip=1)
+            npair <- scan(numrf, what=character(0), nlines=1, quiet=TRUE, skip=1)
+            Npair <- as.integer(npair[1])
             NN <- Npair # Total number of mapped fragments
          }
          close(numrf)
       }
-      outf <- file(out.file, 'w')
+
+      # Samples file
+      samples.name <- NULL
+      n.samples <- 1
+      if(samples.file!=''){
+         samples <- read.table(samples.file)
+         samples.name <- sort(unique(samples[,1]))
+         n.samples <- length(samples.name)
+         print(paste('The sample names are:', paste(samples.name, collapse=" ")))
+      }
+
+      # Output file & Update NN
+      outf.fpkm <- NULL
+      outf.count <- NULL
+      if(is.null(samples.name)){
+         outf <- list(file(out.file, 'w'))
+      } else {
+         go <- sub('[.][^.]*$', '', basename(out.file))
+         tmp.names.all <- sapply(strsplit(nn[-1], split='='), FUN=function(k) k[1]) # all sample names in the instance file
+         ind.samples <- sapply(samples.name, FUN=function(ii) which(tmp.names.all==ii)) # keep the ones given in the sample file
+         if(output.type=='table') {
+            outf <- list(file(out.file, 'w'))
+            outf.fpkm <- file(paste(go, 'fpkm', sep='_'), 'w')
+            outf.count <- file(paste(go, 'count', sep='_'), 'w')
+            cat("Name", as.vector(samples.name), sep="\t", '\n', file=outf.fpkm)
+            cat("Name", as.vector(samples.name), sep="\t", '\n', file=outf.count)
+         } else {
+            outf <- lapply( samples.name, FUN=function(ss) file(paste(go,'_',ss,'.gtf',sep=""),'w') )
+         }
+         if(paired==FALSE){
+            nn.parse <- strsplit(nn[-1], split='=')
+            NN <- sapply(nn.parse[ind.samples], FUN=function(k) as.integer(k[2]))
+         }
+         if(paired==TRUE){
+            npair.parse <- strsplit(npair[-1], split='=')
+            NN <- sapply(npair.parse[ind.samples], FUN=function(k) as.integer(k[2]))
+         }
+      }
 
       ##=======================================
       ## Set up parameters
       ##=======================================
-      delta <- 1e-5 # Smoothing parameter for the Poisson Model
+      #delta <- 1e-5 # Smoothing parameter for the Poisson Model # now an option
       param <- list()
       param$mode_decomposition <- 3 # Flow decomposition mode (1, 2 or 3)
       param$regul <- 'graph-path-conv2'
@@ -148,12 +196,12 @@ flipflop <- function(data.file,
       param$pos <- TRUE
       param$tol <- 1e-10
       ##=======================================
-      
+
       beta.fpkm <- list()
       beta.expcount <- list()
       timer.all <- vector()
-      #granges <- GRangesList() 
-      granges <- list() # GRangesList does not work because the number of metadata columns varies
+      granges <- GenomicRangesList()
+      #granges <- list() # GRangesList does not work because the number of metadata columns varies - use GenomicRangesList
       mm <- 0
       scan(inpf, what=character(0), nlines=3, quiet=TRUE)
 
@@ -165,9 +213,7 @@ flipflop <- function(data.file,
          print(name)
          nom <- paste('Inst', name[2], sep='')
 
-         if(length(name)==0){
-            break
-         }
+         if(length(name)==0) break
 
          ## Boundary
          bound <- scan(inpf, what=character(0), nlines=1, quiet=TRUE)
@@ -200,7 +246,8 @@ flipflop <- function(data.file,
          nref <- as.integer(ref[2])
          TSSref <- PASref <- NULL
          if(nref>=1){
-            listref <- scan(inpf, what=character(0), nlines=nref, quiet=TRUE) # so far we don't use reference information for more than exon boundaries
+            # so far we don't use reference information for more than exon boundaries and (optionnaly) TSS and PAS
+            listref <- scan(inpf, what=character(0), nlines=nref, quiet=TRUE) 
             dim(listref) <- c((n.exons+2),nref)
             listref <- listref[1:n.exons,,drop=F]
             TSSref <- unique(apply(listref, 2, FUN=function(v) which(v==1)[1]))
@@ -215,22 +262,26 @@ flipflop <- function(data.file,
          type <- scan(inpf, what=character(0), nlines=1, quiet=TRUE)
          ntype <- as.integer(type[2])
          if(ntype > 0){
-            readtype <- scan(inpf, what=numeric(0), nlines=ntype, quiet=TRUE)
-            dim(readtype) <- c((n.exons+2), ntype)
-            readtype <- t(readtype)
-         }
-         if(ntype==0){
-            readtype <- matrix(0,1,(n.exons+1))
+            readtype_all <- scan(inpf, what=character(0), nlines=ntype, quiet=TRUE)
+            dim(readtype_all) <- c(length(readtype_all)/ntype, ntype)
+            readtype_all <- t(readtype_all)
+            readtype <- readtype_all[,1:(n.exons+1), drop=F]
+            readtype <- apply(readtype, 2, as.double)  # readtype contains all types of reads for the sum of samples (as.double otherwise bug)
+            if(!is.matrix(readtype)) readtype <- matrix(readtype, ncol=length(readtype))
+            n.samples.max <- ncol(readtype_all)-ncol(readtype)-1 # the total number of samples in the provied instance file (potentially more than the given samples)
+         } else {
+            VALID <- FALSE
          }
 
          ## Paired-End type
          petype <- scan(inpf, what=character(0), nlines=1, quiet=TRUE)
          npereads <- as.integer(petype[2])
          npetype <- as.integer(petype[3])
-         # Skip instance when not enough mapped reads or mapped fragments (but don't skip if your reads are supposed to be paired but there is more than 1000 single-end reads):
+         # Skip instance when not enough mapped reads or mapped fragments 
+         # (but don't skip if your reads are supposed to be paired but there is more than 1000 single-end reads)
          if(nreads<minReadNum | (paired==TRUE & npereads<minFragNum & nreads<1000)){
             if(npetype>0){
-               scan(inpf, what=character(0), nlines=(2*npetype), quiet=TRUE) # Skip paired-end type information
+               scan(inpf, what=character(0), nlines=((2+n.samples.max)*npetype), quiet=TRUE) # Skip paired-end type information
             }
             next
          }
@@ -238,222 +289,206 @@ flipflop <- function(data.file,
          eff.paired <- FALSE
          if(npetype>0){
             if(paired==FALSE | npetype>=300) {
-               scan(inpf, what=character(0), nlines=(2*npetype), quiet=TRUE) # Skip paired-end type information
+               scan(inpf, what=character(0), nlines=((2+n.samples.max)*npetype), quiet=TRUE) # Skip paired-end type information
             } else {
-            # Paired-end reads:
+               # Paired-end reads:
                eff.paired <- TRUE
                # Construct the bins (consider pairs as 'long single' with some heuristics if necessary)
                bins.res <- bins_paired(inpf=inpf, npetype=npetype, tophat.exons=tophat.exons, count.exons=count.exons, 
-                                       len.exons=len.exons, n.exons=n.exons, readtype=readtype, gap=gap, std=std) 
-               keeplolo <- bins.res$longtype
+                                       len.exons=len.exons, n.exons=n.exons, readtype=readtype, gap=gap, std=std, 
+                                       n.samples.max=n.samples.max, samples.name=samples.name, n.samples=n.samples)
+               longtype <- bins.res$longtype
+               VALID <- (length(longtype)>0)
+               keeplolo <- bins.res$keeplolo
                count.first <- bins.res$count.first
-               VALID <- (length(keeplolo)>0)
             }
          }
 
          tic()
-         ## MULTI-EXONS
-         if(n.exons>1){
-            ##==========================================
-            ## Create Splicing Graph
-            ## NODE:=READTYPE:=BIN
-            ##==========================================
-            if(!eff.paired){
-               #lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
-               ### sanity check 1 --- duplicated lolo
-               ## -------------------------------------
-               #list.dup <- lolo[duplicated(lolo)]
-               #to.remove <- c()
-               #for(dd in unique(list.dup)){
-               #   # indice des dupliques
-               #   ind.dup <- which(sapply(lolo, FUN=function(k) identical(k,dd)))
-               #   readtype[ind.dup[1],n.exons+1] <- sum(readtype[ind.dup,n.exons+1])
-               #   to.remove <- c(to.remove, ind.dup[2:length(ind.dup)])
-               #}
-               #if(!is.null(to.remove)){
-               #   readtype <- readtype[-to.remove,,drop=F]
-               #}
-               lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
-               ## sanity check 2 --- valid bins
-               # -----------------------------------
-               validbins <- sapply(lolo, FUN=function(v){
-                                   if(length(v)<=2){
-                                      return((sum(len.exons[v])>=readlen))
-                                   }
-                                   if(length(v)>=3){
-                                      vv <- v[2:(length(v)-1)]
-                                      return(((sum(len.exons[v])>=readlen) & (sum(len.exons[vv])<(readlen-1)))) 
-                                   }}) 
-               VALID <- (sum(validbins)>0)
-            }
+         ##==========================================
+         ## Create Splicing Graph
+         ## NODE:=READTYPE:=BIN
+         ##==========================================
+         if(!eff.paired & nreads>0){
+            lolo <- lapply(1:nrow(readtype), FUN=function(v) which(readtype[v,1:n.exons]==1))
+            ## sanity check 2 --- valid bins
+            # -----------------------------------
+            validbins <- sapply(lolo, FUN=function(v){
+                                if(length(v)<=2){
+                                   return((sum(len.exons[v])>=readlen))
+                                }
+                                if(length(v)>=3){
+                                   vv <- v[2:(length(v)-1)]
+                                   return(((sum(len.exons[v])>=readlen) & (sum(len.exons[vv])<(readlen-1)))) 
+                                       }})
+            VALID <- (sum(validbins)>0)
+         }
 
-            if(nreads == 0 | !VALID) { # don't go if you do not have any bins
-               path.select <- matrix(0, nrow=n.exons, ncol=1)
-               beta.select <- 0
+         if(!VALID) { # don't go if you do not have reads or any bins
+            path.select <- matrix(0, nrow=n.exons, ncol=1)
+            beta.select <- beta.raw <- rep(0, n.samples)
+         } else {
+            # Create bins and graph
+            if(!eff.paired) {
+               keeplolo <- lolo[validbins]
+               count.first <- readtype[validbins,n.exons+1]
+               graph_creation <- graph_single(binlist=keeplolo, count.first=count.first, readlen=readlen,
+                                              len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons,
+                                              use_TSSPAS=use_TSSPAS, TSSref=TSSref, PASref=PASref)
             } else {
-               # Create bins and junctions
+               graph_creation <- graph_paired(binlist=keeplolo, count.first=count.first, frag=frag, 
+                                              len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons,
+                                              use_TSSPAS=use_TSSPAS, TSSref=TSSref, PASref=PASref)
+            }
+            allbins <- graph_creation$allbins
+            n.nodes=length(allbins)
+            count <- graph_creation$count
+            len <- graph_creation$len
+            graph <- graph_creation$graph
+            
+            # save matrix of count for each samples ---------------------
+            if(!is.null(samples.name)){
+               indcount <- graph_creation$indcount
+               count.samples <- matrix(0, nrow=n.nodes, ncol=n.samples)
                if(!eff.paired) {
-                  keeplolo <- lolo[validbins]
-                  count.first <- readtype[validbins,n.exons+1]
-                  graph_creation <- graph_single(binlist=keeplolo, count.first=count.first, readlen=readlen,
-                                                   len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons,
-                                                   use_TSSPAS=use_TSSPAS, TSSref=TSSref, PASref=PASref)
+                  goodtype_all <- readtype_all[validbins,(n.exons+2):(n.exons+1+n.samples.max),drop=F]
+                  count.first.samples <- apply(goodtype_all, 1, FUN=function(v){
+                                               pp <- strsplit(v, split='=')
+                                               tt <- sapply(pp, FUN=function(k) as.double(k[2]))  # double ?? 
+                                               return(tt)})
+                  count.samples[indcount,] <- t(count.first.samples)[,ind.samples]
                } else {
-                  graph_creation <- graph_paired(binlist=keeplolo, count.first=count.first, frag=frag, 
-                                                   len.exons=len.exons, n.exons=n.exons, tophat.exons=tophat.exons,
-                                                   use_TSSPAS=use_TSSPAS, TSSref=TSSref, PASref=PASref)
+                  count.first.samples <- bins.res$count.first.samples
+                  for(nn in 1:n.samples){
+                     count.samples[indcount,nn] <- count.first.samples[[nn]]
+                  }
                }
-               allbins <- graph_creation$allbins
-               n.nodes=length(allbins)
-               count <- graph_creation$count
-               len <- graph_creation$len
-               graph <- graph_creation$graph
+               colnames(count.samples) <- samples.name
+               rownames(count.samples) <- allbins
+            }
 
-               ##==========================================
-               ## Regularization Path
-               ## Use Dichotomie - Use REFIT
-               ##==========================================
-               loss.weights <- NN*len/1e9
-               param$loss_weights <- as.matrix(loss.weights)
+            ##==========================================
+            ## Regularization Path
+            ## Use Dichotomie - Use REFIT
+            ##==========================================
+            loss.weights <- sum(NN)*len/1e9
+            param$loss_weights <- as.matrix(loss.weights)
 
-               respath <- regularization_path(graph, count, param, max_isoforms, delta, fast_guess=1, iterpoisson=2000, tolpoisson=1e-9, verbosepath, verbose)
-               beta.refit=respath$beta.refit
+            if(n.samples==1 | mergerefit) { # use the 1 dim fit against the one sample or the pool
+               if(!mergerefit & !is.null(samples.name)){
+                  count.mono <- count.samples # the count of one given sample
+               } else {
+                  count.mono <- count # the pool
+               }
+               respath <- regularization_path(graph, count.mono, param, max_isoforms, delta,
+                                              fast_guess=1, iterpoisson=2000, tolpoisson=1e-6, verbosepath, verbose)
                path.set=respath$path.set
-               size.set=respath$size.set
-               loss.set=respath$loss.set
+            } else { # use group-lasso approach
+               # 1) collect paths --------------------------------------------------
+               # --> on the sum counts 
+               collpath <- collect_path_grouplasso(graph, count, param, max_isoforms, delta, 
+                                                   fast_guess=1, iterpoisson=2000, tolpoisson=1e-6, verbosepath, verbose)
+               path.coll <- matrix(unlist(collpath$path.set), nrow=n.nodes)
+               beta.coll <- matrix(unlist(collpath$beta.avantrefit), nrow=1)
+               indup <- duplicated(t(path.coll), fromLast=TRUE)
+               path.coll <- path.coll[,!indup, drop=F]
+               beta.coll <- beta.coll[,!indup, drop=F]
+               # --> on the individual counts
+               for(jj in 1:n.samples){
+                  collpath <- collect_path_grouplasso(graph, count.samples[,jj,drop=F], param, max_isoforms, delta, 
+                                                      fast_guess=1, iterpoisson=2000, tolpoisson=1e-6, verbosepath, verbose)
+                  pm=matrix(unlist(collpath$path.set), nrow=n.nodes)
+                  bm=matrix(unlist(collpath$beta.avantrefit), nrow=1)
+                  indup <- duplicated(t(pm), fromLast=TRUE)
+                  pm <- pm[,!indup, drop=F]
+                  bm <- bm[,!indup, drop=F]
+                  path.coll <- cbind(path.coll, pm)
+                  beta.coll <- cbind(beta.coll, bm)
+               }
+               indup <- duplicated(t(path.coll), fromLast=TRUE)
+               path.coll <- path.coll[,!indup, drop=F]
+               beta.coll <- beta.coll[,!indup, drop=F]
+               # je peux sans doute faire mieux pour l'initialisation -- 
+               # prendre les beta de chaque sample s'il existe le chemin ......
+               respath <- regularization_path_grouplasso_dich(path.coll=path.coll, beta.coll=beta.coll,
+                                                              count.samples=count.samples, loss.weights=loss.weights,
+                                                              delta=delta, iterpoisson=2000, tolpoisson=1e-6, tolpoisson_refit=1e-20,
+                                                              REFIT=TRUE, verbosepath=verbosepath, verbose=verbose,
+                                                              n.samples=n.samples, NN=NN, len=len, max_isoforms=max_isoforms)
+               path.tmp=path.coll
+            }
+            beta.refit=respath$beta.refit # ok in FPKM with individual normalization
+            size.set=respath$size.set
+            loss.set=respath$loss.set
+            #lambda.set=respath$lambda.set
+            beta.avantrefit=respath$beta.avantrefit
 
-               if(verbose==1){
-                  print('MODEL SELECTION ...')
-               }
-               ##================
-               ## Model Selection:
-               ## BIC Criterion
-               ##================			
-               beta.select <- 0 # abundance values in FPKM
-               beta.raw <- 0 # expected fragment 'raw' counts 
-               path.select <- matrix(0, n.exons)
-               select <- which.min(loss.set + BICcst*size.set*log(n.nodes))
-               trueind <- which(beta.refit[[select]] > 0)
-               if(length(trueind)>0){
-                  beta.select <- beta.refit[[select]][trueind]
-                  path.tmp <- matrix(path.set[[select]][,trueind],nrow=n.nodes)
-                  rownames(path.tmp) <- allbins
-                  if(eff.paired){ # For paired-end check that there is no repeating paths:
-                     if(length(beta.select)==1){
-                        ind.exons <- unique(unlist(strsplit(allbins[which(path.tmp[,1]!=0)], split='-')))
-                        ind.exons <- sort(as.numeric(ind.exons))
-                        path.select <- matrix(0, nrow=n.exons, ncol=1)
-                        path.select[ind.exons,1] <- 1
-                     }
-                     if(length(beta.select)>1){
-                        listpath <- lapply(1:ncol(path.tmp), FUN=function(v) sort(as.numeric(unique(unlist(strsplit(allbins[which(path.tmp[,v]!=0)],split='-'))))))
-                        tutu <- duplicated(listpath)
-                        if(sum(tutu)>0){
-                           indrep <- which(tutu==TRUE)
-                           for(gg in indrep){
-                              koi <- which(sapply(listpath,FUN=function(v) identical(v, listpath[[gg]])))
-                              beta.select[koi[koi!=gg]] <- sum(beta.select[koi])
-                           }
-                           listpath <- listpath[tutu==FALSE]
-                           beta.select <- beta.select[tutu==FALSE]
-                        }
-                        path.select <- sapply(listpath, FUN=function(ll){
-                                              onep <- rep(0, n.exons)
-                                              onep[ll] <- 1
-                                              return(onep)})
-                        #-----------------------------#
-                        ### CUT-OFF for low value (5% default) 
-                        keepend <- which(beta.select > max(beta.select)*cutoff/100)
-                        beta.select <- beta.select[keepend]
-                        path.select <- path.select[,keepend, drop=F]
-                        #-----------------------------#
-                     }
-                  }
-                  if(!eff.paired){
-                     path.select <- apply(path.tmp, 2, FUN=function(pp){
-                                          onep <- rep(0, n.exons)
-                                          ind.exons <- unique(unlist(strsplit(allbins[which(pp!=0)], split='-')))
-                                          ind.exons <- sort(as.numeric(ind.exons))
-                                          onep[ind.exons] <- 1
-                                          return(onep)})
-                  }
-                  npaths <- length(beta.select)
-                  ind.exons.all <- lapply(1:npaths, FUN=function(tt){ which(path.select[,tt]!=0)})
-                  beta.raw <- sapply(1:npaths, FUN=function(qq){ 
-                                     ind.exons <- ind.exons.all[[qq]]
-                                     if(eff.paired){
-                                       return(max(0,(sum(len.exons[ind.exons]) - frag + 1)*beta.select[qq]*NN/1e9)) # expected raw counts for paired-end
-                                     }
-                                     if(!eff.paired){
-                                        return(max(0,(sum(len.exons[ind.exons]) - readlen + 1)*beta.select[qq]*NN/1e9)) # expected raw counts for single-end
-                                     }})
-                  if(verbose==1){
-                     print('WRITE in OUTPUT ...')
-                  }
-                  ##================
-                  ## WRITE OUTPUT
-                  ##================
-                  manage.exons <- tophat.exons
-                  manage.exons[length(manage.exons)] <- manage.exons[length(manage.exons)]+1
-                  for(ll in 1:npaths){
-                     ind.exons <- ind.exons.all[[ll]]
-                     transcript.start <- tophat.exons[(ind.exons[1]),1]
-                     transcript.end <- tophat.exons[tail(ind.exons,1),2]
-                     write.transcript(outf, chr, nom, strand, transcript.start, transcript.end, beta.select[ll], beta.raw[ll], ll) 
-                     numex <- 0
-                     subexons <- as.vector(manage.exons[ind.exons,])
-                     ii1 <- duplicated(subexons)
-                     ii2 <- duplicated(subexons, fromLast=TRUE)
-                     subexons <- subexons[!(ii1|ii2)]
-                     dim(subexons) = c(length(subexons)/2,2)
-                     for(kk in 1:nrow(subexons)){
-                        numex <- numex+1
-                        write.exons(outf, chr, nom, strand, (subexons[kk,1]), (subexons[kk,2]-1), ll, numex, 
-                                    beta.select[ll], beta.raw[ll])
-                     }
-                  }
-               }
-            }
-         }
-         ## MONO-EXON
-         if(n.exons==1){
-            if(paired==TRUE & npetype>0){
-               count.exons <- npereads
-            }
-            select <- which.min(c(loss.ll(count.exons,0,delta), loss.ll(count.exons, count.exons, delta) + BICcst))
-            if(select==2){
-               beta.select <- count.exons*1e9/(NN*len.exons)
-               path.select <- matrix(1)
-               beta.raw <- count.exons
-            }
-            if(select==1){
-               beta.select <- 0
-               path.select <- matrix(0)
-               beta.raw <- 0
-            }
-            if(verbose==1){
-               print('WRITE in OUTPUT ...')
-            }
+            if(verbose==1) print('MODEL SELECTION ...')
             ##================
-            ## WRITE OUTPUT
-            ##================  
-            if(beta.select > 0){
-               transcript.start <- tophat.exons[1,1]
-               transcript.end <- tophat.exons[1,2]
-               write.transcript(outf, chr, nom, strand, transcript.start, transcript.end, beta.select, beta.raw, 1)
-               write.exons(outf, chr, nom, strand, transcript.start, transcript.end, 1, 1, beta.select, beta.raw)
+            ## Model Selection:
+            ## BIC Criterion
+            ##================			
+            select <- modelselection(BICcst=BICcst, loss.set=loss.set, 
+                                     beta.refit=beta.refit, beta.avantrefit=beta.avantrefit,
+                                     size.set=size.set, n.nodes=n.nodes,
+                                     n.samples=n.samples, mergerefit=mergerefit)
+
+            # beta in FPKM and path
+            beta.select <- beta.refit[[select]] # abundance values in FPKM
+            if(n.samples==1 | mergerefit) {
+               path.tmp <- path.set[[select]]
+               if(mergerefit) {  # AMELIORER LES CONDITIONS ?
+                  beta.select <- refitSamples(count.samples, path.tmp, beta.select, NN, len, delta, 
+                                              iterpoisson=2000, tolpoisson=1e-20, verbosepath) # multi-samples refit
+               } else {
+                  beta.select <- t(beta.select)
+               }
+            }
+            if(ncol(path.tmp)==0) path.tmp <- matrix(0, n.nodes, 1) # 2015-03-02
+            rownames(beta.select) <- samples.name
+            path.select <- apply(path.tmp, 2, FUN=function(pp){
+                                 onep <- rep(0, n.exons)
+                                 ind.exons <- unique(unlist(strsplit(allbins[which(pp!=0)], split='-')))
+                                 ind.exons <- sort(as.numeric(ind.exons))
+                                 onep[ind.exons] <- 1
+                                 return(onep)})
+            if(!is.matrix(path.select)) path.select <- matrix(path.select, nrow=n.nodes)  # (for when only 1 bins) 
+            if(ncol(path.select)==0) path.select <- matrix(0, nrow=n.nodes) # 2015-03-02
+            # 2015-03-02
+            # no need to check for repeating paths for paired anymore
+            # cutoff is now in the writing part
+            npaths <- ncol(path.select)
+            ind.exons.all <- lapply(1:npaths, FUN=function(tt){ which(path.select[,tt]!=0)})
+            beta.raw <- sapply(1:npaths, FUN=function(qq){ # beta in RAW COUNTS
+                               ind.exons <- ind.exons.all[[qq]]
+                               if(eff.paired){
+                                  return(pmax(0,(sum(len.exons[ind.exons]) - frag + 1)*beta.select[,qq]*NN/1e9)) # expected raw counts for paired-end
+                               }
+                               if(!eff.paired){
+                                  return(pmax(0,(sum(len.exons[ind.exons]) - readlen + 1)*beta.select[,qq]*NN/1e9)) # expected raw counts for single-end
+                                 }})
+            if(!is.matrix(beta.raw)) beta.raw <- matrix(beta.raw, ncol=npaths)
+            rownames(beta.raw) <- rownames(beta.select)
+
+            if(length(beta.select)>0){ # UTILE ? 
+               if(verbose==1) print('WRITE in OUTPUT ...')
+               ##================
+               ## WRITE OUTPUT
+               ##================
+               WriteOutput(tophat.exons=tophat.exons, npaths=npaths, ind.exons.all=ind.exons.all,
+                           chr=chr, nom=nom, strand=strand,
+                           beta.select=beta.select, beta.raw=beta.raw, cutoff=cutoff,
+                           n.samples=n.samples, samples.name=samples.name,  
+                           output.type=output.type, outf=outf, outf.fpkm=outf.fpkm, outf.count=outf.count)
             }
          }
-
          timer <- toc()
          beta.fpkm[[mm]] <- beta.select
          beta.expcount[[mm]] <- beta.raw
          timer.all[mm] <- timer
          strand.gr <- strand
-         if(strand.gr=='.'){
-            strand.gr='*'
-         }
-         gr <- GRanges(chr, 
+         if(strand.gr=='.') strand.gr='*'
+         gr <- GRanges(chr,
                        IRanges(tophat.exons[,1], tophat.exons[,2], names=rep(nom, n.exons)),
                        strand=strand.gr,
                        read.count=count.exons,
@@ -461,7 +496,11 @@ flipflop <- function(data.file,
          granges[[mm]] <- gr
       }
       close(inpf)
-      close(outf)
+      ccl <- lapply(outf, close)
+      if(!is.null(samples.name) & output.type=='table') {
+         close(outf.fpkm)
+         close(outf.count)
+      }
    }
    ## Delete processed sam file
    if(preprocess.instance=='' & OnlyPreprocess==FALSE){
@@ -472,4 +511,3 @@ flipflop <- function(data.file,
       return(list(transcripts=granges, abundancesFPKM=beta.fpkm, expected.counts=beta.expcount, timer=timer.all))
    }
 }
-

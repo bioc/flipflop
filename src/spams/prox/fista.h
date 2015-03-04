@@ -2735,10 +2735,10 @@ namespace FISTA {
          dual -= loss.fenchel(grad1);
          dual = MAX(dual,best_dual);
          T delta= primal == 0 ? 0 : (primal-dual)/abs<T>(primal);
-         if (verbose) {
-            //cout << "Relative duality gap: " << delta << endl;
-            //flush(cout);
-         }
+         /* if (verbose) {
+            cout << "Relative duality gap: " << delta << endl;
+            flush(cout);
+         } */
          best_dual=dual;
          return delta;
       }
@@ -2929,8 +2929,8 @@ namespace FISTA {
                   ++iter;
                }
             }
-            if (param.verbose && ((it % it0) == 0)) 
-               //cout << endl;
+	    //if (param.verbose && ((it % it0) == 0)) 
+	       //cout << endl; 
             if (param.linesearch_mode==2) {
                sbb.copy(grad);
                xbb.copy(x);
@@ -2954,10 +2954,10 @@ namespace FISTA {
          T los=loss.eval(x) + lambda*regularizer.eval(x);    
          optim_info[0]=los;
          T sec=time.getElapsed();
-         if (param.verbose) {
-            //cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L << endl;
-            //flush(cout);
-         }
+         /* if (param.verbose) {
+            cout << "Iter: " << it << ", loss: " << los << ", time: " << sec << ", L: " << L << endl;
+            flush(cout);
+         } */
          if (duality) {
             rel_duality_gap=duality_gap(loss,regularizer,x,lambda,best_dual,param.verbose);
             optim_info[1]=best_dual;
@@ -3016,7 +3016,7 @@ namespace FISTA {
                   //cout << " " << L;
                ++iter;
             }
-            if (param.verbose && ((it % it0) == 0)) 
+            //if (param.verbose && ((it % it0) == 0)) 
                //cout << endl;
 
             prox.copy(x);
@@ -3510,34 +3510,34 @@ namespace FISTA {
          if (param.verbose) {
             print_loss(param.loss);
             print_regul(param.regul);
-            //if (param_for_admm(param)) {
-            //   if (param.admm || param.lin_admm) {
-            //      if (param.lin_admm) {
-            //         cout << "Linearized ADMM algorithm" << endl;
-            //      } else {
-            //         cout << "ADMM algorithm" << endl;
-            //      }
-            //   } 
-            //} else {
-            //   if (param.ista) {
-            //      cout << "ISTA algorithm" << endl;
-            //   } else if (param.subgrad) {
-            //      cout << "Subgradient descent" << endl;
-            //   } else {
-            //      cout << "FISTA algorithm" << endl;
-            //   }
-            //   if ((param.regul == GRAPH || param.regul == TREEMULT ||
-            //            param.regul == GRAPHMULT || param.regul==L1LINFCR) &&
-            //         param.clever) 
-            //      cout << "Projections with arc capacities" << endl;
-            //   if (param.intercept) cout << "with intercept" << endl;
-            //   if (param.pos) cout << "Non-negativity constraints" << endl;
-            //   if (param.log && param.logName) {
-            //      cout << "log activated " << endl;
-            //      cout << param.logName << endl;
-            //      cout << endl;
-            //   }
-            //}
+            /* if (param_for_admm(param)) {
+               if (param.admm || param.lin_admm) {
+                  if (param.lin_admm) {
+                     cout << "Linearized ADMM algorithm" << endl;
+                  } else {
+                     cout << "ADMM algorithm" << endl;
+                  }
+               } 
+            } else {
+               if (param.ista) {
+                  cout << "ISTA algorithm" << endl;
+               } else if (param.subgrad) {
+                  cout << "Subgradient descent" << endl;
+               } else {
+                  cout << "FISTA algorithm" << endl;
+               }
+               if ((param.regul == GRAPH || param.regul == TREEMULT ||
+                        param.regul == GRAPHMULT || param.regul==L1LINFCR) &&
+                     param.clever) 
+                  cout << "Projections with arc capacities" << endl;
+               if (param.intercept) cout << "with intercept" << endl;
+               if (param.pos) cout << "Non-negativity constraints" << endl;
+               if (param.log && param.logName) {
+                  cout << "log activated " << endl;
+                  cout << param.logName << endl;
+                  cout << endl;
+               }
+            } */
             //flush(cout);
          }
       };
@@ -3586,13 +3586,15 @@ namespace FISTA {
          const int M = X.n();
          if (param.verbose) {
             const bool duality = losses[0]->is_fenchel() && regularizers[0]->is_fenchel();
-            // if (duality) cout << "Duality gap via Fenchel duality" << endl;
-            // if (!param.ista && param.subgrad && !regularizers[0]->is_subgrad()) {
-            //   cerr << "Subgradient algorithm is not implemented for this combination of loss/regularization" << endl;
-            //   exit(1);
-            // }
-            // cout << "Timings reported do not include loss and fenchel evaluation" << endl;
-            //flush(cout);
+            /*
+	    if (duality) cout << "Duality gap via Fenchel duality" << endl;
+            if (!param.ista && param.subgrad && !regularizers[0]->is_subgrad()) {
+               cerr << "Subgradient algorithm is not implemented for this combination of loss/regularization" << endl;
+               exit(1);
+            }
+            cout << "Timings reported do not include loss and fenchel evaluation" << endl;
+            flush(cout);
+	    */
          }
          optim_info.resize(4,M);
 
@@ -3950,10 +3952,10 @@ namespace FISTA {
             graphs[i]=new DoubleGraphPath<T>();
             graphs[i]->init_graph(*graph_path_st);
          }
-         // if (param.regul != GRAPH_PATH_CONV && param.regul != GRAPH_PATH_CONV2) {
-         //   cout << "Invalid loss" << endl;
-         //   exit(1);
-         // }
+         /* if (param.regul != GRAPH_PATH_CONV && param.regul != GRAPH_PATH_CONV2) {
+            cout << "Invalid loss" << endl;
+            exit(1);
+         } */
          const bool alt_norm= param.regul==GRAPH_PATH_CONV2;
          const bool pos = param.pos || loss==FLOW_POISSON || loss==FLOW_POISSON_WEIGHTS;
          loss_flow new_loss=loss;

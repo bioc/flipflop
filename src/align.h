@@ -33,6 +33,8 @@ public:
   int nmismatch;
   int nhits;
 
+  string rgname; // 2015-01-15 ELSA
+
   /*
   parse fields from a line of string
   Return 0 if success, -1 if any error occurs.

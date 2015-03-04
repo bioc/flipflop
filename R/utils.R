@@ -4,14 +4,14 @@
 ## - basic check on the bins
 
 # look if a given bin is striclty inside another given bin
-#bin.inside <- function(inside.bin, outside.bin){
-#   test <- FALSE
-#   length.diff <- length(outside.bin) - length(inside.bin)
-#   if(length.diff>=2){
-#      test <- any( sapply(1:(length.diff-1), FUN=function(ii) identical( inside.bin , outside.bin[(ii+1):(ii+length(inside.bin))] ) ) )
-#   }
-#   return(test)
-#}
+bin.inside <- function(inside.bin, outside.bin){
+   test <- FALSE
+   length.diff <- length(outside.bin) - length(inside.bin)
+   if(length.diff>=2){
+      test <- any( sapply(1:(length.diff-1), FUN=function(ii) identical( inside.bin , outside.bin[(ii+1):(ii+length(inside.bin))] ) ) )
+   }
+   return(test)
+}
 
 # match a vector of indexes (bin) to a list of vectors of indexes (alllist)
 # stop the loop at first match and return the position

@@ -4,8 +4,8 @@
 #include "common.h"
 
 extern "C" {  
-  void ffProcesssam(char ** in, char ** pre, char ** an, char ** pair, char ** minr, char ** minc, char ** minj, char ** verb){
-    string inSamFile = string(in[0]);  
+  void ffProcesssam(char ** in, char ** pre, char ** an, char ** samp, char ** pair, char ** minr, char ** minc, char ** minj, char ** verb){
+    string inSamFile = string(in[0]);
     string prefix = string(pre[0]);
     string paired = string(pair[0]);
     string verbose = string(verb[0]);
@@ -30,6 +30,11 @@ extern "C" {
       //cline.push_back(string("--annotation"));
       cline.push_back(string("-x"));
       cline.push_back(string(an[0]));
+    }
+    /* optional sample file 2015-01-15 */
+    if(strcmp("", samp[0])){
+      cline.push_back(string("--samples"));
+      cline.push_back(string(samp[0]));
     }
     /* minimum number of reads in a gene */
     cline.push_back(string("--min-read-num"));

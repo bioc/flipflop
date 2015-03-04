@@ -240,7 +240,7 @@ graph_single <- function(binlist, count.first, readlen, len.exons, n.exons, toph
    if(use_TSSPAS==1){
       ## TSS no entering junctions (1 line of 0)
       ind.sometss <- which(!rowSums(sp.Adj))
-      
+
       ## PAS no outgoing junctions (1 col of 0)
       ind.somepas <- which(!colSums(sp.Adj))
 
@@ -266,6 +266,6 @@ graph_single <- function(binlist, count.first, readlen, len.exons, n.exons, toph
    graph[['start_weights']] <- wg.start
    graph[['stop_weights']] <- wg.stop
 
-   return(list(allbins=allbins, count=count, len=len, graph=graph))
+   return(list(allbins=allbins, count=count, len=len, graph=graph, indcount=indcount))
 
 }

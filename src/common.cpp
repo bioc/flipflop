@@ -63,7 +63,7 @@ int MIN_GRANGE_DISTANCE=100;
 /*
 Minimum number of reads to be considered in one instance
 */
-int MIN_GRANGE_READ_CNT=4;
+int MIN_GRANGE_READ_CNT=40;
 
 /*
 The maximum number of instance to be output. Default -1 (no limit)
@@ -106,9 +106,11 @@ When reads are mapped to junctions, this parameter checks the length of the firs
 int MIN_SEG_FL_OVERLAP=0;
 
 
-
 /* To save the memory usage, replace the read name with some simpler strings */
 bool REPLACE_READ_NAME=true;
 
 /* Are the input reads stranded? 1 for positive, -1 for negative, and 0 for unstranded. This parameter is set by -d/--direction option and will be used when writing instances */
 int STRANDED_RNASEQ=0;
+
+/* 2015-01-15 ELSA: add option. Boundary should be created based on coverage discrepancies or not */
+int CVG_CUT=1;

@@ -174,6 +174,10 @@ int getCvgStat(map<long,int>&cvg, map<long,int>& allbound,
     map<long, vector<double> >&cvgstat){
     map<long,int>::iterator mitr,mitr2;
 
+    if( allbound.size() ==0 ){
+       return 0;
+    }
+
     //then, get some statistics of the ranges
     for(mitr=allbound.begin();mitr!=allbound.end();mitr++){
       //if the coverage data does not include the boundary point, insert the boundary point to coverage, 
