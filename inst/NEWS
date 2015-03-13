@@ -5,6 +5,11 @@ o take care of all cpp warnings (isolasso+spams)
 o parallelization
 
 
+CHANGES IN VERSION 1.5.11
+ --------------------------
+    o added the fraction of each predicted transcript (among one gene) in the output GTF file.
+
+
 CHANGES IN VERSION 1.5.10
  --------------------------
 MAJOR CHANGES
