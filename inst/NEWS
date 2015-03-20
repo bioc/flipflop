@@ -2,8 +2,19 @@ TO DO:
 o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
-o parallelization
 
+
+CHANGES IN VERSION 1.5.12
+ --------------------------
+MAJOR CHANGES
+    o parallelization
+      -----> FlipFlop can be run on multiple cores. 
+    2 novel options:
+
+    - 'sliceCount'       number of slices in which the pre-processing '.instance' file is cut. 
+                         when OnlyPreprocess set to TRUE, it creates slices and you can run FlipFlop independently afterwards on each one of the slice.
+    - mc.cores           it distributed the slices on several cores when sliceCount>1. 
+                         when using a given preprocessing.instance and several samples, it using several cores for some operations concerning the several samples .
 
 CHANGES IN VERSION 1.5.11
  --------------------------

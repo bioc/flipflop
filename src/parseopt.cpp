@@ -140,6 +140,9 @@ int parseopt(vector<string> args){
 	    CVG_CUT=0;
 	 }
       }
+      else if(string(args[i])=="--slice-cnt"){ // 2015-02-25
+        SLICE_CNT=atoi(args[i+1].c_str());
+      }
     }
   }
   //cout<<"Minimum gap length for two genes (mingapdist): "<<MIN_GRANGE_DISTANCE<<endl;

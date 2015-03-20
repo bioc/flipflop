@@ -14,7 +14,7 @@
 
 regularization_path_grouplasso_dich <- function(path.coll, beta.coll, count.samples, loss.weights, 
                                                 delta, iterpoisson, tolpoisson, tolpoisson_refit, REFIT, verbosepath, verbose,
-                                                n.samples, NN, len, max_isoforms){
+                                                n.samples, NN, len, max_isoforms, mc.cores){
 
    # compute the maximum lambda value
    Z <- as.matrix(spams_flipflop.multLeftDiag(path.coll, loss.weights))
@@ -167,7 +167,7 @@ regularization_path_grouplasso_dich <- function(path.coll, beta.coll, count.samp
             path2fit <- path.coll[,ind,drop=F]
             beta.all <- beta.avantrefit[[ii]][ind,,drop=F]
             Z.samples <- lapply(1:n.samples, FUN=function(jj) as.matrix(spams_flipflop.multLeftDiag(path2fit, NN[jj]*len/1e9)))
-            res.apos <- lapply(1:n.samples, FUN=function(ind.c){
+            res.apos <- mclapply(1:n.samples, FUN=function(ind.c){
                                cc <- count.samples[,ind.c,drop=F]
                                Z <- Z.samples[[ind.c]]
                                # more appropriate initialization: either 0 vector or beta.avant refit (obtained with sum of counts)
@@ -181,7 +181,7 @@ regularization_path_grouplasso_dich <- function(path.coll, beta.coll, count.samp
                                                          iterpoisson=iterpoisson, tolpoisson=tolpoisson_refit, solver_refit='NEW', verbosepath=verbosepath)
                                loss.apos <- loss.ll(cc, Z%*%beta.apos, delta)
                                y.apos <- Z%*%beta.apos
-                               return(list(beta.apos=beta.apos, loss.apos=loss.apos, y.apos=y.apos))})
+                               return(list(beta.apos=beta.apos, loss.apos=loss.apos, y.apos=y.apos))}, mc.cores=mc.cores)
 
             beta.refit[[ii]][,ind] <- t( sapply( 1:n.samples, FUN=function(jj) return(res.apos[[jj]]$beta.apos) ) )
             loss.set[ii] <- sum( sapply( 1:n.samples, FUN=function(jj) return(res.apos[[jj]]$loss.apos) ) )

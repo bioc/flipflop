@@ -8,7 +8,7 @@
 
 R_CMethodDef cMethods[] = {
   //  {"ffProcesssam", (DL_FUNC) & ffProcesssam, 6, {STRSXP, STRSXP, STRSXP, STRSXP, STRSXP, STRSXP}},
-  {"ffProcesssam", (DL_FUNC) & ffProcesssam, 9},
+  {"ffProcesssam", (DL_FUNC) & ffProcesssam, 10},
   {NULL, NULL, 0}
 };
 

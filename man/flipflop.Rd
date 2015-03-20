@@ -22,8 +22,8 @@
 flipflop(data.file, out.file="FlipFlop_output.gtf", output.type="gtf", annot.file="",
   samples.file="", mergerefit=FALSE, paired=FALSE, frag=400, std=20,
   OnlyPreprocess=FALSE, preprocess.instance="", minReadNum=40, minFragNum=20,
-  minCvgCut=0.05, minJuncCount=1, NN="", verbose=0, verbosepath=0, cutoff=1, BICcst=50,
-  delta=1e-07, use_TSSPAS=0, max_isoforms=10)
+  minCvgCut=0.05, minJuncCount=1, sliceCount=1, mc.cores=1, NN="", verbose=0,
+  verbosepath=0, cutoff=1, BICcst=50, delta=1e-07, use_TSSPAS=0, max_isoforms=10)
 }
 
 \arguments{
@@ -43,6 +43,8 @@ flipflop(data.file, out.file="FlipFlop_output.gtf", output.type="gtf", annot.fil
   \item{minCvgCut}{[pre-processing] The fraction for coverage cutoff, should be between 0-1. A higher value will be more sensitive to coverage discrepancies in one gene. Default 0.05.}
   \item{minJuncCount}{[pre-processing] The minimum number of reads to consider a junction as valid. Default 1.}
   \item{NN}{[pre-processing] Total number of mapped fragments. Optional. If given the number of mapped fragments is not read from the '.totalnumread' file.}
+  \item{sliceCount}{[parallelization] Number of slices in which the pre-processing '.instance' file is cut. It creates several instance files with the extension '_jj.instance' where jj is the number of the slice. If you set OnlyPreprocess to TRUE, it will create those slices and you can run FlipFlop independently afterwards on each one of the slice. Default 1.}
+  \item{mc.cores}{[parallelization] Number of cores. If you give sliceCount>1 with OnlyPreprocess set to FALSE, it will distribute the slices on several cores. If you give a preprocess.instance file as input (which might be a slice of an original instance file), it will use several cores when you are using a multi-samples strategy. Default 1.}
   \item{verbose}{[verbosity] Verbosity. Default 0 (little verbosity). Put 1 for more verbosity.}
   \item{verbosepath}{[verbosity] Verbosity of the optimization part. Default 0 (little verbosity). Put 1 for more verbosity. Mainly used for de-bugging.}
   \item{cutoff}{[parameter] Do not report isoforms whose expression level is less than cutoff percent of the most expressed transcripts. Default 1.}

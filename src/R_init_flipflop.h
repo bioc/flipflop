@@ -48,7 +48,7 @@
 #endif
 */
 
-int ffProcesssam(char * in, char * pre, char * an);
+int ffProcesssam(char ** in, char ** pre, char ** an, char ** samp, char ** pair, char ** minr, char ** minc, char ** minj, char ** verb, char ** slicec);
 
 //SWIGRUNTIME SEXP R_SWIG_debug_getCallbackFunctionData();
 

@@ -12,8 +12,10 @@
 #include "samio.h"
 #include "parseopt.h"
 #include "auxiliaryio.h"
-
 //#include "readgroup.h"
+#include "FileSplitter.h"
+
+extern FileSplitter *fileSplitter;
 
 inline long abs2(long a){
   return a>0?a:-a;
@@ -32,7 +34,7 @@ void initGlobalVariables(){
     FIXRANGE=false;
     FIXBOUND=false;
     VERBOSE=0;
-    MIN_CVG_FRACTION=0.25;
+    MIN_CVG_FRACTION=0.05;
     MINEXONCVG=2;
     OUTPUT_INDIVIDUAL_COVERAGE=false;
     DEFAULT_MIN_JUNCTION=2;
@@ -55,6 +57,7 @@ void initGlobalVariables(){
     C_ANNO.resetAll();
     C_RANGE_ANNO.resetAll();
     CVG_CUT=1;
+    SLICE_CNT=1;
 }
 
 
@@ -303,13 +306,16 @@ int readSamFile(string inSamFile, //input file
   ofstream fichier(outNumRead.c_str(), ios::out | ios::trunc);
   fichier<<"@Total Number of Reads\n"<<totalnumread<<"\t";
   num_samples_print(fichier, numread_samples); 
-  //fichier<<"\n@Total Number of Pairs\n"<<totalpair/2<<"\t";
   fichier<<"\n@Total Number of Pairs\n"<<totalpair<<"\t";
   num_samples_print(fichier, numpair_samples);
   fichier<<"\n"; 
 
   fifs.close();
   closeAuxFile();
+
+  if(SLICE_CNT > 1) {
+     fileSplitter->split(SLICE_CNT); // 2015-02-25
+  }
 
   return appearpereads;
 }

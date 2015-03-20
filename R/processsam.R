@@ -1,4 +1,4 @@
-processsam <- function(sam.file, prefix, annot='', samples='', paired=FALSE, minReadNum=10, minCvgCut=0.25, minJuncCount=1, verbose=0)
+processsam <- function(sam.file, prefix, annot='', samples='', paired=FALSE, minReadNum=10, minCvgCut=0.25, minJuncCount=1, verbose=0, sliceCount=1)
 {
    .C('ffProcesssam',
       as.character(sam.file),
@@ -10,5 +10,6 @@ processsam <- function(sam.file, prefix, annot='', samples='', paired=FALSE, min
       as.character(minCvgCut),
       as.character(minJuncCount),
       as.character(verbose),
+      as.character(sliceCount),
       PACKAGE='flipflop')
 }

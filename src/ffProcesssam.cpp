@@ -4,7 +4,7 @@
 #include "common.h"
 
 extern "C" {  
-  void ffProcesssam(char ** in, char ** pre, char ** an, char ** samp, char ** pair, char ** minr, char ** minc, char ** minj, char ** verb){
+  void ffProcesssam(char ** in, char ** pre, char ** an, char ** samp, char ** pair, char ** minr, char ** minc, char ** minj, char ** verb, char ** slicec){
     string inSamFile = string(in[0]);
     string prefix = string(pre[0]);
     string paired = string(pair[0]);
@@ -12,6 +12,7 @@ extern "C" {
     string minReadNum = string(minr[0]);
     string minJuncCount = string(minj[0]);
     string minCvgCut = string(minc[0]);
+    string sliceCount = string(slicec[0]);
     vector<string> cline;  
     /* processsam activation */
     cline.push_back(string("processsam"));
@@ -45,6 +46,9 @@ extern "C" {
     /* coverage cut off for segmenting sub-exons */
     cline.push_back(string("--min-cvg-cut"));
     cline.push_back(minCvgCut);
+    /* number of splices for splitting the instance file 2015-02-15 */
+    cline.push_back(string("--slice-cnt"));
+    cline.push_back(sliceCount);
     cline.push_back(inSamFile);
     /* initialize the boring global variables */
     initGlobalVariables();

@@ -8,6 +8,7 @@
 #include "instanceio.h"
 #include "structdef.h"
 #include "bedio.h"
+#include "FileSplitter.h"
 
 /**
 FILE IOS
@@ -24,6 +25,9 @@ ofstream iofs; //out instance file
 ofstream ofs; //read_info file
 ofstream bofs; //bound file string
 ofstream gofs; //gene range file
+
+FileSplitter *fileSplitter;
+
 
 /* Instance ID */
 //int n_INST=0;
@@ -145,6 +149,10 @@ void prepareAuxFile(vector<string> args,
       // cerr<<"Error opening instance file "<<outInstanceFile<<endl;
       outinstance=false;
     }
+
+    fileSplitter=new FileSplitter(outInstanceFile, iofs); // 2015-02-25
+    fileSplitter->startWritingHeader();
+
     //writing args to out instance file
     iofs<<"@CMD:";
     for (int i=0;i<args.size();i++)
@@ -152,6 +160,8 @@ void prepareAuxFile(vector<string> args,
     iofs<<endl;
     iofs<<"@Fields in Segs section:\n";
     iofs<<"@0: Segment start, 1: Segment end, 2: Segment length, 3:Reads falling onto this segment, 4: max coverage, 5: coverage on left, 6: coverage on right, 7: percentage of bases with 0 coverage, 8: mean coverage\n";
+
+    fileSplitter->endWritingHeader(); // 2015-02-25
 
   }
 }
@@ -543,8 +553,10 @@ int write2rangeandinstance(ReadGroup& rd,range_t& range){
     }
     vector<range_t> segrange=subg[i].getSegs();
     writeboundfs(subg[i].getRange(),n_INST,subg[i].getChr(),segrange,subg[i].size(),subg[i].getDir());
+    fileSplitter->startWritingInstance(); // 2015-01-25
     iofs<<"Instance\t"<<n_INST<<endl;
     subg[i].toStream(iofs);
+    fileSplitter->endWritingInstance(/* info ? */); // 2015-01-25
   }
   
   return 0;

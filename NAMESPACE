@@ -3,7 +3,9 @@ useDynLib(flipflop)
 
 export('flipflop')
 
+import('methods')
 importFrom('Matrix', sparseMatrix, rowSums, colSums)
 importClassesFrom('Matrix', index, number, replValue)
 import('IRanges')
 importFrom('GenomicRanges', GRanges, GenomicRangesList)
+importFrom('parallel', mclapply)

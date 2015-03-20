@@ -112,5 +112,8 @@ extern int STRANDED_RNASEQ;
 
 /* 2015-01-15 ELSA: add option. Boundary should be created based on coverage discrepancies or not */
 extern int CVG_CUT;
- 
+
+/* 2015-02-15 ELSA: number of slices for splitting the instance file*/
+extern int SLICE_CNT;
+
 #endif

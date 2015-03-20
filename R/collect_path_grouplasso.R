@@ -1,7 +1,7 @@
 #==========================================================#
 # LASSO REGULARIZATION PATH solved with NETWORK FLOW
-# REFIT for no-shrinkage effect
 #==========================================================#
+
 
 # *** Solve the L1 penalized poisson regression with network flow algorithm. 
 # A dichotomy is performed in order to give a set of solution with a smoothly increasing number of active isoforms
@@ -15,6 +15,7 @@
 collect_path_grouplasso <- function(graph, count, param, max_isoforms, delta, fast_guess, iterpoisson, tolpoisson, verbosepath, verbose){
 
    n.nodes <- length(count)
+
    ## Compute the max lambda
    mlv.res <- max_lambda(y=count, graph=graph, 
                          delta=param$delta, loss_weights=param$loss_weights, 
@@ -25,8 +26,7 @@ collect_path_grouplasso <- function(graph, count, param, max_isoforms, delta, fa
       candidate <- matrix(as.double(candidate != 0), nrow=nrow(candidate), ncol=ncol(candidate))
       betacandidate <- matrix(0,1,1)
    }
-   if(verbosepath){
-      print(sprintf('the maximum value for lambda is %f', max_lambda_val))}
+   if(verbosepath) print(sprintf('the maximum value for lambda is %f', max_lambda_val))
    if(max_lambda_val <= 0){ max_lambda_val <- 1e-2 }
    if(max_lambda_val > 1e10){ max_lambda_val <- 1e10 }
    
@@ -44,8 +44,7 @@ collect_path_grouplasso <- function(graph, count, param, max_isoforms, delta, fa
 #   dualitygap.avantrefit <- vector()
 #   loss.avantrefit <- vector()
 
-   if(verbose==1){ 
-      print('REGULARIZATION PATH calculation ...')}
+   if(verbose==1) print('REGULARIZATION PATH calculation ...')
 
    ##================================
    ## Poisson: Penalized Regression
@@ -65,7 +64,7 @@ collect_path_grouplasso <- function(graph, count, param, max_isoforms, delta, fa
 #   dualitygap.avantrefit[1] <- dg.poisson.res$duality_gap
 #   loss.avantrefit[1] <- primal0
 
-   while(lambda > 1e-3 && numiso < max_isoforms){ 
+   while(lambda > 1e-3 && numiso < max_isoforms){
       # Compute isoforms given penalization lambda
       param$lambda <- lambda # current lambda
       max_capacity <- min(max(primal0/lambda,0), tmp0)
