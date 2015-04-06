@@ -37,21 +37,23 @@ int Align::parse(string oneline){
     int pos=ss.tellg();
     //string rest=oneline.substr(pos+1); safer not to put the +1
     string rest=oneline.substr(pos);
+    static std::string SAMPLE_TAG="RG:Z:";
 
-    //parse RG:Z -- 2015-01-15 ELSA
+    //parse RG:Z -- 2015-04-03 ELSA
     rgname="";
-    int xrg=rest.find("RG:Z:"); // give -1 if no RG
-    if(xrg==-1){
-      //rgname="prout";
-      //cout<<"DID NOT FIND RG!!!!"<<rgname<<endl;
-    } else{
-      rgname=rest.substr(xrg+5);
+    size_t xrg=rest.find(SAMPLE_TAG); // return -1 if no RG
+    if(xrg!=string::npos){
+       rgname = rest.substr(xrg+SAMPLE_TAG.length());
+       size_t postab = rgname.find("\t");
+       if(postab!=string::npos) {
+	  rgname = rgname.substr(0,postab);
+       }
     }
 
     //parse XS:A:
     if(start.size()==1)splicedir=0;
     else{
-      int xspos=rest.find("XS:A:");
+      size_t xspos=rest.find("XS:A:");
       if(xspos!=string::npos){
         char x='.';
         string tx=rest.substr(xspos);
@@ -61,13 +63,13 @@ int Align::parse(string oneline){
       }
     }
     //parse NM:i:
-    int nmpos=rest.find("NM:i:");
+    size_t nmpos=rest.find("NM:i:");
     if(nmpos!=string::npos){
       string tx=rest.substr(nmpos);
       sscanf(tx.c_str(),"NM:i:%d",&nmismatch);
     }
     //parse NM:i:
-    int nhpos=rest.find("NH:i:");
+    size_t nhpos=rest.find("NH:i:");
     if(nhpos!=string::npos){
       string tx=rest.substr(nhpos);
       sscanf(tx.c_str(),"NH:i:%d",&nhits);
@@ -98,7 +100,7 @@ range_t Align::getRange(bool forcesingle){
  * Parese CIGAR strings
  * notice that the range should be interpreted as [startpos, endpos], not [startpos,endpos).
  * Handle I and D Cigar characters
- * Handle S and X and = Cigar characters (soft-clipping, match, mismatch) # ELSA TO DO - test more - 
+ * Handle H, S and X and = Cigar characters (soft-clipping, match, mismatch) # ELSA TO DO - test more - 
  */
 void Align::parsecigar( ){
   pos_t & startpos=start; 
@@ -113,7 +115,7 @@ void Align::parsecigar( ){
     ss2>>nof;
     if(ss2.eof())break;
     ss2>>t;
-    if(t=='M' || t=='S' || t=='X' || t=='='){ // 31oct14
+    if(t=='M' || t=='S' || t=='X' || t=='=' || t=='H'){ // 2015-04-03
       if(islastn==false){
         startpos.push_back(tpos);
         endpos.push_back(tpos+nof-1);
@@ -132,7 +134,7 @@ void Align::parsecigar( ){
     }
     else if(t=='D'){
       if(endpos.size()==0){
-        // cerr<<"Error: cannot process CIGAR string "<<cigar<<endl;
+        //cerr<<"Error: cannot process CIGAR string "<<cigar<<endl;
       }
       else{
         endpos.back()+=nof;
@@ -140,7 +142,7 @@ void Align::parsecigar( ){
       }
     }
     else{
-      // cerr<<"Error: not supported CIGAR character "<<t<<" of CIGAR "<<cigar<<endl;
+      //cerr<<"Error: not supported CIGAR character "<<t<<" of CIGAR "<<cigar<<endl;
     }
 
   }//end of ss2 loop
