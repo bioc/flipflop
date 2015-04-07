@@ -4,10 +4,12 @@ o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
 
-CHANGES IN VERSION 1.5.13
+CHANGES IN VERSION 1.5.14
  --------------------------
     o correct a bug which might happened when reading the RG:Z tag in the SAM file (align.cpp)
     o allow also H characters in the CIGAR field
+    o correction in spams (prox/project.h) related to topological order
+
 
 CHANGES IN VERSION 1.5.12
  --------------------------

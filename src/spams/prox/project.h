@@ -4149,7 +4149,8 @@ void inline DoubleMinCostFlow<T>::st_flow_decomposition_dag2(List<Path<T>*>& dec
       for (int i = 0; i < _n; ++i) distances[i]=0;
       for (int i = 0; i < _n; ++i) lengths[i]=0;
       for (int i = 0; i < _n; ++i) unit_flows[i]=0;
-      unit_flows[_topological_order[0]]=MAX_FLOW;
+      //unit_flows[_topological_order[0]]=MAX_FLOW;
+      unit_flows[_node_s]=MAX_FLOW; //ELSA 2015-04-07
       for (int i = 0; i < _n; ++i) {
          const int node = _topological_order[i];
          const int pr_begin=_pr_node[node];
@@ -4171,11 +4172,13 @@ void inline DoubleMinCostFlow<T>::st_flow_decomposition_dag2(List<Path<T>*>& dec
             }
          }
       }
-      longest_flow=unit_flows[_topological_order[_n-1]];
+      //longest_flow=unit_flows[_topological_order[_n-1]];
+      longest_flow=unit_flows[_node_t]; // ELSA 2015-07-04
 //      cerr << longest_flow << " " << distances[_topological_order[_n-1]] << " " << lengths[_topological_order[_n-1]] << endl;
 //      flush(cerr);
       //stop();
-      int current=_topological_order[_n-1];
+      //int current=_topological_order[_n-1];
+      int current=_node_t; // ELSA 2015-07-04
       list_path.clear();
       while (current != -1) {
          list_path.push_front(current);
@@ -4208,7 +4211,8 @@ T inline DoubleMinCostFlow<T>::cost_shortest_path_in_dag(list_int& list_path) {
    int* prec = new int[_n];
    for (int i = 0; i < _n; ++i) prec[i]=-1;
    for (int i = 0; i < _n; ++i) distances[i]=MAX_FLOW;
-   distances[_topological_order[0]]=0;
+   //distances[_topological_order[0]]=0;
+   distances[_node_s]=0; // ELSA 2015-04-07
    for (int i = 0; i < _n; ++i) {
       const int node = _topological_order[i];
       const int pr_begin=_pr_node[node];
@@ -4224,8 +4228,10 @@ T inline DoubleMinCostFlow<T>::cost_shortest_path_in_dag(list_int& list_path) {
          }
       }
    }
-   const T shortest_path=distances[_topological_order[_n-1]];
-   int current=_topological_order[_n-1];
+   //const T shortest_path=distances[_topological_order[_n-1]];
+   const T shortest_path=distances[_node_t]; // ELSA 2015-04-07
+   //int current=_topological_order[_n-1];
+   int current=_node_t; // ELSA 2015-04-07
    list_path.clear();
    while (current != -1) {
       list_path.push_front(current);
