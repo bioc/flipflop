@@ -4,10 +4,15 @@ o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
 
+CHANGES IN VERSION 1.5.15
+ --------------------------
+    o correct a bug happened when the pre-processing encountered a * in the CIGAR field.
+      now it simply ignore the read (align.cpp).
+
 CHANGES IN VERSION 1.5.14
  --------------------------
     o correct a bug which might happened when reading the RG:Z tag in the SAM file (align.cpp)
-    o allow also H characters in the CIGAR field
+    o allow H characters in the CIGAR field
     o correction in spams (prox/project.h) related to topological order
 
 
@@ -16,12 +21,16 @@ CHANGES IN VERSION 1.5.12
 MAJOR CHANGES
     o parallelization
       -----> FlipFlop can be run on multiple cores. 
-    2 novel options:
 
-    - 'sliceCount'       number of slices in which the pre-processing '.instance' file is cut. 
-                         when OnlyPreprocess set to TRUE, it creates slices and you can run FlipFlop independently afterwards on each one of the slice.
-    - mc.cores           it distributed the slices on several cores when sliceCount>1. 
-                         when using a given preprocessing.instance and several samples, it using several cores for some operations concerning the several samples .
+NEW FEATURES
+    o 2 novel options related to the parallelization:
+
+      - 'sliceCount'     number of slices in which the pre-processing '.instance' file is cut. 
+                         when OnlyPreprocess is set to TRUE, it creates slices and 
+			 you can run FlipFlop independently afterwards on each one of the slice.
+      - mc.cores         it automatically distributes the slices on several cores when sliceCount>1. 
+                         when using a given preprocessing.instance and several samples,
+			 it uses several cores for some operations concerning multiple samples.
 
 CHANGES IN VERSION 1.5.11
  --------------------------
@@ -41,7 +50,8 @@ NEW FEATURES
       - 'samples.file'    optional samples file (one line per sample name)
       - 'output.type'     type of output when using several samples simultaneously. 
                           when equal to "gtf" the output corresponds to a gtf file per sample with specific abundances. 
-                          when equal to "table" the output corresponds to a single gtf file storing the structure of the transcripts, and an associated table with the abundances of all samples.
+                          when equal to "table" the output corresponds to a single gtf file storing the structure of the transcripts, 
+			  and an associated table with the abundances of all samples.
       - 'mergerefit'      if TRUE use a simple refit strategy instead of the group-lasso. Default FALSE.
 
 MINOR CHANGES
@@ -64,7 +74,7 @@ CHANGES IN VERSION 1.5.6
  --------------------------
 MAJOR CHANGES
     o faster single-end and paired-end graph implementation 
-    o use_TSSPAS: if yes then start/end bins are the ones with no entering/outgoing junctions (+ annotated ones if given annotation)
+    o use_TSSPAS: if yes then start/end bins are the ones with no entering/outgoing junctions (+ annotated ones if given annotations)
 
 MINOR CHANGES
     o remove the sanity-check for possibly duplicated types, as it was solved into readgroup.cpp/getType
@@ -72,10 +82,9 @@ MINOR CHANGES
     o [pre-processing] cancel change of version 1.3.9 (extreme boundary of segments calculateBound in readgroup.cpp) (I changed my mind !!)
 
 
-
 CHANGES IN VERSION 1.5.5
  --------------------------
-    o allow more easy 2 steps run (preprocessing+prediction). The option "OnlyPreprocess" allows to perform preprocessing only. It creates two files 'prefix.instance' and (prefix.totalnumread). Running then flipflop with the option preprocess.instance='prefix.instance' performs the prediction (it reads automatically the total number of reads in prefix.totalnumread)
+    o allow more easy 2 steps run (preprocessing+prediction). The option "OnlyPreprocess" allows to perform preprocessing only. It creates two files 'prefix.instance' and 'prefix.totalnumread'. Running then flipflop with the option preprocess.instance='prefix.instance' performs the prediction (it reads automatically the total number of reads in prefix.totalnumread)
     o [pre-processing] push the default minJuncCount from 1 to 2 (high enough for a default?) 
     o [pre-processing] slight change for paired-end preprocessing, see option to processsam (--single-only not automatic anymore)
     o start using Rprintf in c/cpp codes for user messages (to continue)
@@ -89,7 +98,6 @@ CHANGES IN VERSION 1.5.4
 CHANGES IN VERSION 1.5.3
  --------------------------
 NEW FEATURE
-
     o [pre-processing] add minJuncCount as an option, ie number of required reads to consider a junction/boundary as valid.
 
 CHANGES IN VERSION 1.5.1

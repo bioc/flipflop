@@ -1,13 +1,15 @@
 Package: flipflop
 Title: Fast lasso-based isoform prediction as a flow problem
-Version: 1.5.14
+Version: 1.5.15
 Date: 2013-09-26
 Author: Elsa Bernard, Laurent Jacob, Julien Mairal and Jean-Philippe
         Vert
 Maintainer: Elsa Bernard <elsa.bernard@mines-paristech.fr>
 Description: Flipflop discovers which isoforms of a gene are expressed
         in a given sample together with their abundances, based on
-        RNA-Seq read data.
+        RNA-Seq read data. It takes an alignment file in SAM format as input.
+	It can also discover transcripts from several samples simultaneously, 
+	increasing statistical power.
 License: GPL-3
 LazyLoad: yes
 Imports: methods, Matrix, IRanges, GenomicRanges, parallel
@@ -15,4 +17,5 @@ Suggests: GenomicFeatures
 Depends: R (>= 2.10.0)
 NeedsCompilation: yes
 BuildVignettes: true
-biocViews: RNASeq
+URL: http://cbio.ensmp.fr/flipflop
+biocViews: RNASeq, RNASeqData, AlternativeSplicing, Regression

@@ -28,6 +28,11 @@ int Align::getReadLen()const{
 int Align::parse(string oneline){
     stringstream ss(oneline);
     ss>>qname>>flag>>rname>>pos>>mapq>>cigar>>rnext>>pnext>>plen;
+    // ELSA 2015-04-10 skip unmapped reads with * CIGAR
+    if(cigar=="*") {
+      //std::cerr << "Ignoring CIGAR character *\n";
+      return -1;
+    }
     start.clear();
     end.clear();
     parsecigar();
