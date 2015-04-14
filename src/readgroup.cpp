@@ -10,6 +10,9 @@
 // 2014-09-28: Eric Viara
 //#define MERGE_ADJACENT_SEGMENTS
 
+// 2015-04-14: Eric Viara
+#define OUT_OF_MEMORY_PATCH
+
 int ReadGroup::statReadLen=0;
 
 //ReadGroup::CollapseAdjacentSegments ReadGroup::collapse_adjacent_segments = ReadGroup::COLLAPSE_ADJACENT_SEGMENTS_NO;
@@ -399,12 +402,30 @@ void ReadGroup::splitByRangeSet(vector<ReadGroup> & vr,long minD){
       vr[i].clearPairInfo();
     }
   }
+#ifdef OUT_OF_MEMORY_PATCH
+  vector<ReadGroup> ret_vr;
+  vector<ReadGroup>::iterator rgi = vr.begin();
+  vector<ReadGroup>::iterator vr_end = vr.end();
+  size_t valid_size = valid.size();
+  for(int i = 0; i < valid_size; i++) {
+    if (valid[i]) {
+      ret_vr.push_back(*rgi);
+    } else {
+      rgi->clear();
+    }
+    rgi++;
+  }
+  vr = ret_vr;
+#else
   vector<ReadGroup>::iterator rgi=vr.begin();
   for(int i=0;i<valid.size();i++){
-    if(valid[i]==0) rgi=vr.erase(rgi);
+    if(valid[i]==0) {
+      rgi=vr.erase(rgi);
+    }
     else rgi++;
   }
-  
+#endif
+
 }
 
 /*

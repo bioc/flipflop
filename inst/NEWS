@@ -3,10 +3,13 @@ o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
+CHANGES IN VERSION 1.5.15
+ --------------------------
+    o correct a bad memory managment in readgroup.cpp (do not use erase on a vector!)
 
 CHANGES IN VERSION 1.5.15
  --------------------------
-    o correct a bug happened when the pre-processing encountered a * in the CIGAR field.
+    o correct a bug that may happen when the pre-processing encountered a * in the CIGAR field.
       now it simply ignore the read (align.cpp).
 
 CHANGES IN VERSION 1.5.14
