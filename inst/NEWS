@@ -3,7 +3,7 @@ o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
-CHANGES IN VERSION 1.5.15
+CHANGES IN VERSION 1.5.16
  --------------------------
     o correct a bad memory managment in readgroup.cpp (do not use erase on a vector!)
 
