@@ -287,7 +287,7 @@ are not the same as in the previous example because boundaries now include exons
 \subsection{Read the output GTF file}
 
 The transcripts which are found to be expressed are stored in a \texttt{gtf} format file.
-The transcript information from the GTF file can be easily extracted using the \Rfunction{makeTranscriptDbFromGFF} function
+The transcript information from the GTF file can be easily extracted using the \Rfunction{makeTxDbFromGFF} function
 from the \Rpackage{GenomicFeatures} package~\citep{GenomicFeatures}.
 
 The following example shows (when the \Rpackage{GenomicFeatures} is installed) 
@@ -300,7 +300,7 @@ extracts the list of exons for each gene or transcript:
 
 <<GenomicFeatures, echo=TRUE>>=
 if(require(GenomicFeatures)){
-   txdb <- makeTranscriptDbFromGFF(file='FlipFlop_output.gtf', 
+   txdb <- makeTxDbFromGFF(file='FlipFlop_output.gtf', 
 				format='gtf', 
 				exonRankAttributeName='exon_number')
    # List of exons for each transcript:
