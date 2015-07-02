@@ -3,6 +3,11 @@ o change optim parameter in main flipflop
 o check everything ok on windows and os
 o take care of all cpp warnings (isolasso+spams)
 
+CHANGES IN VERSION 1.7.3
+ --------------------------
+    o add the header ie the sample names to the output tables (created when using output.type='table')
+    o correct little bug concerning the SAM file when header is present (see samio.cpp first test over linecount replace by totalnumread)
+
 CHANGES IN VERSION 1.5.16
  --------------------------
     o correct a bad memory managment in readgroup.cpp (do not use erase on a vector!)

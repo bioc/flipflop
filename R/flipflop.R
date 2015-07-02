@@ -284,8 +284,8 @@ flipflop <- function(data.file,
             go1 <- dirname(out.file)
             go2 <- sub('[.][^.]*$', '', basename(out.file))
             go <- paste(go1,go2,sep='/')
-            system( paste('cat', paste(go, 'fpkm', 1:sliceCount.eff, sep="_", collapse=" "), '>', paste(go,'fpkm',sep="_"), sep=" ") )
-            system( paste('cat', paste(go, 'count', 1:sliceCount.eff, sep="_", collapse=" "), '>', paste(go,'count',sep="_"), sep=" ") )
+            system( paste('cat', paste(go, 'fpkm', 1:sliceCount.eff, sep="_", collapse=" "), '>>', paste(go,'fpkm',sep="_"), sep=" ") )
+            system( paste('cat', paste(go, 'count', 1:sliceCount.eff, sep="_", collapse=" "), '>>', paste(go,'count',sep="_"), sep=" ") )
             lapply(1:sliceCount.eff, FUN=function(ss){ unlink(paste(go, 'fpkm', ss, sep="_")) ; unlink(paste(go, 'count', ss, sep="_"))})
          }
          aa <- lapply(outf, FUN=function(oo) {
