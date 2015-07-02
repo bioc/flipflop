@@ -196,17 +196,20 @@ int readSamFile(string inSamFile, //input file
   
     //write to read info
     writeoneline2readinfo(calign);
-    if(linecount==1){
+    /*if(linecount==1){ // 2015-10-15 ELSA (comment because using linecount here is not good)
       ReadGroup::setStatReadLen(calign.getReadLen());
       ReadGroup::setStatChr(calign.rname);
+    }*/
+    // 2015-01-15 ELSA
+    totalnumread++;
+    if(numpair_samples.find(calign.rgname)!=numpair_samples.end()){
+       numread_samples[calign.rgname]++;
     }
-    if(oneline[0]!='@'){
-       // 2015-01-15 ELSA
-       totalnumread++;
-       if(numpair_samples.find(calign.rgname)!=numpair_samples.end()){
-	  numread_samples[calign.rgname]++;
-       }
+    if(totalnumread==1){ // 2015-10-15 ELSA 
+       ReadGroup::setStatReadLen(calign.getReadLen());
+       ReadGroup::setStatChr(calign.rname);
     }
+
     //write to instance, if possible
     //update and write generange file
     if(calign.rname!=prevrname || calign.pos>currentrange.second+MIN_GRANGE_DISTANCE){
