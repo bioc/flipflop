@@ -298,13 +298,13 @@ More information can be found in \citep{GenomicFeatures}.
 For instance the \Rfunction{exonsBy} function 
 extracts the list of exons for each gene or transcript:
 
-<<GenomicFeatures, echo=TRUE>>=
-if(require(GenomicFeatures)){
-   txdb <- makeTxDbFromGFF(file='FlipFlop_output.gtf', format='gtf')
-   # List of exons for each transcript:
-   exonsBy(txdb, by='tx')
-}
-@
+%<<GenomicFeatures, echo=TRUE>>=
+%if(require(GenomicFeatures)){
+%   txdb <- makeTxDbFromGFF(file='FlipFlop_output.gtf', format='gtf')
+%   # List of exons for each transcript:
+%   exonsBy(txdb, by='tx')
+%}
+%@
 
 \section{Session Information}
 
