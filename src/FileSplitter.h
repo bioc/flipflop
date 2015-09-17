@@ -8,7 +8,7 @@
 
 class FileSplitter {
    //off_t header_offset;
-   std::streampos  header_offset;
+   std::streampos header_offset;
    size_t header_size;
 
    struct InstanceInfo {
@@ -58,4 +58,3 @@ class FileSplitter {
    void split(size_t slice_cnt);
 
 };
-
