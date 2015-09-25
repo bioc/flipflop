@@ -39,7 +39,7 @@ int Samples::readsamples(const string& filename) // Samples constructor
 
    while(!fifs.eof()){
     string oneline;
-    getline(fifs,oneline);  
+    getline(fifs,oneline);
     trim(oneline); // trim the sample name in case there is a blank
     if(oneline.length()>0){
       samples.push_back(oneline);
