@@ -616,7 +616,7 @@ using namespace FISTA;
 
    if (param.regul==GRAPH || param.regul==GRAPHMULT) 
     throw("Error: fistaGraph should be used instead");
-  if (param.regul==TREEMULT && abs<T>(param.lambda2 - 0) < 1e-20) 
+  if (param.regul==TREEMULT && abss<T>(param.lambda2 - 0) < 1e-20) 
       throw("fistaTree error: with multi-task-tree, lambda2 should be > 0");
   TreeStruct<T> tree;
   tree.Nv=0;
@@ -824,7 +824,7 @@ using namespace FISTA;
   graph.n=pAlpha;
   graph.m=jc[graph.n];
   graph.weights=weights;
-  for (int i = 0; i<graph.m; ++i) if (abs<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
+  for (int i = 0; i<graph.m; ++i) if (abss<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
   graph.start_weights=start_weights;
   graph.stop_weights=stop_weights;
   graph.ir=ir;
@@ -951,7 +951,7 @@ using namespace FISTA;
   graph.n=pAlpha;
   graph.m=jc[graph.n];
   graph.weights=weights;
-  for (int i = 0; i<graph.m; ++i) if (abs<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
+  for (int i = 0; i<graph.m; ++i) if (abss<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
   graph.start_weights=start_weights;
   graph.stop_weights=stop_weights;
   graph.ir=ir;
@@ -1046,7 +1046,7 @@ using namespace FISTA;
   graph.n=pAlpha;
   graph.m=jc[graph.n];
   graph.weights=weights;
-  for (int i = 0; i<graph.m; ++i) if (abs<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
+  for (int i = 0; i<graph.m; ++i) if (abss<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
   graph.start_weights=start_weights;
   graph.stop_weights=stop_weights;
   graph.ir=ir;
@@ -1128,7 +1128,7 @@ using namespace FISTA;
   graph.n=pAlpha;
   graph.m=jc[graph.n];
   graph.weights=weights;
-  for (int i = 0; i<graph.m; ++i) if (abs<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
+  for (int i = 0; i<graph.m; ++i) if (abss<T>(graph.weights[i]) < 1e-10) graph.weights[i]=0; // to be able to have zero weights in the sparse matrix
   graph.start_weights=start_weights;
   graph.stop_weights=stop_weights;
   graph.ir=ir;
@@ -1262,7 +1262,6 @@ Matrix<T> *_alltrainDL(Data<T> *X,bool in_memory, Matrix<T> **omA,Matrix<T> **om
 }
 */
 /* end  dictLearn */
-
 
 /* dags */
 

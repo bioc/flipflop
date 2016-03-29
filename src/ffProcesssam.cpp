@@ -3,7 +3,7 @@
 #include "samio.h"
 #include "common.h"
 
-extern "C" {  
+extern "C" {
   void ffProcesssam(char ** in, char ** pre, char ** an, char ** samp, char ** pair, char ** minr, char ** minc, char ** minj, char ** verb, char ** slicec){
     string inSamFile = string(in[0]);
     string prefix = string(pre[0]);

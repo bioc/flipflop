@@ -46,7 +46,7 @@ template <typename T>
 T power(const T x, const T y);
 /// template version of the fabs function
 template <typename T>
-T abs(const T x);
+T abss(const T x);
 /// template version of the fabs function
 template <typename T>
 T sqr(const T x);
@@ -212,11 +212,11 @@ inline float power(const float x, const float y) {
 
 /// template version of the fabs function
 template <>
-inline double abs(const double x) {
+inline double abss(const double x) {
    return fabs(x);
 };
 template <>
-inline float abs(const float x) {
+inline float abss(const float x) {
    return fabsf(x);
 };
 

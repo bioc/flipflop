@@ -1194,7 +1194,7 @@ namespace FISTA {
                T mm = output.fmaxval();
                scal= mm > 1.0 ? T(1.0)/mm : 1.0;
                val=0;
-               if (this->_intercept & (abs<T>(output[output.n()-1]) > EPSILON)) val=INFINITY; 
+               if (this->_intercept & (abss<T>(output[output.n()-1]) > EPSILON)) val=INFINITY; 
             };
             virtual bool is_subgrad() const { return true; };
             virtual void sub_grad(const Vector<T>& input, Vector<T>& output) const {  
@@ -1279,12 +1279,12 @@ namespace FISTA {
             };
             void inline linearize(const Vector<T> &x) {
                _weights.resize(x.n());
-               for (int i = 0; i<x.n(); ++i) _weights[i] = T(1.0)/(abs<T>(x[i])+_eps);
+               for (int i = 0; i<x.n(); ++i) _weights[i] = T(1.0)/(abss<T>(x[i])+_eps);
             };
             bool inline is_concave() const { return true; };
             T inline eval(const Vector<T>& x) const { 
                T tmp=0;
-               for (int i = 0; i<x.n(); ++i) tmp+= log_alt<T>(abs<T>(x[i])+_eps);
+               for (int i = 0; i<x.n(); ++i) tmp+= log_alt<T>(abss<T>(x[i])+_eps);
                return tmp;
             };
             void inline fenchel(const Vector<T>& input, T& val, T& scal) const { };
@@ -1341,7 +1341,7 @@ namespace FISTA {
                if (this->_pos) tmp.thrsPos();
                val=this->eval(tmp);
                scal=T(1.0);
-               if (this->_intercept & (abs<T>(tmp[tmp.n()-1]) > EPSILON)) val=INFINITY; 
+               if (this->_intercept & (abss<T>(tmp[tmp.n()-1]) > EPSILON)) val=INFINITY; 
             };
             virtual bool is_subgrad() const { return true; };
             virtual void sub_grad(const Vector<T>& input, Vector<T>& output) const {  
@@ -1388,7 +1388,7 @@ namespace FISTA {
                T mm = output.nrm2();
                scal= mm > 1.0 ? T(1.0)/mm : 1.0;
                val=0;
-               if (this->_intercept & (abs<T>(output[output.n()-1]) > EPSILON)) val=INFINITY; 
+               if (this->_intercept & (abss<T>(output[output.n()-1]) > EPSILON)) val=INFINITY; 
             };
       };
 
@@ -1420,7 +1420,7 @@ namespace FISTA {
                T mm = output.asum();
                scal= mm > 1.0 ? T(1.0)/mm : 1.0;
                val=0;
-               if (this->_intercept & (abs<T>(output[output.n()-1]) > EPSILON)) val=INFINITY; 
+               if (this->_intercept & (abss<T>(output[output.n()-1]) > EPSILON)) val=INFINITY; 
             };
       };
 
@@ -1583,7 +1583,7 @@ namespace FISTA {
                   gr->restore_flow();
                scal= mm > 1.0 ? T(1.0)/mm : 1.0;
                val=0;
-               if (this->_intercept & (abs<T>(input[input.n()-1]) > EPSILON)) val=INFINITY; 
+               if (this->_intercept & (abss<T>(input[input.n()-1]) > EPSILON)) val=INFINITY; 
             };
 
             virtual void init(const Vector<T>& y) { };
@@ -1700,7 +1700,7 @@ namespace FISTA {
                   T mm = const_cast<Tree_Seq<T>* >(&_tree)->dual_norm_inf(yp2);
                   scal= mm > 1.0 ? T(1.0)/mm : 1.0;
                   val=0;
-                  if (this->_intercept & (abs<T>(y[y.n()-1]) > EPSILON)) val=INFINITY; 
+                  if (this->_intercept & (abss<T>(y[y.n()-1]) > EPSILON)) val=INFINITY; 
                } 
             };
             virtual bool is_fenchel() const {
@@ -1971,7 +1971,7 @@ namespace FISTA {
                T mm = norm.fmaxval();
                scal= mm > 1.0 ? T(1.0)/mm : 1.0; 
                val=0;
-               if (this->_intercept & (abs<T>(norm[norm.n()-1]) > EPSILON)) val=INFINITY; 
+               if (this->_intercept & (abss<T>(norm[norm.n()-1]) > EPSILON)) val=INFINITY; 
             };
       };
 
@@ -2016,7 +2016,7 @@ namespace FISTA {
                T mm = norm.fmaxval();
                scal= mm > 1.0 ? T(1.0)/mm : 1.0; 
                val=0;
-               if (this->_intercept & (abs<T>(norm[norm.n()-1]) > EPSILON)) val=INFINITY; 
+               if (this->_intercept & (abss<T>(norm[norm.n()-1]) > EPSILON)) val=INFINITY; 
             };
             virtual bool is_subgrad() const { return true; };
             virtual void sub_grad(const Matrix<T>& input, Matrix<T>& output) const { 
@@ -2030,12 +2030,12 @@ namespace FISTA {
                   if (max > 1e-15) {
                      int num_max=0;
                      for (int j = 0; j<row.n(); ++j) {
-                        if (abs<T>(max-abs<T>(row[j])) < 1e-15) 
+                        if (abss<T>(max-abss<T>(row[j])) < 1e-15) 
                            num_max++;
                      }
                      T add = T(1.0)/num_max;
                      for (int j = 0; j<row.n(); ++j) {
-                        if (abs<T>(max-abs<T>(row[j])) < 1e-15) 
+                        if (abss<T>(max-abss<T>(row[j])) < 1e-15) 
                            row[j] = row[j] > 0 ? add : -add;
                      }
                      output.setRow(i,row);
@@ -2336,7 +2336,7 @@ namespace FISTA {
                 }
                 scal= mm > 1.0 ? T(1.0)/mm : 1.0;
                 val=0;
-                if (this->_intercept & (abs<T>(input[input.n()-1]) > EPSILON)) val=INFINITY; 
+                if (this->_intercept & (abss<T>(input[input.n()-1]) > EPSILON)) val=INFINITY; 
              };
           private:
              GraphPath<T> _graph;
@@ -2734,7 +2734,7 @@ namespace FISTA {
          grad1.scal(scal);
          dual -= loss.fenchel(grad1);
          dual = MAX(dual,best_dual);
-         T delta= primal == 0 ? 0 : (primal-dual)/abs<T>(primal);
+         T delta= primal == 0 ? 0 : (primal-dual)/abss<T>(primal);
          /* if (verbose) {
             cout << "Relative duality gap: " << delta << endl;
             flush(cout);
@@ -2929,8 +2929,8 @@ namespace FISTA {
                   ++iter;
                }
             }
-	    //if (param.verbose && ((it % it0) == 0)) 
-	       //cout << endl; 
+   //if (param.verbose && ((it % it0) == 0)) 
+       //cout << endl; 
             if (param.linesearch_mode==2) {
                sbb.copy(grad);
                xbb.copy(x);
@@ -4199,7 +4199,7 @@ namespace FISTA {
                   b.sub(zz);
                   Xcopy.multTrans(b,tmp);
                   for (int k = 0; k<p; ++k) {
-                     if (abs<T>(tmp[k]) > lambda*(1+1e-9)) {
+                     if (abss<T>(tmp[k]) > lambda*(1+1e-9)) {
                         optlasso2=false;
                         break;
                      }

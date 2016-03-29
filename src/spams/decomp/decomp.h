@@ -512,7 +512,7 @@ void coreORMP(Vector<T>& scores, Vector<T>& norm, Vector<T>& tmp, Matrix<T>& Un,
       Vector<int>& ind, Vector<T>& RUn, 
        T& normX, const T* peps, const int* pL, const T* plambda,
       T* path) {
-   const T eps = abs<T>(*peps);
+   const T eps = abss<T>(*peps);
    const int L = MIN(*pL,Gs.n());
    const T lambda=*plambda;
    if ((normX <= eps) || L == 0) return;
@@ -793,7 +793,7 @@ void coreLARS(Vector<T>& Rdnv, Vector<T>& Xdnv, Vector<T>& Av,
             Cmax = Rdn[currentInd];
             sig[j]=1.0;
          } else {
-            Cmax = abs<T>(Rdn[currentInd]);
+            Cmax = abss<T>(Rdn[currentInd]);
             sig[j] = SIGN(Rdn[currentInd]);
          }
          for (int k = 0; k<=j; ++k) Un[j*L+k]=0.0;
@@ -956,7 +956,7 @@ void coreLARS(Vector<T>& Rdnv, Vector<T>& Xdnv, Vector<T>& Av,
          downDateLasso<T>(j,minBasis,normX,ols,pos,Rdnv,ind,coeffs,sigv,
                avv,Xdnv, RUnv, Unm, Gsm, Gsam,Undsm,Rm);
          newAtom=false;
-         Cmax=abs<T>(Rdn[ind[0]]);
+         Cmax=abss<T>(Rdn[ind[0]]);
          --j;
       } else {
          newAtom=true;
@@ -964,7 +964,7 @@ void coreLARS(Vector<T>& Rdnv, Vector<T>& Xdnv, Vector<T>& Av,
       ++iter;
 
       if (mode == PENALTY) {
-         thrs=abs<T>(Rdn[ind[0]]);
+         thrs=abss<T>(Rdn[ind[0]]);
       }
 
       if ((j == L-1) || 
@@ -1182,7 +1182,7 @@ void lassoReweighted(const Matrix<T>& X, const Matrix<T>& D, SpMatrix<T>& spalph
          weights.set(sig);
          for (int k = 0; k<K; ++k) {
             if (ind[k] != -1) {
-               weights[ind[k]] = MAX(1e-4,sig*exp(-sig*abs<T>(coeffs[k])));
+               weights[ind[k]] = MAX(1e-4,sig*exp(-sig*abss<T>(coeffs[k])));
             } else {
                break;
             }
@@ -1629,7 +1629,7 @@ void coreLARS2(Vector<T>& DtR, const AbstractMatrix<T>& G,
       }
  //     PRINT_F(step_max)
 
-      T current_correlation = abs<T>(pr_DtR[pr_ind[0]]);
+      T current_correlation = abss<T>(pr_DtR[pr_ind[0]]);
       cblas_gemv<T>(CblasColMajor,CblasNoTrans,K,i+1,T(1.0),pr_Ga,
             K,pr_u,1,T(0.0),pr_work+2*K,1);
       cblas_copy<T>(K,pr_work+2*K,1,pr_work+K,1);
@@ -1844,7 +1844,7 @@ void coreLARS2W(Vector<T>& DtR, AbstractMatrix<T>& G,
          }
       }
 
-      T current_correlation = abs<T>(pr_DtR[pr_ind[0]]);
+      T current_correlation = abss<T>(pr_DtR[pr_ind[0]]);
       cblas_gemv<T>(CblasColMajor,CblasNoTrans,K,i+1,T(1.0),pr_Ga,
             K,pr_u,1,T(0.0),pr_work+2*K,1);
       vDiv<T>(K,pr_work+2*K,pr_weights,pr_work+2*K);

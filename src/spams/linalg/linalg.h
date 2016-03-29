@@ -71,12 +71,12 @@ typedef std::vector< group > vector_groups;
 
 template <typename T> 
 static inline bool isZero(const T lambda) {
-   return static_cast<double>(abs<T>(lambda)) < 1e-99;
+   return static_cast<double>(abss<T>(lambda)) < 1e-99;
 }
 
 template <typename T> 
 static inline bool isEqual(const T lambda1, const T lambda2) {
-   return static_cast<double>(abs<T>(lambda1-lambda2)) < 1e-99;
+   return static_cast<double>(abss<T>(lambda1-lambda2)) < 1e-99;
 }
 
 
@@ -2196,7 +2196,7 @@ template <typename T> inline void Matrix<T>::norm_inf_rows(Vector<T>& norms) con
    norms.setZeros();
    for (int i = 0; i<_n; ++i) 
       for (int j = 0; j<_m; ++j) 
-         norms[j] = MAX(abs<T>(_X[i*_m+j]),norms[j]);
+         norms[j] = MAX(abss<T>(_X[i*_m+j]),norms[j]);
 };
 
 /// returns the linf norms of the columns
@@ -2205,7 +2205,7 @@ template <typename T> inline void Matrix<T>::norm_l1_rows(Vector<T>& norms) cons
    norms.setZeros();
    for (int i = 0; i<_n; ++i) 
       for (int j = 0; j<_m; ++j) 
-         norms[j] += abs<T>(_X[i*_m+j]);
+         norms[j] += abss<T>(_X[i*_m+j]);
 };
 
 
@@ -2976,7 +2976,7 @@ template <typename T> inline void Vector<T>::thrsabsmin(const T nu) {
 /// performs thresholding of the vector
 template <typename T> inline void Vector<T>::thrshold(const T nu) {
    for (int i = 0; i<_n; ++i) 
-      if (abs<T>(_X[i]) < nu) 
+      if (abss<T>(_X[i]) < nu) 
          _X[i]=0;
 }
 /// performs soft-thresholding of the vector
@@ -3356,7 +3356,7 @@ template <typename T> inline T Vector<T>::lzero() const {
 template <typename T> inline T Vector<T>::afused() const {
    T sum = 0;
    for (int i = 1; i<_n; ++i) {
-      sum += abs<T>(_X[i]-_X[i-1]);
+      sum += abss<T>(_X[i]-_X[i-1]);
    }
    return sum;
 }
@@ -3734,7 +3734,7 @@ inline void Vector<T>::fusedProjectHomotopy(Vector<T>& alpha,
    pr_signs[0] = pr_DtR[0] > 0;
    pr_c[0]=T(1.0)/K;
    int currentInd=this->fmax();
-   T currentLambda=abs<T>(pr_DtR[currentInd]);
+   T currentLambda=abss<T>(pr_DtR[currentInd]);
    bool newAtom = true;
 
    /// Solve the Lasso using simplified LARS

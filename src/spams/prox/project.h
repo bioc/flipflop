@@ -51,7 +51,7 @@ Timer tglobal1, tglobal2, tglobal3;
 
 template <typename T>
 bool compare_abs (T first, T second) {
-   return abs<T>(first) >= abs<T>(second);
+   return abss<T>(first) >= abss<T>(second);
 }
 template <typename T>
 T inline project_tree_l1(T* variables, const int n, const T lambda);
@@ -245,7 +245,7 @@ T inline Tree_Seq<T>::val_norm2(const T* pr_alpha, const int current_node, T& tm
    }
    if (l1) {
       for (int i = 0; i<_size_own_variables[current_node]; ++i)
-         tmp=MAX(abs<T>(pr_alpha[i+_pr_variables[current_node]]),tmp);
+         tmp=MAX(abss<T>(pr_alpha[i+_pr_variables[current_node]]),tmp);
       sum+=_lambda[current_node]*tmp;
    } else {
       tmp += cblas_dot<T>(_size_own_variables[current_node],const_cast<T*>(pr_alpha+_pr_variables[current_node]),1,const_cast<T*>(pr_alpha+_pr_variables[current_node]),1);
@@ -288,11 +288,11 @@ void inline Tree_Seq<T>::sub_grad(const Vector<T>& input, Vector<T>& output, con
          T max=pr[imax];
          int num_max=0;
          for (int j = 0; j<_size_variables[i];++j) {
-            if (abs<T>(max-abs<T>(pr[j])) < 1e-10) ++num_max;
+            if (abss<T>(max-abss<T>(pr[j])) < 1e-10) ++num_max;
          }
          T add=T(1.0)/num_max;
          for (int j = 0; j<_size_variables[i];++j) {
-            if (abs<T>(max-abs<T>(pr[j])) < 1e-10 && input[_pr_variables[i]+j]) {
+            if (abss<T>(max-abss<T>(pr[j])) < 1e-10 && input[_pr_variables[i]+j]) {
                output[_pr_variables[i]+j]+= input[_pr_variables[i]+j] > 0 ? add : -add;
             }
          }
@@ -961,13 +961,13 @@ void inline MaxFlow<T>::sub_gradient_aux(const Vector<T>& input, Vector<T>& outp
    }
    T max_abs = 0;
    for (const_iterator_int it = variables.begin(); it != variables.end(); ++it) {
-      if (abs<T>(input[*it-Ng]) > max_abs) max_abs=abs<T>(input[*it-Ng]);
+      if (abss<T>(input[*it-Ng]) > max_abs) max_abs=abss<T>(input[*it-Ng]);
    }
    if (max_abs < 1e-15)
       return;
    list_int var_max;
    for (const_iterator_int it = variables.begin(); it != variables.end(); ++it) {
-      if (abs<T>(abs<T>(input[*it-Ng])-max_abs) < 1e-15)
+      if (abss<T>(abss<T>(input[*it-Ng])-max_abs) < 1e-15)
          var_max.push_back(*it-Ng);
    }
    T scal = weights[node]/var_max.size();
@@ -1378,7 +1378,7 @@ T inline MaxFlow<T>::project_box(const list_int& component,
          pivot=*it;
          sum+= pivot;
          num+= pivot > 0 ? 1 : -1;
-         if (sum-abs<T>(*it)*num > lambda) {
+         if (sum-abss<T>(*it)*num > lambda) {
             sum-=*it;
             num-= (*it > 0 ? 1 : -1);
             br=true;
@@ -2064,7 +2064,7 @@ T inline Graph<T>::dual_norm_inf(const Vector<T>& input,
                sum_weights+=weights[*it];
                ++size_list;
             } else {
-               sum_variables+=abs<T>(input[*it-_Ng]);
+               sum_variables+=abss<T>(input[*it-_Ng]);
             }
          }
          tau = MAX(tau,sum_variables/sum_weights);
@@ -2122,7 +2122,7 @@ void inline Graph<T>::proximal_operator(const T* variables_in, T* variables_out,
    _maxflow->extractConnexComponents(connex_components);
    T* work = new T[_Nv+_Ng+2];
    T* variables_bis = new T[_Nv];
-   for (int i = 0; i<_Nv; ++i) variables_bis[i]=abs<T>(variables_in[i]);
+   for (int i = 0; i<_Nv; ++i) variables_bis[i]=abss<T>(variables_in[i]);
    for (int i = 0; i<_Nv; ++i) variables_out[i]=variables_bis[i];
 
    /*  cerr << "var out" << endl;
@@ -2175,11 +2175,11 @@ void inline Graph<T>::proximal_operator(const T* variables_in, T* variables_out,
             num4+=num_gap_relabels;
             _maxflow->restore_capacities(*component);
             T flow=_maxflow->flow_component(*component,_Ng);
-            if (abs<T>(budget-flow)/budget > EPSILON_MAXFLOW) {
+            if (abss<T>(budget-flow)/budget > EPSILON_MAXFLOW) {
                /// At this point, the vector _maxflow->_seen is set to true for all nodes not in component
                tsplit.start();
                if (!_maxflow->splitComponent(*component,connex_components,_Ng, positive,true)) {
-                  flow_missed+=abs<T>(budget-flow);
+                  flow_missed+=abss<T>(budget-flow);
                }
                tsplit.stop();
             }
@@ -3257,7 +3257,7 @@ T GraphPath<T,Int>::eval_l0(const T* variables, List<Path<Int>*>* decomposition)
 template <typename T, typename Int>
 T GraphPath<T,Int>::eval_conv(const T* variables, List<Path<Int>*>* decomposition, const bool alt_norm) {
    for (int i = 0; i<_n; ++i) {
-      const Int dem= static_cast<Int>(_sf*abs<T>(variables[i]));
+      const Int dem= static_cast<Int>(_sf*abss<T>(variables[i]));
       _min_cost_flow->set_demand(i,dem);
       _min_cost_flow->set_demand(i+_n,-dem);
    }
@@ -3275,7 +3275,7 @@ T GraphPath<T,Int>::eval_conv(const T* variables, List<Path<Int>*>* decompositio
    }
    if (decomposition) {
       for (int i = 0; i<_n; ++i) {
-         const Int dem= static_cast<Int>(_sf*abs<T>(variables[i]));
+         const Int dem= static_cast<Int>(_sf*abss<T>(variables[i]));
          _min_cost_flow->set_demand(i,0);
          _min_cost_flow->set_demand(i+_n,0);
          _min_cost_flow->add_flow(i,0,dem);
@@ -3296,17 +3296,17 @@ T GraphPath<T,Int>::eval_dual_norm(const T* variables, list_int* path_out, const
 
    while (!exit_loop) {
       for (int i = 0; i<_n; ++i) {
-         const Int fact= alt_norm ? static_cast<Int>(_sf*(variables[i]/tau)) : static_cast<Int>(_sf*abs<T>(variables[i]/tau));
+         const Int fact= alt_norm ? static_cast<Int>(_sf*(variables[i]/tau)) : static_cast<Int>(_sf*abss<T>(variables[i]/tau));
          _min_cost_flow->set_edge(i,0,-fact,_infinite_capacity);
          _min_cost_flow->set_edge(i,1,0,0);
       }
       T delta=static_cast<T>(_min_cost_flow->cost_shortest_path_in_dag(path))/_sf;
       T gamma=0;
       for (const_iterator_int it = path.begin(); it != path.end(); ++it) {
-         if (*it  < _n) gamma+= alt_norm ? variables[*it] : abs<T>(variables[*it]);
+         if (*it  < _n) gamma+= alt_norm ? variables[*it] : abss<T>(variables[*it]);
       }
       T new_tau=gamma/(delta+gamma/tau);
-      if (abs<T>(new_tau) < 1e-12 || abs<T>(delta) < 1e-12 || abs<T>(new_tau-tau) < 1e-12 || (!first && (new_tau <= tau))) exit_loop=true;
+      if (abss<T>(new_tau) < 1e-12 || abss<T>(delta) < 1e-12 || abss<T>(new_tau-tau) < 1e-12 || (!first && (new_tau <= tau))) exit_loop=true;
       tau=new_tau;
       first=false;
    }
@@ -3380,7 +3380,7 @@ void GraphPath<T,Int>::proximal_conv(T* variables, const T lambda, const bool al
       _min_cost_flow->set_demand(i,0);
    }
    for (int i = 0; i<_n; ++i) {
-      const Int fact= static_cast<Int>(_sf*(abs<T>(variables[i])));
+      const Int fact= static_cast<Int>(_sf*(abss<T>(variables[i])));
       _min_cost_flow->set_edge(i,0,-fact,fact);
       _min_cost_flow->set_quad_cost(i,0,true);
       if (alt_norm) {
@@ -3482,7 +3482,7 @@ template <typename T> class DoubleMinCostFlow {
       void inline solve_min_cost(const T tol = TOL_EPS, const bool price_restart=false);
       void inline set_total_demand(const T total_demand) { _total_demand=total_demand; };
       T inline get_flow(const int node, const int num_arc) const { 
-         T flow= _flow[_pr_node[node]+num_arc]; return abs<T>(flow) < EPSILON_FLOW ? 0 : flow ; };
+         T flow= _flow[_pr_node[node]+num_arc]; return abss<T>(flow) < EPSILON_FLOW ? 0 : flow ; };
       void inline set_prices(T* prices) { memcpy(_prices,prices,_n*sizeof(T)); };
       void inline get_prices(T* prices) const { memcpy(prices,_prices,_n*sizeof(T)); };
 
@@ -3700,7 +3700,7 @@ T inline DoubleMinCostFlow<T>::compute_cost() const {
 template <typename T>
 T inline DoubleMinCostFlow<T>::eval_flow_arc(const int node, const int arc) const {
    const int pointer=_pr_node[node]+arc;
-   const T flow = abs<T>(_flow[pointer]);
+   const T flow = abss<T>(_flow[pointer]);
    const T& param1=_cost[pointer];
    const T& param2=_param_loss2[pointer];
    const T& param3=_param_loss3[pointer];
@@ -3733,7 +3733,7 @@ T inline DoubleMinCostFlow<T>::eval_flow_derivative_arc(const int node, const in
    const T& param2=_param_loss2[pointer];
    const T& param3=_param_loss3[pointer];
    const loss_flow& loss=_loss[pointer];
-   const T flow = abs<T>(_flow[pointer]);
+   const T flow = abss<T>(_flow[pointer]);
    T tmp;
    switch (loss) {
       case FLOW_LINEAR: tmp=param1; break;
@@ -3816,7 +3816,7 @@ void inline DoubleMinCostFlow<T>::solve_min_cost(const T tol, const bool price_r
       this->check_balance_excess();
       this->refine(eps);
       T max_price=0;
-      for (int i = 0; i<_n; ++i) max_price=MAX(abs<T>(_prices[i]),max_price);
+      for (int i = 0; i<_n; ++i) max_price=MAX(abss<T>(_prices[i]),max_price);
    //   this->check_reduced_costs();
       if (eps < max_price*tol+_epsilon_flow) break;
 
@@ -4253,14 +4253,14 @@ template <typename T>
 void inline DoubleMinCostFlow<T>::check_balance_excess() {
    T balance=0;
    for (int i =0; i<_n; ++i) {
-      if (abs<T>(_excess[i]) < _epsilon_flow) {
+      if (abss<T>(_excess[i]) < _epsilon_flow) {
          _excess[i]=0;
       } else {
          balance+=_excess[i];
       }
    }
    for (int i =0; i<_n; ++i) 
-      if (_excess[i] && abs<T>(_excess[i]) < balance+1e-15) { 
+      if (_excess[i] && abss<T>(_excess[i]) < balance+1e-15) { 
  //        cout << _excess[i] << endl;
          _excess[i]=0;
       }
@@ -4531,15 +4531,15 @@ void DoubleGraphPath<T>::init_graph(const GraphPathStruct<T>& graph) {
 template <typename T>
 T DoubleGraphPath<T>::eval_conv(const T* input, List<Path<T>*>* decomposition, const bool alt_norm) {
    for (int i = 0; i<_n; ++i) {
-      _solver->set_demand(i,abs<T>(input[i]));
-      _solver->set_demand(i+_n,-abs<T>(input[i]));
+      _solver->set_demand(i,abss<T>(input[i]));
+      _solver->set_demand(i+_n,-abss<T>(input[i]));
    }
    if (alt_norm) {
       for (int i = 0; i<_n; ++i) 
          _solver->set_edge(i,0,0,0);
    }
    T total_demand=0;
-   for (int i=0; i<_n; ++i) total_demand += abs<T>(input[i]);
+   for (int i=0; i<_n; ++i) total_demand += abss<T>(input[i]);
    _solver->set_total_demand(total_demand);
    _solver->solve_min_cost();
    const T val=0.5*_solver->compute_cost();
@@ -4551,7 +4551,7 @@ T DoubleGraphPath<T>::eval_conv(const T* input, List<Path<T>*>* decomposition, c
       for (int i = 0; i<_n; ++i) {
          _solver->set_demand(i,0);
          _solver->set_demand(i+_n,0);
-         _solver->add_flow(i,0,abs<T>(input[i]));
+         _solver->add_flow(i,0,abss<T>(input[i]));
       }
       this->flow_decomposition(*decomposition);
    }
@@ -4584,20 +4584,16 @@ T DoubleGraphPath<T>::eval_dual_norm(const T* variables, list_int* path_out, con
 
    while (!exit_loop) {
       for (int i = 0; i<_n; ++i) {
-         const T fact= alt_norm ? variables[i]/tau : abs<T>(variables[i]/tau);
+         const T fact= alt_norm ? variables[i]/tau : abss<T>(variables[i]/tau);
          _solver->set_edge(i,0,-fact,_max_capacity);
       }
       T delta=_solver->cost_shortest_path_in_dag(path);
       T gamma=0;
       for (const_iterator_int it = path.begin(); it != path.end(); ++it) {
-         if (*it  < _n) gamma+= alt_norm ? variables[*it] : abs<T>(variables[*it]);
+         if (*it  < _n) gamma+= alt_norm ? variables[*it] : abss<T>(variables[*it]);
       }
       T new_tau=gamma/(delta+gamma/tau);
-//      cerr << new_tau << " " << delta << " " << tau << " " << gamma << endl;
-//      flush(cerr);
-//      stop();
-//      flush(cout);
-      if (abs<T>(new_tau) < 1e-12 || abs<T>(delta) < 1e-12 || abs<T>(new_tau-tau) < 1e-12 || (!first && (new_tau <= tau))) exit_loop=true;
+      if (abss<T>(new_tau) < 1e-12 || abss<T>(delta) < 1e-12 || abss<T>(new_tau-tau) < 1e-12 || (!first && (new_tau <= tau))) exit_loop=true;
       tau=new_tau;
       first=false;
    }
@@ -4622,12 +4618,12 @@ void DoubleGraphPath<T>::proximal_conv(T* variables, const T lambda, const bool 
    for (int i = 0; i<_n; ++i) 
       _solver->set_edge(i,0,(variables[i]),_max_capacity,alt_norm ? FLOW_SQUARE : FLOW_SQUARE_POS);
    T total_demand=0;
-   for (int i=0; i<_n; ++i) total_demand += abs<T>(variables[i]);
+   for (int i=0; i<_n; ++i) total_demand += abss<T>(variables[i]);
    total_demand *= 10;
    _solver->set_total_demand(total_demand);
    _solver->solve_min_cost();
    for (int i = 0; i<_n; ++i) {
-      T flow= alt_norm ? _solver->get_flow(i,0) : MIN(abs<T>(variables[i]),_solver->get_flow(i,0));
+      T flow= alt_norm ? _solver->get_flow(i,0) : MIN(abss<T>(variables[i]),_solver->get_flow(i,0));
 //      variables[i]= variables[i] >= 0 ? flow : -flow; 
       variables[i]=flow;
    }
@@ -4647,11 +4643,11 @@ void DoubleGraphPath<T>::sep_costs_conv(T* variables,const T lambda, const loss_
    if (loss==FLOW_SQUARE || loss==FLOW_SQUARE_POS || loss==FLOW_POISSON || loss==FLOW_POISSON_POS) {
       for (int i = 0; i<_n; ++i)
          _solver->set_edge(i,0,variables[i],_max_capacity,loss,0,delta);
-      for (int i=0; i<_n; ++i) total_demand += abs<T>(variables[i]);
+      for (int i=0; i<_n; ++i) total_demand += abss<T>(variables[i]);
    } else if (loss==FLOW_SQUARE_WEIGHTS || loss==FLOW_SQUARE_POS_WEIGHTS || loss==FLOW_POISSON_WEIGHTS || loss==FLOW_POISSON_WEIGHTS_POS) {
       for (int i = 0; i<_n; ++i) if (weights[i])
          _solver->set_edge(i,0,variables[i],_max_capacity,loss,weights[i],delta);
-      for (int i=0; i<_n; ++i) if (weights[i]) total_demand += abs<T>(variables[i])/weights[i];
+      for (int i=0; i<_n; ++i) if (weights[i]) total_demand += abss<T>(variables[i])/weights[i];
    } else {
       //cerr << "Wrong loss" << endl;
       //exit(1);

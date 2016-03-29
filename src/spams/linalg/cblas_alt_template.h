@@ -907,7 +907,7 @@ template <typename T> inline void vDiv( int n,  T* vecIn1,
 /// Slow implementation of vAbs
 template <typename T> inline void vAbs( int n,  T* vecIn, 
       T* vecOut) {
-   for (int i = 0; i<n; ++i) vecOut[i]=abs<T>(vecIn[i]);
+   for (int i = 0; i<n; ++i) vecOut[i]=abss<T>(vecIn[i]);
 };
 
 /// Slow implementation of cblas_idamin and cblas_isamin
