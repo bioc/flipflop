@@ -20,4 +20,4 @@ NeedsCompilation: yes
 BuildVignettes: true
 URL: http://cbio.ensmp.fr/flipflop
 biocViews: RNASeq, RNASeqData, AlternativeSplicing, Regression
-Package Status: Deprecated
+PackageStatus: Deprecated
