@@ -1660,7 +1660,7 @@ template <typename T> inline void Matrix<T>::eigLargestSymApprox(
          up.copy(u);
       }
       lambda+=theta*norm;
-      if isnan(lambda) {
+      if (isnan(lambda)) {
          //std::cerr << "eigLargestSymApprox failed" << std::endl;
          //exit(1);
       }
