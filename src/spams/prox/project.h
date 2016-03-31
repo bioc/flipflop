@@ -863,11 +863,11 @@ bool inline MaxFlow<T>::check_flow() {
             _seen[_children[ind+i]]=true;
          }
       }
-      if (node != _s && node != _t && abs(totalflow+_excess[node]) > EPSILON_MAXFLOW) {
+      if (node != _s && node != _t && abss(totalflow+_excess[node]) > EPSILON_MAXFLOW) {
          //cerr << "prb on node " << node << ", excess: " << _excess[node] << ", totalflow: " << totalflow << endl;
       }
       if (node != _s && node != _t)
-         total_excess2+=abs(totalflow+_excess[node]);
+         total_excess2+=abss(totalflow+_excess[node]);
    }
    return correct;
 }
@@ -1009,7 +1009,7 @@ T inline MaxFlow<T>::norm(const T* variables, T* work, const T* weights, const i
          tmp.pop_front();
       } else {
          if (node >= Ng && node != _s && node != _t) {
-            work[node]= linf ? abs(variables[node-Ng]) : variables[node-Ng]*variables[node-Ng];
+            work[node]= linf ? abss(variables[node-Ng]) : variables[node-Ng]*variables[node-Ng];
             _seen[node]=true;
             tmp.pop_front();
          } else {
@@ -1798,7 +1798,7 @@ void inline MaxFlow<T>::set_capacities_variables(const T* cap, const int Nv,
       const int Ng) {
    for (int i = 0; i<Nv; ++i) {
       const int ind = _pr_node[Ng+i];
-      _capacity[ind]=abs(cap[i]);
+      _capacity[ind]=abss(cap[i]);
    }
 };
 

@@ -5,6 +5,7 @@ export('flipflop')
 
 import('methods')
 importFrom('Matrix', sparseMatrix, rowSums, colSums)
+importFrom("utils", "read.table", "tail")
 importClassesFrom('Matrix', index, number, replValue)
 import('IRanges')
 importFrom('GenomicRanges', GRanges, GenomicRangesList)

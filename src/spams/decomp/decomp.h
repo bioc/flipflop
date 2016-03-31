@@ -1579,7 +1579,7 @@ void coreLARS2(Vector<T>& DtR, const AbstractMatrix<T>& G,
 
    // Find the most correlated element
    int currentInd = pos ? DtR.max() : DtR.fmax();
-   if (mode == PENALTY && abs(DtR[currentInd]) < constraint) return;
+   if (mode == PENALTY && abss(DtR[currentInd]) < constraint) return;
    if (mode == L2ERROR && normX < constraint) return;
    bool newAtom=true;
 
@@ -1750,7 +1750,7 @@ void coreLARS2(Vector<T>& DtR, const AbstractMatrix<T>& G,
       } else {
          newAtom=true;
       }
-      if ((iter >= length_path-1) || (!safe && abs(step) < 1e-15) ||
+      if ((iter >= length_path-1) || (!safe && abss(step) < 1e-15) ||
             step == step_max2 || (normX < 1e-15) ||
             (i == (L-1)) ||
             (mode == L2ERROR && normX - constraint < 1e-15) ||
@@ -1795,7 +1795,7 @@ void coreLARS2W(Vector<T>& DtR, AbstractMatrix<T>& G,
 
    // Find the most correlated element
    int currentInd = pos ? DtR.max() : DtR.fmax();
-   if (mode == PENALTY && abs(DtR[currentInd]) < constraint) return;
+   if (mode == PENALTY && abss(DtR[currentInd]) < constraint) return;
    if (mode == L2ERROR && normX < constraint) return;
    bool newAtom=true;
 
@@ -1944,7 +1944,7 @@ void coreLARS2W(Vector<T>& DtR, AbstractMatrix<T>& G,
          newAtom=true;
       }
       // Choose next action
-      if (iter > 4*L || abs(step) < 1e-15 ||
+      if (iter > 4*L || abss(step) < 1e-15 ||
             step == step_max2 || (normX < 1e-15) ||
             (i == (L-1)) ||
             (mode == L2ERROR && normX - constraint < 1e-15) ||
@@ -2098,13 +2098,13 @@ inline void coreIST(const AbstractMatrix<T>& G, Vector<T>& DtRv, Vector<T>& coef
          T DtRa = T();
          for (int j = 0; j<K; ++j) {
             if (coeffs[j]) {
-               norm1 += abs(coeffs[j]);
+               norm1 += abss(coeffs[j]);
                DtRa += DtR[j]*coeffs[j];
             }
          }
          vAdd(K,DtR,coeffs,DtR);         
          const T kappa = -DtRa+norm1*maxDtR;
-         if (abs(lambda - maxDtR) < tol && kappa <= tol)
+         if (abss(lambda - maxDtR) < tol && kappa <= tol)
             break;
       }
    }
@@ -2173,7 +2173,7 @@ void coreISTconstrained(const AbstractMatrix<T>& G, Vector<T>& DtRv, Vector<T>&
       T DtRa = T();
       for (int j = 0; j<count; ++j) {
          const int ind = pr_indices[j];
-         norm1 += abs(coeffs[ind]);
+         norm1 += abss(coeffs[ind]);
          DtRa += DtR[ind]*coeffs[ind];
       }
       if (norm1-DtRa/maxDtR <= current_tol) {

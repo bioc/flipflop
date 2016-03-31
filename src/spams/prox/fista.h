@@ -1185,7 +1185,7 @@ namespace FISTA {
                if (this->_intercept) y[y.n()-1] = x[y.n()-1];
             };
             T inline eval(const Vector<T>& x) const { 
-               return (this->_intercept ? x.asum() - abs(x[x.n()-1]) : x.asum());
+               return (this->_intercept ? x.asum() - abss(x[x.n()-1]) : x.asum());
             };
             void inline fenchel(const Vector<T>& input, T& val, T& scal) const {
                Vector<T> output;
@@ -1496,8 +1496,8 @@ namespace FISTA {
                T sum = T();
                const int maxn = this->_intercept ? x.n()-1 : x.n();
                for (int i = 0; i<maxn-1; ++i)
-                  sum += abs(x[i+1]-x[i]) + _lambda2d1*abs(x[i]) + 0.5*_lambda3d1*x[i]*x[i];
-               sum += _lambda2d1*abs(x[maxn-1])+0.5*_lambda3d1*x[maxn-1]*x[maxn-1];
+                  sum += abss(x[i+1]-x[i]) + _lambda2d1*abss(x[i]) + 0.5*_lambda3d1*x[i]*x[i];
+               sum += _lambda2d1*abss(x[maxn-1])+0.5*_lambda3d1*x[maxn-1]*x[maxn-1];
                return sum;
             };
             virtual bool is_fenchel() const { return false; };

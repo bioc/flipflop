@@ -3480,7 +3480,7 @@ template <typename T>
 inline void Vector<T>::project_sft_binary(const Vector<T>& y) {
    T mean = this->mean();
    T thrs=mean;
-   while (abs(mean) > EPSILON) {
+   while (abss(mean) > EPSILON) {
       int n_seuils=0;
       for (int i = 0; i< _n; ++i) {
          _X[i] = _X[i]-thrs;
@@ -3503,7 +3503,7 @@ inline void Vector<T>::project_sft(const Vector<int>& labels, const int clas) {
    T mean = this->mean();
    T thrs=mean;
 
-   while (abs(mean) > EPSILON) {
+   while (abss(mean) > EPSILON) {
       int n_seuils=0;
       for (int i = 0; i< _n; ++i) {
          _X[i] = _X[i]-thrs;
