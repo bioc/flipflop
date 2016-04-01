@@ -2,8 +2,8 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 #include <R_ext/Rdynload.h>
-//#include "Rinterface.h"
-#include <Rinterface.h>
+#include "Rinterface.h"
+//#include <Rinterface.h>
 
 #include "R_init_flipflop.h"
 
