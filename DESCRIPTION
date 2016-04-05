@@ -1,6 +1,6 @@
 Package: flipflop
 Title: Fast lasso-based isoform prediction as a flow problem
-Version: 1.8.1
+Version: 1.8.2
 Date: 2013-09-26
 Author: Elsa Bernard, Laurent Jacob, Julien Mairal and Jean-Philippe
         Vert
@@ -20,4 +20,3 @@ NeedsCompilation: yes
 BuildVignettes: true
 URL: http://cbio.ensmp.fr/flipflop
 biocViews: RNASeq, RNASeqData, AlternativeSplicing, Regression
-PackageStatus: Deprecated
